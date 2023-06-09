@@ -2,7 +2,7 @@
 title: "Reconstruction of Egeland et al., 2018: 'Hominin skeletal part abundances...'"
 author: 'Antonio Canepa-Oneto'
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
-output: html_notebook
+output: github_document
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
