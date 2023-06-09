@@ -3,11 +3,8 @@ title: "Reconstruction of Egeland et al., 2018: 'Hominin skeletal part abundance
 author: 'Antonio Canepa-Oneto'
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output:
-  github_document: default # put github_document *before* html_document
-  html_document: default
-knit: (function(inputFile, encoding) {
-  rmarkdown::render(inputFile, encoding = encoding,
-  output_format = "all") })
+  github_document:
+    keep_html: true
 ---
 
 # Intro
