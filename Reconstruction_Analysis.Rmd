@@ -1,0 +1,90 @@
+---
+title: "Reconstruction of Egeland et al., 2018: 'Hominin skeletal part abundances...'"
+author: 'Antonio Canepa-Oneto'
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
+output: html_notebook
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(gt)
+library(tidyverse)
+```
+
+The algorithms implemented, the packaged used for and the URL for those packages are listed in the following table:
+
+```{r echo=FALSE}
+packages <- tibble(
+  Algorithm = c("Neural Network",
+                "Neural Network",
+                "SVM", 
+                "SVM", 
+                "Decision tree with C5.0", 
+                "Decision tree with C5.0",
+                "KNN",
+                "KNN",
+                "Random Forest",
+                "Random Forest"
+                ),
+  Package_used = c("neuralnet", 
+                    "caret", 
+                    "e1071", 
+                    "caret", 
+                    "C50",
+                    "caret",
+                    "class",
+                    "knn/fknn",
+                    "randomForest",
+                    "caret"
+                    ),
+  Packages_Link = c("https://cran.r-project.org/web/packages/neuralnet/",
+                    "https://cran.r-project.org/web/packages/caret/index.html",
+                    "https://cran.r-project.org/web/packages/e1071/index.html",
+                    "https://cran.r-project.org/web/packages/caret/index.html",
+                    "https://cran.r-project.org/web/packages/C50/index.html",
+                    "https://cran.r-project.org/web/packages/caret/index.html",
+                    "https://cran.r-project.org/web/packages/class/index.html",
+                    "https://cran.r-project.org/web/packages/FastKNN/index.html",
+                    "https://cran.r-project.org/web/packages/randomForest/index.html",
+                    "https://cran.r-project.org/web/packages/caret/index.html"
+                    )
+)
+
+#packages
+```
+
+```{r, echo=FALSE}
+# using markdown
+packages %>%
+  mutate(
+    link = glue::glue("[website]({Packages_Link})"),
+    link = map(Packages_Link, gt::md)) %>%
+  select(!Packages_Link) %>% 
+  gt() %>% 
+  tab_header(
+    title = md("List of algorithms used in Egeland et al., 2018"),
+    subtitle = "R Packages and their URL are given"
+  ) %>% 
+  cols_label(
+    Algorithm = "Algorithm",
+    Package_used = "Package used",
+    link = "Package URL") %>%  
+  tab_footnote(data = .,
+               footnote = "No 'knn' package was found. Similar algorithm in FastKNN - fknn",
+               # locations = cells_body(columns = Package_used, rows = everything()
+               locations = cells_body(columns = Package_used, rows = Package_used == 'knn/fknn')
+  )
+```
+
+## Exploratory analysis. 
+
+The goal of exploratory analysis is twofold: (i) to identify the optimum number of groups represented by the hominin assemblages and (ii) to determine the membership of each identified group. Many grouping algorithms tend to perform poorly when, as is the case here, the number of variables (skeletal elements = 23) substantially exceeds sample size (hominin assemblages = 16). To address this discrepancy, we used a RF analysis on all 16 assemblages, including the SH and DC, to identify a subset of skeletal elements that is smaller than the sample size and explains the greatest amount of variance (120). To identify the optimum number of groups represented by all 16 assemblages, those skeletal elements with a MDA value > 5 after the generation of 500 trees are entered in the “NbClust” R library, which runs and combines 30 different clustering algorithms. A k-means analysis then classifies each of the comparative assemblages into one of the groups recognized by the NbClust functions. The strength of group assignment is assessed with the “clusplot” graphic function, which provides 95% confidence ellipses and silhouette plots, which estimate the s(i) value of each comparative assemblage. A comparison of within- and between-group distances results in s(i) values that range from 1 (strong classification within a group) to 0 (parsimonious but weak classification within a group). This preliminary classification establishes a framework for the application of a variety of machine-learning methods that can identify the comparative assemblages that best match the hominin concentrations from the SH and DC.
+
+Before model construction, all skeletal part data undergo center and scale transformation
+
+To choose the best model for analysis, we use Monte-Carlo leave-group-out cross-validation resampling. This creates multiple training set/testing set splits and is more robust with small samples than bootstrapping, bagging, and k-fold cross-validation methods
+
+The models produced by each machine learning method after 30 iterations are evaluated with Cohen’s κ.
+
+Finally, we perform an unsupervised CA with PCA loading scores.
+
+
