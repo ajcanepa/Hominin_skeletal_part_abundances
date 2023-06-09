@@ -5,12 +5,33 @@ date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
+# Intro
+The idea is to be able to reproduce all the statistical analysis in the paper: *Hominin skeletal part abundances and claims of deliberate disposal of corpses in the Middle Pleistocene*[https://doi.org/10.1073/pnas.1718678115](https://doi.org/10.1073/pnas.1718678115)
+
+The dataset was compiled by Antonio Canepa-Oneto, following the Supporting Information found [here](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
+
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(gt)
 library(tidyverse)
 ```
 
+The dataset (only the first fifteen rows) looks like:
+
+
+```{r, message=FALSE, warning=FALSE}
+Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
+
+Summary_Dataset %>% 
+  slice_head(n = 15) %>% 
+  gt()
+```
+
+## Statistical Treatment of Primate Skeletal Part Data
+All analyses described below are run within the R statistical environment
+
+
 The algorithms implemented, the packaged used for and the URL for those packages are listed in the following table:
+
 
 ```{r echo=FALSE}
 packages <- tibble(
@@ -52,6 +73,8 @@ packages <- tibble(
 #packages
 ```
 
+
+
 ```{r, echo=FALSE}
 # using markdown
 packages %>%
@@ -75,7 +98,10 @@ packages %>%
   )
 ```
 
+
+
 ## Exploratory analysis. 
+Some key points from the paper itself are highlighted here.
 
 The goal of exploratory analysis is twofold: (i) to identify the optimum number of groups represented by the hominin assemblages and (ii) to determine the membership of each identified group. Many grouping algorithms tend to perform poorly when, as is the case here, the number of variables (skeletal elements = 23) substantially exceeds sample size (hominin assemblages = 16). To address this discrepancy, we used a RF analysis on all 16 assemblages, including the SH and DC, to identify a subset of skeletal elements that is smaller than the sample size and explains the greatest amount of variance (120). To identify the optimum number of groups represented by all 16 assemblages, those skeletal elements with a MDA value > 5 after the generation of 500 trees are entered in the “NbClust” R library, which runs and combines 30 different clustering algorithms. A k-means analysis then classifies each of the comparative assemblages into one of the groups recognized by the NbClust functions. The strength of group assignment is assessed with the “clusplot” graphic function, which provides 95% confidence ellipses and silhouette plots, which estimate the s(i) value of each comparative assemblage. A comparison of within- and between-group distances results in s(i) values that range from 1 (strong classification within a group) to 0 (parsimonious but weak classification within a group). This preliminary classification establishes a framework for the application of a variety of machine-learning methods that can identify the comparative assemblages that best match the hominin concentrations from the SH and DC.
 
