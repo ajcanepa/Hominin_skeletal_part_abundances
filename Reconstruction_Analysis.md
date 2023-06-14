@@ -1,21 +1,82 @@
-Reconstruction of Egeland et al., 2018: ‘Hominin skeletal part
+Reconstrucción de Egeland et al., 2018: ‘Hominin skeletal part
 abundances…’
 ================
 Antonio Canepa-Oneto
 Last compiled on 14 junio, 2023
 
-## Intro
+## Introducción
 
-The idea is to be able to reproduce all the statistical analysis in the
-paper: *Hominin skeletal part abundances and claims of deliberate
-disposal of corpses in the Middle
-Pleistocene*<https://doi.org/10.1073/pnas.1718678115>
+Se hace una mini-revisión de lo reportado en *Hominin skeletal part
+abundances and claims of deliberate disposal of corpses in the Middle
+Pleistocene* <https://doi.org/10.1073/pnas.1718678115>
 
-The dataset was compiled by Antonio Canepa-Oneto, following the
-Supporting Information found
-[here](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
+Los procesos funerarios humanos tiene una antiguedad determinada (desde
+cuándo somos conscientes de nuestra muerte) que está bajo escrutinio y
+constante debate. Gracias a un estudio de diversos yacimientos se
+intenta esclarecer ese posible supuesto de primer origen de
+enterramientos funerarios para los yacimientos de Atapuerca (**SH**) y
+Sudáfrica (**DC**).
 
-The dataset (only the first fifteen rows) looks like:
+Cuando se encuentra y analiza un yacimiento de homínidos (u homininos
+para ser más precisos) es posible que no todos los huesos estén en
+perfecto estado y más notable aún es posible que no todos los huesos
+estén presentes. La ausencia de determinados huesos puede deberse a
+procesos aleatorios (deterioro, rompimiento, etc), semi-aleatorios
+(consumo de carroña de partes específicas) o altamente selectivos (ritos
+funerarios).
+
+Afortunamente existe una cantidad interesante de yacimientos con restos
+humanos y de primates (“cercanos”) que pueden dar pistas de si los
+yacimientos **SH** y **DC** pueden (o no) considerarse procesos rituales
+(muy específicos) o simplemente procesos aleatorios y/o semi-aleatorios.
+
+### Objetivos
+
+Los objetivos del artículo son tratar de comparar los yacimientos de
+**SH** y **DC** con yacimientos conocidos para determinar si la
+estructura (como composición unitaria, no como forma) de huesos
+disponibles es ás característico de un rito funerario o de un proceso de
+pérdida aleatorio (descomposición) o semi-aleatorio (carroña).
+
+#### Diseño de Análisis
+
+La idea general es que ellos comparan los huesos encontrados (“*Hominin
+skeletal part representation* - **HSPR**”) con otros 14 yacimientos
+entre los cuales existen algunos de humanos en estado “completo” en el
+que no le falta ninguna pieza.
+
+Para eso ellos:
+
+1.- Usando un Random Forest (RF) determinan cuáles son las piezas de
+huesos con más variabilidad (Gini idex y MDA), para utilizarlas luego en
+la creación/clasificación de grupos.
+
+2.- Usando un primer k-means logran crear dos grupos de “HSPR”, en los
+que los huesos humanos “completos” y otros yacimientos en buen estado
+quedan juntos en un cluster y el segundo cluster atribuyen a carroña,
+canibalismo, etc. mostrando un proceso de acumulación natural (**no
+ritual**).
+
+3.- Repiten el k-means con más grupos y encuentran un gradiente de
+conservación de 4 grupos desde los más completos hasta los netamente
+depredados/erosionados.
+
+4.- Usando herramientas supervisadas intentan clasificar los yacimientos
+(todos) con especial interés en **SH** y **DC** en alguno de los grupos
+ya reconocidos por los k-means anteriores.
+
+5.- Usando herramientas no-supervisadas intentan agrupar los yacimientos
+(todos) con especial interés en **SH** y **DC** para ver si coinciden
+con las características/grupos encontradas en los k-means anteriores.
+
+El conjunto de datos se entrega de manera desagregada, dificultando los
+análisis por lo que he procedido a recopilarlo todo en un único
+documento. El documento original entregado como “material suplementario”
+se puede encontrar
+[aquí](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
+
+El connjunto de datos recopilado (solo las primeras 15 filas) se muestra
+a continuación:
 
 ``` r
 Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
@@ -25,20 +86,20 @@ Summary_Dataset %>%
   gt()
 ```
 
-<div id="hkfczwtkoh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#hkfczwtkoh table {
+<div id="tvzekhvgtt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tvzekhvgtt table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#hkfczwtkoh thead, #hkfczwtkoh tbody, #hkfczwtkoh tfoot, #hkfczwtkoh tr, #hkfczwtkoh td, #hkfczwtkoh th {
+&#10;#tvzekhvgtt thead, #tvzekhvgtt tbody, #tvzekhvgtt tfoot, #tvzekhvgtt tr, #tvzekhvgtt td, #tvzekhvgtt th {
   border-style: none;
 }
-&#10;#hkfczwtkoh p {
+&#10;#tvzekhvgtt p {
   margin: 0;
   padding: 0;
 }
-&#10;#hkfczwtkoh .gt_table {
+&#10;#tvzekhvgtt .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -63,11 +124,11 @@ Summary_Dataset %>%
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_caption {
+&#10;#tvzekhvgtt .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#hkfczwtkoh .gt_title {
+&#10;#tvzekhvgtt .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -78,7 +139,7 @@ Summary_Dataset %>%
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#hkfczwtkoh .gt_subtitle {
+&#10;#tvzekhvgtt .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -89,7 +150,7 @@ Summary_Dataset %>%
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#hkfczwtkoh .gt_heading {
+&#10;#tvzekhvgtt .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -100,12 +161,12 @@ Summary_Dataset %>%
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_bottom_border {
+&#10;#tvzekhvgtt .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_col_headings {
+&#10;#tvzekhvgtt .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -119,7 +180,7 @@ Summary_Dataset %>%
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_col_heading {
+&#10;#tvzekhvgtt .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -138,7 +199,7 @@ Summary_Dataset %>%
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#hkfczwtkoh .gt_column_spanner_outer {
+&#10;#tvzekhvgtt .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -149,13 +210,13 @@ Summary_Dataset %>%
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#hkfczwtkoh .gt_column_spanner_outer:first-child {
+&#10;#tvzekhvgtt .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#hkfczwtkoh .gt_column_spanner_outer:last-child {
+&#10;#tvzekhvgtt .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#hkfczwtkoh .gt_column_spanner {
+&#10;#tvzekhvgtt .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -166,10 +227,10 @@ Summary_Dataset %>%
   display: inline-block;
   width: 100%;
 }
-&#10;#hkfczwtkoh .gt_spanner_row {
+&#10;#tvzekhvgtt .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#hkfczwtkoh .gt_group_heading {
+&#10;#tvzekhvgtt .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -194,7 +255,7 @@ Summary_Dataset %>%
   vertical-align: middle;
   text-align: left;
 }
-&#10;#hkfczwtkoh .gt_empty_group_heading {
+&#10;#tvzekhvgtt .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -208,13 +269,13 @@ Summary_Dataset %>%
   border-bottom-color: #D3D3D3;
   vertical-align: middle;
 }
-&#10;#hkfczwtkoh .gt_from_md > :first-child {
+&#10;#tvzekhvgtt .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#hkfczwtkoh .gt_from_md > :last-child {
+&#10;#tvzekhvgtt .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#hkfczwtkoh .gt_row {
+&#10;#tvzekhvgtt .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -232,7 +293,7 @@ Summary_Dataset %>%
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#hkfczwtkoh .gt_stub {
+&#10;#tvzekhvgtt .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -244,7 +305,7 @@ Summary_Dataset %>%
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#hkfczwtkoh .gt_stub_row_group {
+&#10;#tvzekhvgtt .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -257,13 +318,13 @@ Summary_Dataset %>%
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#hkfczwtkoh .gt_row_group_first td {
+&#10;#tvzekhvgtt .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#hkfczwtkoh .gt_row_group_first th {
+&#10;#tvzekhvgtt .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#hkfczwtkoh .gt_summary_row {
+&#10;#tvzekhvgtt .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -272,14 +333,14 @@ Summary_Dataset %>%
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#hkfczwtkoh .gt_first_summary_row {
+&#10;#tvzekhvgtt .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_first_summary_row.thick {
+&#10;#tvzekhvgtt .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#hkfczwtkoh .gt_last_summary_row {
+&#10;#tvzekhvgtt .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -288,7 +349,7 @@ Summary_Dataset %>%
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_grand_summary_row {
+&#10;#tvzekhvgtt .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -297,7 +358,7 @@ Summary_Dataset %>%
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#hkfczwtkoh .gt_first_grand_summary_row {
+&#10;#tvzekhvgtt .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -306,7 +367,7 @@ Summary_Dataset %>%
   border-top-width: 6px;
   border-top-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_last_grand_summary_row_top {
+&#10;#tvzekhvgtt .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -315,10 +376,10 @@ Summary_Dataset %>%
   border-bottom-width: 6px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_striped {
+&#10;#tvzekhvgtt .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
-&#10;#hkfczwtkoh .gt_table_body {
+&#10;#tvzekhvgtt .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -326,7 +387,7 @@ Summary_Dataset %>%
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_footnotes {
+&#10;#tvzekhvgtt .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -339,7 +400,7 @@ Summary_Dataset %>%
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_footnote {
+&#10;#tvzekhvgtt .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -347,7 +408,7 @@ Summary_Dataset %>%
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#hkfczwtkoh .gt_sourcenotes {
+&#10;#tvzekhvgtt .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -360,57 +421,57 @@ Summary_Dataset %>%
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#hkfczwtkoh .gt_sourcenote {
+&#10;#tvzekhvgtt .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#hkfczwtkoh .gt_left {
+&#10;#tvzekhvgtt .gt_left {
   text-align: left;
 }
-&#10;#hkfczwtkoh .gt_center {
+&#10;#tvzekhvgtt .gt_center {
   text-align: center;
 }
-&#10;#hkfczwtkoh .gt_right {
+&#10;#tvzekhvgtt .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#hkfczwtkoh .gt_font_normal {
+&#10;#tvzekhvgtt .gt_font_normal {
   font-weight: normal;
 }
-&#10;#hkfczwtkoh .gt_font_bold {
+&#10;#tvzekhvgtt .gt_font_bold {
   font-weight: bold;
 }
-&#10;#hkfczwtkoh .gt_font_italic {
+&#10;#tvzekhvgtt .gt_font_italic {
   font-style: italic;
 }
-&#10;#hkfczwtkoh .gt_super {
+&#10;#tvzekhvgtt .gt_super {
   font-size: 65%;
 }
-&#10;#hkfczwtkoh .gt_footnote_marks {
+&#10;#tvzekhvgtt .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#hkfczwtkoh .gt_asterisk {
+&#10;#tvzekhvgtt .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#hkfczwtkoh .gt_indent_1 {
+&#10;#tvzekhvgtt .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#hkfczwtkoh .gt_indent_2 {
+&#10;#tvzekhvgtt .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#hkfczwtkoh .gt_indent_3 {
+&#10;#tvzekhvgtt .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#hkfczwtkoh .gt_indent_4 {
+&#10;#tvzekhvgtt .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#hkfczwtkoh .gt_indent_5 {
+&#10;#tvzekhvgtt .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -873,28 +934,28 @@ Summary_Dataset %>%
 </table>
 </div>
 
-## Statistical Treatment of Primate Skeletal Part Data
+### Tratamiento estadístico de datos de partes esqueléticas de primates
 
-All analyses described below are run within the R statistical
-environment
+Todos los análisis descritos a continuación se ejecutan dentro del
+entorno estadístico R
 
-The algorithms implemented, the packaged used for and the URL for those
-packages are listed in the following table:
+Los algoritmos implementados, el paquete utilizado y la URL de esos
+paquetes se enumeran en la siguiente tabla:
 
-<div id="jmatpojnzg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jmatpojnzg table {
+<div id="ihmwzudiai" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ihmwzudiai table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#jmatpojnzg thead, #jmatpojnzg tbody, #jmatpojnzg tfoot, #jmatpojnzg tr, #jmatpojnzg td, #jmatpojnzg th {
+&#10;#ihmwzudiai thead, #ihmwzudiai tbody, #ihmwzudiai tfoot, #ihmwzudiai tr, #ihmwzudiai td, #ihmwzudiai th {
   border-style: none;
 }
-&#10;#jmatpojnzg p {
+&#10;#ihmwzudiai p {
   margin: 0;
   padding: 0;
 }
-&#10;#jmatpojnzg .gt_table {
+&#10;#ihmwzudiai .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -919,11 +980,11 @@ packages are listed in the following table:
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_caption {
+&#10;#ihmwzudiai .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#jmatpojnzg .gt_title {
+&#10;#ihmwzudiai .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -934,7 +995,7 @@ packages are listed in the following table:
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#jmatpojnzg .gt_subtitle {
+&#10;#ihmwzudiai .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -945,7 +1006,7 @@ packages are listed in the following table:
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#jmatpojnzg .gt_heading {
+&#10;#ihmwzudiai .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -956,12 +1017,12 @@ packages are listed in the following table:
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_bottom_border {
+&#10;#ihmwzudiai .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_col_headings {
+&#10;#ihmwzudiai .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -975,7 +1036,7 @@ packages are listed in the following table:
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_col_heading {
+&#10;#ihmwzudiai .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -994,7 +1055,7 @@ packages are listed in the following table:
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#jmatpojnzg .gt_column_spanner_outer {
+&#10;#ihmwzudiai .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1005,13 +1066,13 @@ packages are listed in the following table:
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#jmatpojnzg .gt_column_spanner_outer:first-child {
+&#10;#ihmwzudiai .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#jmatpojnzg .gt_column_spanner_outer:last-child {
+&#10;#ihmwzudiai .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#jmatpojnzg .gt_column_spanner {
+&#10;#ihmwzudiai .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1022,10 +1083,10 @@ packages are listed in the following table:
   display: inline-block;
   width: 100%;
 }
-&#10;#jmatpojnzg .gt_spanner_row {
+&#10;#ihmwzudiai .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#jmatpojnzg .gt_group_heading {
+&#10;#ihmwzudiai .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1050,7 +1111,7 @@ packages are listed in the following table:
   vertical-align: middle;
   text-align: left;
 }
-&#10;#jmatpojnzg .gt_empty_group_heading {
+&#10;#ihmwzudiai .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1064,13 +1125,13 @@ packages are listed in the following table:
   border-bottom-color: #D3D3D3;
   vertical-align: middle;
 }
-&#10;#jmatpojnzg .gt_from_md > :first-child {
+&#10;#ihmwzudiai .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#jmatpojnzg .gt_from_md > :last-child {
+&#10;#ihmwzudiai .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#jmatpojnzg .gt_row {
+&#10;#ihmwzudiai .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1088,7 +1149,7 @@ packages are listed in the following table:
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#jmatpojnzg .gt_stub {
+&#10;#ihmwzudiai .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1100,7 +1161,7 @@ packages are listed in the following table:
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jmatpojnzg .gt_stub_row_group {
+&#10;#ihmwzudiai .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1113,13 +1174,13 @@ packages are listed in the following table:
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#jmatpojnzg .gt_row_group_first td {
+&#10;#ihmwzudiai .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#jmatpojnzg .gt_row_group_first th {
+&#10;#ihmwzudiai .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#jmatpojnzg .gt_summary_row {
+&#10;#ihmwzudiai .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1128,14 +1189,14 @@ packages are listed in the following table:
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jmatpojnzg .gt_first_summary_row {
+&#10;#ihmwzudiai .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_first_summary_row.thick {
+&#10;#ihmwzudiai .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#jmatpojnzg .gt_last_summary_row {
+&#10;#ihmwzudiai .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1144,7 +1205,7 @@ packages are listed in the following table:
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_grand_summary_row {
+&#10;#ihmwzudiai .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1153,7 +1214,7 @@ packages are listed in the following table:
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jmatpojnzg .gt_first_grand_summary_row {
+&#10;#ihmwzudiai .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1162,7 +1223,7 @@ packages are listed in the following table:
   border-top-width: 6px;
   border-top-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_last_grand_summary_row_top {
+&#10;#ihmwzudiai .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1171,10 +1232,10 @@ packages are listed in the following table:
   border-bottom-width: 6px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_striped {
+&#10;#ihmwzudiai .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
-&#10;#jmatpojnzg .gt_table_body {
+&#10;#ihmwzudiai .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1182,7 +1243,7 @@ packages are listed in the following table:
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_footnotes {
+&#10;#ihmwzudiai .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1195,7 +1256,7 @@ packages are listed in the following table:
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_footnote {
+&#10;#ihmwzudiai .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1203,7 +1264,7 @@ packages are listed in the following table:
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jmatpojnzg .gt_sourcenotes {
+&#10;#ihmwzudiai .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1216,57 +1277,57 @@ packages are listed in the following table:
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#jmatpojnzg .gt_sourcenote {
+&#10;#ihmwzudiai .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jmatpojnzg .gt_left {
+&#10;#ihmwzudiai .gt_left {
   text-align: left;
 }
-&#10;#jmatpojnzg .gt_center {
+&#10;#ihmwzudiai .gt_center {
   text-align: center;
 }
-&#10;#jmatpojnzg .gt_right {
+&#10;#ihmwzudiai .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#jmatpojnzg .gt_font_normal {
+&#10;#ihmwzudiai .gt_font_normal {
   font-weight: normal;
 }
-&#10;#jmatpojnzg .gt_font_bold {
+&#10;#ihmwzudiai .gt_font_bold {
   font-weight: bold;
 }
-&#10;#jmatpojnzg .gt_font_italic {
+&#10;#ihmwzudiai .gt_font_italic {
   font-style: italic;
 }
-&#10;#jmatpojnzg .gt_super {
+&#10;#ihmwzudiai .gt_super {
   font-size: 65%;
 }
-&#10;#jmatpojnzg .gt_footnote_marks {
+&#10;#ihmwzudiai .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#jmatpojnzg .gt_asterisk {
+&#10;#ihmwzudiai .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#jmatpojnzg .gt_indent_1 {
+&#10;#ihmwzudiai .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#jmatpojnzg .gt_indent_2 {
+&#10;#ihmwzudiai .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#jmatpojnzg .gt_indent_3 {
+&#10;#ihmwzudiai .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#jmatpojnzg .gt_indent_4 {
+&#10;#ihmwzudiai .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#jmatpojnzg .gt_indent_5 {
+&#10;#ihmwzudiai .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1324,44 +1385,63 @@ packages are listed in the following table:
 </table>
 </div>
 
-## Exploratory analysis.
+### Análisis somero del material suplementario
 
-Some key points from the paper itself are highlighted here.
+Aquí se destacan algunos puntos clave del documento mismo.
 
-The goal of exploratory analysis is twofold: (i) to identify the optimum
-number of groups represented by the hominin assemblages and (ii) to
-determine the membership of each identified group. Many grouping
-algorithms tend to perform poorly when, as is the case here, the number
-of variables (skeletal elements = 23) substantially exceeds sample size
-(hominin assemblages = 16). To address this discrepancy, we used a RF
-analysis on all 16 assemblages, including the SH and DC, to identify a
-subset of skeletal elements that is smaller than the sample size and
-explains the greatest amount of variance (120). To identify the optimum
-number of groups represented by all 16 assemblages, those skeletal
-elements with a MDA value \> 5 after the generation of 500 trees are
-entered in the “NbClust” R library, which runs and combines 30 different
-clustering algorithms. A k-means analysis then classifies each of the
-comparative assemblages into one of the groups recognized by the NbClust
-functions. The strength of group assignment is assessed with the
-“clusplot” graphic function, which provides 95% confidence ellipses and
-silhouette plots, which estimate the s(i) value of each comparative
-assemblage. A comparison of within- and between-group distances results
-in s(i) values that range from 1 (strong classification within a group)
-to 0 (parsimonious but weak classification within a group). This
-preliminary classification establishes a framework for the application
-of a variety of machine-learning methods that can identify the
-comparative assemblages that best match the hominin concentrations from
-the SH and DC.
+El objetivo del análisis exploratorio es doble: (i) identificar el
+número óptimo de grupos representados por los ensamblajes de homínidos y
+(ii) determinar la pertenencia de cada grupo identificado. Muchos
+algoritmos de agrupación tienden a funcionar mal cuando, como es el caso
+aquí, el número de variables (elementos esqueléticos = 23) excede
+sustancialmente el tamaño de la muestra (ensamblajes de homínidos = 16).
+Para abordar esta discrepancia, utilizamos un análisis de RF en los 16
+ensamblajes, incluidos SH y DC, para identificar un subconjunto de
+elementos esqueléticos que es más pequeño que el tamaño de la muestra y
+explica la mayor cantidad de variación (120). Para identificar el número
+óptimo de grupos representados por los 16 ensamblajes, los elementos
+esqueléticos con un valor de MDA \> 5 después de la generación de 500
+árboles se ingresan en la biblioteca R “NbClust”, que ejecuta y combina
+30 algoritmos de agrupamiento diferentes. Luego, un análisis de k-medias
+clasifica cada uno de los conjuntos comparativos en uno de los grupos
+reconocidos por las funciones NbClust. La fuerza de la asignación de
+grupos se evalúa con la función gráfica “clusplot”, que proporciona
+elipses y gráficos de silueta con un 95 % de confianza, que estiman el
+valor s(i) de cada conjunto comparativo. Una comparación de distancias
+dentro y entre grupos da como resultado valores de s(i) que van desde 1
+(clasificación fuerte dentro de un grupo) hasta 0 (clasificación
+parsimoniosa pero débil dentro de un grupo). Esta clasificación
+preliminar establece un marco para la aplicación de una variedad de
+métodos de aprendizaje automático que pueden identificar los ensamblajes
+comparativos que mejor coinciden con las concentraciones de homínidos de
+SH y DC.
 
-Before model construction, all skeletal part data undergo center and
-scale transformation
+Antes de la construcción del modelo, todos los datos de las partes del
+esqueleto se someten a una transformación de centro y escala
 
-To choose the best model for analysis, we use Monte-Carlo
-leave-group-out cross-validation resampling. This creates multiple
-training set/testing set splits and is more robust with small samples
-than bootstrapping, bagging, and k-fold cross-validation methods
+Para elegir el mejor modelo para el análisis, utilizamos el remuestreo
+de validación cruzada con exclusión de grupo de Monte-Carlo. Esto crea
+múltiples divisiones de conjuntos de entrenamiento/conjuntos de prueba y
+es más sólido con muestras pequeñas que los métodos de validación
+cruzada de bootstrapping, bagging y k-fold.
 
-The models produced by each machine learning method after 30 iterations
-are evaluated with Cohen’s κ.
+Los modelos producidos por cada método de aprendizaje automático después
+de 30 iteraciones se evalúan con κ de Cohen.
 
-Finally, we perform an unsupervised CA with PCA loading scores.
+Finalmente, realizamos una CA no supervisada con puntajes de carga de
+PCA.
+
+### Pasos a seguir y algunas ideas
+
+Aseguran que los huesos de *SH* presentan mucha perturbación (tipo
+carroña) y por ende no podrían ser clasificados como rito mortuorio. Sin
+embargo no muestran un análisis detallado de los rastros de “huellas” de
+carroñeo que presentan ni los datos que (entiendo) posee el grupo de
+Nohemí.
+
+Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque
+probablemente muestren algo similar), pero sí a nivel de incluir datos
+nuevos que no estén incluidos y ya sea repitiendo la aproximación de
+ellos o agregando alguna nueva, los resultados sean diferentes apoyando
+(esta vez) la idea de que los restos en **SH** están allí por un acto
+“ritual de muerte” y no por simple acumulación transporte.

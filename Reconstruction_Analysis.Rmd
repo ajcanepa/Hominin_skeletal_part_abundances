@@ -8,7 +8,7 @@ output:
 ---
 
 ## Introducción
-Se hace una mini-revisión de lo reportado en *Hominin skeletal part abundances and claims of deliberate disposal of corpses in the Middle Pleistocene*[https://doi.org/10.1073/pnas.1718678115](https://doi.org/10.1073/pnas.1718678115)
+Se hace una mini-revisión de lo reportado en *Hominin skeletal part abundances and claims of deliberate disposal of corpses in the Middle Pleistocene* [https://doi.org/10.1073/pnas.1718678115](https://doi.org/10.1073/pnas.1718678115)
 
 Los procesos funerarios humanos tiene una antiguedad determinada (desde cuándo somos conscientes de nuestra muerte) que está bajo escrutinio y constante debate. Gracias a un estudio de diversos yacimientos se intenta esclarecer ese posible supuesto de primer origen de enterramientos funerarios para los yacimientos de Atapuerca (**SH**) y Sudáfrica (**DC**).
 
@@ -23,21 +23,25 @@ Los objetivos del artículo son tratar de comparar los yacimientos de **SH** y *
 La idea general es que ellos comparan los huesos encontrados ("*Hominin skeletal part representation* - __HSPR__") con otros 14 yacimientos entre los cuales existen algunos de humanos en estado "completo" en el que no le falta ninguna pieza.
 
 Para eso ellos:
+
 1.-   Usando un Random Forest (RF) determinan cuáles son las piezas de huesos con más variabilidad (Gini idex y MDA), para utilizarlas luego en la creación/clasificación de grupos.
+
 2.-   Usando un primer k-means logran crear dos grupos de "HSPR", en los que los huesos humanos "completos" y otros yacimientos en buen estado quedan juntos en un cluster y el segundo cluster atribuyen a carroña, canibalismo, etc. mostrando un proceso de acumulación natural (__no ritual__).
+
 3.-   Repiten el k-means con más grupos y encuentran un gradiente de conservación de 4 grupos desde los más completos hasta los netamente depredados/erosionados.
+
 4.-   Usando herramientas supervisadas intentan clasificar los yacimientos (todos) con especial interés en **SH** y **DC** en alguno de los grupos ya reconocidos por los k-means anteriores.
+
 5.-   Usando herramientas no-supervisadas intentan agrupar los yacimientos (todos) con especial interés en **SH** y **DC** para ver si coinciden con las características/grupos encontradas en los k-means anteriores.
 
-El conjunto 
-The dataset was compiled by Antonio Canepa-Oneto, following the Supporting Information found [here](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
+El conjunto de datos se entrega de manera desagregada, dificultando los análisis por lo que he procedido a recopilarlo todo en un único documento. El documento original entregado como "material suplementario" se puede encontrar [aquí](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(gt)
 library(tidyverse)
 ```
 
-The dataset (only the first fifteen rows) looks like:
+El connjunto de datos recopilado (solo las primeras 15 filas) se muestra a continuación:
 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -48,11 +52,10 @@ Summary_Dataset %>%
   gt()
 ```
 
-## Statistical Treatment of Primate Skeletal Part Data
-All analyses described below are run within the R statistical environment
+### Tratamiento estadístico de datos de partes esqueléticas de primates
+Todos los análisis descritos a continuación se ejecutan dentro del entorno estadístico R
 
-
-The algorithms implemented, the packaged used for and the URL for those packages are listed in the following table:
+Los algoritmos implementados, el paquete utilizado y la URL de esos paquetes se enumeran en la siguiente tabla:
 
 
 ```{r echo=FALSE}
@@ -120,19 +123,21 @@ packages %>%
   )
 ```
 
+### Análisis somero del material suplementario
+Aquí se destacan algunos puntos clave del documento mismo.
 
+El objetivo del análisis exploratorio es doble: (i) identificar el número óptimo de grupos representados por los ensamblajes de homínidos y (ii) determinar la pertenencia de cada grupo identificado. Muchos algoritmos de agrupación tienden a funcionar mal cuando, como es el caso aquí, el número de variables (elementos esqueléticos = 23) excede sustancialmente el tamaño de la muestra (ensamblajes de homínidos = 16). Para abordar esta discrepancia, utilizamos un análisis de RF en los 16 ensamblajes, incluidos SH y DC, para identificar un subconjunto de elementos esqueléticos que es más pequeño que el tamaño de la muestra y explica la mayor cantidad de variación (120). Para identificar el número óptimo de grupos representados por los 16 ensamblajes, los elementos esqueléticos con un valor de MDA > 5 después de la generación de 500 árboles se ingresan en la biblioteca R "NbClust", que ejecuta y combina 30 algoritmos de agrupamiento diferentes. Luego, un análisis de k-medias clasifica cada uno de los conjuntos comparativos en uno de los grupos reconocidos por las funciones NbClust. La fuerza de la asignación de grupos se evalúa con la función gráfica "clusplot", que proporciona elipses y gráficos de silueta con un 95 % de confianza, que estiman el valor s(i) de cada conjunto comparativo. Una comparación de distancias dentro y entre grupos da como resultado valores de s(i) que van desde 1 (clasificación fuerte dentro de un grupo) hasta 0 (clasificación parsimoniosa pero débil dentro de un grupo). Esta clasificación preliminar establece un marco para la aplicación de una variedad de métodos de aprendizaje automático que pueden identificar los ensamblajes comparativos que mejor coinciden con las concentraciones de homínidos de SH y DC.
 
-## Exploratory analysis. 
-Some key points from the paper itself are highlighted here.
+Antes de la construcción del modelo, todos los datos de las partes del esqueleto se someten a una transformación de centro y escala
 
-The goal of exploratory analysis is twofold: (i) to identify the optimum number of groups represented by the hominin assemblages and (ii) to determine the membership of each identified group. Many grouping algorithms tend to perform poorly when, as is the case here, the number of variables (skeletal elements = 23) substantially exceeds sample size (hominin assemblages = 16). To address this discrepancy, we used a RF analysis on all 16 assemblages, including the SH and DC, to identify a subset of skeletal elements that is smaller than the sample size and explains the greatest amount of variance (120). To identify the optimum number of groups represented by all 16 assemblages, those skeletal elements with a MDA value > 5 after the generation of 500 trees are entered in the “NbClust” R library, which runs and combines 30 different clustering algorithms. A k-means analysis then classifies each of the comparative assemblages into one of the groups recognized by the NbClust functions. The strength of group assignment is assessed with the “clusplot” graphic function, which provides 95% confidence ellipses and silhouette plots, which estimate the s(i) value of each comparative assemblage. A comparison of within- and between-group distances results in s(i) values that range from 1 (strong classification within a group) to 0 (parsimonious but weak classification within a group). This preliminary classification establishes a framework for the application of a variety of machine-learning methods that can identify the comparative assemblages that best match the hominin concentrations from the SH and DC.
+Para elegir el mejor modelo para el análisis, utilizamos el remuestreo de validación cruzada con exclusión de grupo de Monte-Carlo. Esto crea múltiples divisiones de conjuntos de entrenamiento/conjuntos de prueba y es más sólido con muestras pequeñas que los métodos de validación cruzada de bootstrapping, bagging y k-fold.
 
-Before model construction, all skeletal part data undergo center and scale transformation
+Los modelos producidos por cada método de aprendizaje automático después de 30 iteraciones se evalúan con κ de Cohen.
 
-To choose the best model for analysis, we use Monte-Carlo leave-group-out cross-validation resampling. This creates multiple training set/testing set splits and is more robust with small samples than bootstrapping, bagging, and k-fold cross-validation methods
+Finalmente, realizamos una CA no supervisada con puntajes de carga de PCA.
 
-The models produced by each machine learning method after 30 iterations are evaluated with Cohen’s κ.
+### Pasos a seguir y algunas ideas
+Aseguran que los huesos de *SH* presentan mucha perturbación (tipo carroña) y por ende no podrían ser clasificados como rito mortuorio. Sin embargo no muestran un análisis detallado de los rastros de "huellas" de carroñeo que presentan ni los datos que (entiendo) posee el grupo de Nohemí.
 
-Finally, we perform an unsupervised CA with PCA loading scores.
-
+Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque probablemente muestren algo similar), pero sí a nivel de incluir datos nuevos que no estén incluidos y ya sea repitiendo la aproximación de ellos o agregando alguna nueva, los resultados sean diferentes apoyando (esta vez) la idea de que los restos en **SH** están allí por un acto "ritual de muerte" y no por simple acumulación transporte.
 
