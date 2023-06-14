@@ -19,7 +19,7 @@ Afortunamente existe una cantidad interesante de yacimientos con restos humanos 
 ### Objetivos
 Los objetivos del artículo son tratar de comparar los yacimientos de **SH** y **DC** con yacimientos conocidos para determinar si la estructura (como composición unitaria, no como forma) de huesos disponibles es ás característico de un rito funerario o de un proceso de pérdida aleatorio (descomposición) o semi-aleatorio (carroña).
 
-#### Diseño de Análisis
+### Diseño de Análisis
 La idea general es que ellos comparan los huesos encontrados ("*Hominin skeletal part representation* - __HSPR__") con otros 14 yacimientos entre los cuales existen algunos de humanos en estado "completo" en el que no le falta ninguna pieza.
 
 Para eso ellos:
