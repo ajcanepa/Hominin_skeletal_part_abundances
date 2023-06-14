@@ -11,7 +11,7 @@ output:
   keep_md: yes
 ---
 
-## Introducción
+## Introducción nueva
 Se hace una mini-revisión de lo reportado en *Hominin skeletal part abundances and claims of deliberate disposal of corpses in the Middle Pleistocene* [https://doi.org/10.1073/pnas.1718678115](https://doi.org/10.1073/pnas.1718678115)
 
 Los procesos funerarios humanos tiene una antiguedad determinada (desde cuándo somos conscientes de nuestra muerte) que está bajo escrutinio y constante debate. Gracias a un estudio de diversos yacimientos se intenta esclarecer ese posible supuesto de primer origen de enterramientos funerarios para los yacimientos de Atapuerca (**SH**) y Sudáfrica (**DC**).
