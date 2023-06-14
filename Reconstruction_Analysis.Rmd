@@ -5,12 +5,12 @@ date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     toc: yes  
-    toc_float: no
+    toc_float: yes
     toc_depth: 6
     keep_md: yes
 ---
 
-## Introducción nueva
+## Introducción
 Se hace una mini-revisión de lo reportado en *Hominin skeletal part abundances and claims of deliberate disposal of corpses in the Middle Pleistocene* [https://doi.org/10.1073/pnas.1718678115](https://doi.org/10.1073/pnas.1718678115)
 
 Los procesos funerarios humanos tiene una antiguedad determinada (desde cuándo somos conscientes de nuestra muerte) que está bajo escrutinio y constante debate. Gracias a un estudio de diversos yacimientos se intenta esclarecer ese posible supuesto de primer origen de enterramientos funerarios para los yacimientos de Atapuerca (**SH**) y Sudáfrica (**DC**).
@@ -22,7 +22,7 @@ Afortunamente existe una cantidad interesante de yacimientos con restos humanos 
 ### Objetivos
 Los objetivos del artículo son tratar de comparar los yacimientos de **SH** y **DC** con yacimientos conocidos para determinar si la estructura (como composición unitaria, no como forma) de huesos disponibles es ás característico de un rito funerario o de un proceso de pérdida aleatorio (descomposición) o semi-aleatorio (carroña).
 
-### Diseño de Análisis
+#### Diseño de Análisis
 La idea general es que ellos comparan los huesos encontrados ("*Hominin skeletal part representation* - __HSPR__") con otros 14 yacimientos entre los cuales existen algunos de humanos en estado "completo" en el que no le falta ninguna pieza.
 
 Para eso ellos:
@@ -49,7 +49,7 @@ library(DT)
 library(knitr)
 ```
 
-El connjunto de datos recopilado (solo las primeras 15 filas) se muestra a continuación:
+El conjunto de datos recopilado se muestra a continuación. La tabla se puede descargar de la siguiente botonera y es dinámica.
 
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
@@ -71,11 +71,26 @@ Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
 # )
 ```
 
-
-```{r, message=FALSE, warning=FALSE}
-#datatable(Summary_Dataset)
-DT::datatable(Summary_Dataset, width = '100%', options = list(scrollX = TRUE))
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# put CSV, XLS, and PDF in a collection
+datatable(
+  Summary_Dataset, width = '100%', 
+  #options = list(scrollX = TRUE),
+  extensions = 'Buttons', 
+  options = list(
+   scrollX = TRUE,
+    dom = 'Bfrtip',
+    buttons = 
+      list('copy', 'print', list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      ))
+    
+  )
+)
 ```
+
 
 ### Tratamiento estadístico de datos de partes esqueléticas de primates
 Todos los análisis descritos a continuación se ejecutan dentro del entorno estadístico R
@@ -163,7 +178,7 @@ Los modelos producidos por cada método de aprendizaje automático después de 3
 
 Finalmente, realizamos una CA no supervisada con puntajes de carga de PCA.
 
-### Pasos a seguir y algunas ideas
+## Pasos a seguir y algunas ideas
 Aseguran que los huesos de *SH* presentan mucha perturbación (tipo carroña) y por ende no podrían ser clasificados como rito mortuorio. Sin embargo no muestran un análisis detallado de los rastros de "huellas" de carroñeo que presentan ni los datos que (entiendo) posee el grupo de Nohemí.
 
 Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque probablemente muestren algo similar), pero sí a nivel de incluir datos nuevos que no estén incluidos y ya sea repitiendo la aproximación de ellos o agregando alguna nueva, los resultados sean diferentes apoyando (esta vez) la idea de que los restos en **SH** están allí por un acto "ritual de muerte" y no por simple acumulación transporte.
