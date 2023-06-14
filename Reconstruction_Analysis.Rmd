@@ -3,8 +3,12 @@ title: "Reconstrucción de Egeland et al., 2018: 'Hominin skeletal part abundanc
 author: 'Antonio Canepa-Oneto'
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output:
-  github_document:
-    keep_html: true
+  html_document:
+    df_print: paged
+    toc: yes  
+    toc_float: no
+    toc_depth: 6
+  keep_md: yes
 ---
 
 ## Introducción
@@ -37,19 +41,32 @@ Para eso ellos:
 El conjunto de datos se entrega de manera desagregada, dificultando los análisis por lo que he procedido a recopilarlo todo en un único documento. El documento original entregado como "material suplementario" se puede encontrar [aquí](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-library(gt)
+#library(gt)
 library(tidyverse)
+# Install the DT package
+#install.packages("DT")
+# Load the DT package
+library(DT)
+library(knitr)
 ```
 
 El connjunto de datos recopilado (solo las primeras 15 filas) se muestra a continuación:
 
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
+```
 
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
 Summary_Dataset %>% 
   slice_head(n = 15) %>% 
   gt()
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+datatable(Summary_Dataset)
 ```
 
 ### Tratamiento estadístico de datos de partes esqueléticas de primates
@@ -100,7 +117,7 @@ packages <- tibble(
 
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 # using markdown
 packages %>%
   mutate(
@@ -141,3 +158,34 @@ Aseguran que los huesos de *SH* presentan mucha perturbación (tipo carroña) y 
 
 Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque probablemente muestren algo similar), pero sí a nivel de incluir datos nuevos que no estén incluidos y ya sea repitiendo la aproximación de ellos o agregando alguna nueva, los resultados sean diferentes apoyando (esta vez) la idea de que los restos en **SH** están allí por un acto "ritual de muerte" y no por simple acumulación transporte.
 
+
+
+```{r}
+example.df.kable <- data.frame("link"=c("[Tokyo](https://en.wikipedia.org/wiki/Tokyo)","[Paris](https://en.wikipedia.org/wiki/Paris)"), "country"=c("Japan","France"))
+```
+
+```{r}
+example.df.datatable <- data.frame("link"=c(
+'<a href="https://en.wikipedia.org/wiki/Tokyo">Tokyo</a>',
+'<a href="https://en.wikipedia.org/wiki/Paris">Paris</a>'),
+"country"=c("Japan","France"))
+```
+
+```{r}
+kable(example.df.kable)
+```
+
+
+```{r}
+datatable(example.df.kable)  # This does NOT show the links
+```
+
+
+```{r}
+datatable(example.df.datatable)  # This does NOT show the links
+```
+
+
+```{r}
+datatable(example.df.datatable, escape=FALSE)  # This does show the links
+```
