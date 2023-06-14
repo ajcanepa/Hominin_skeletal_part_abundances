@@ -41,7 +41,7 @@ Para eso ellos:
 El conjunto de datos se entrega de manera desagregada, dificultando los análisis por lo que he procedido a recopilarlo todo en un único documento. El documento original entregado como "material suplementario" se puede encontrar [aquí](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-#library(gt)
+library(gt)
 library(tidyverse)
 # Install the DT package
 #install.packages("DT")
@@ -58,15 +58,24 @@ Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
 ```
 
 
-```{r, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
-Summary_Dataset %>% 
-  slice_head(n = 15) %>% 
-  gt()
+```{r, message=FALSE, warning=FALSE, echo=TRUE, eval=TRUE}
+#Tablas pijas con GT que funcionan muy mal
+# Summary_Dataset %>% 
+#   slice_head(n = 15) %>% 
+#   gt()
+
+fmt_markdown(
+  gt(Summary_Dataset),
+  columns = everything(),
+  rows = everything(),
+  md_engine = c("markdown", "commonmark")
+)
 ```
 
 
 ```{r, message=FALSE, warning=FALSE}
-datatable(Summary_Dataset)
+#datatable(Summary_Dataset)
+DT::datatable(Summary_Dataset, width = '100%', options = list(scrollX = TRUE))
 ```
 
 ### Tratamiento estadístico de datos de partes esqueléticas de primates
