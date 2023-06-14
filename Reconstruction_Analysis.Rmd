@@ -4,11 +4,10 @@ author: 'Antonio Canepa-Oneto'
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
-    df_print: paged
     toc: yes  
     toc_float: no
     toc_depth: 6
-  keep_md: yes
+    keep_md: yes
 ---
 
 ## Introducción nueva
@@ -41,7 +40,7 @@ Para eso ellos:
 El conjunto de datos se entrega de manera desagregada, dificultando los análisis por lo que he procedido a recopilarlo todo en un único documento. El documento original entregado como "material suplementario" se puede encontrar [aquí](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-library(gt)
+#library(gt)
 library(tidyverse)
 # Install the DT package
 #install.packages("DT")
@@ -58,18 +57,18 @@ Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
 ```
 
 
-```{r, message=FALSE, warning=FALSE, echo=TRUE, eval=TRUE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
 #Tablas pijas con GT que funcionan muy mal
 # Summary_Dataset %>% 
 #   slice_head(n = 15) %>% 
 #   gt()
-
-fmt_markdown(
-  gt(Summary_Dataset),
-  columns = everything(),
-  rows = everything(),
-  md_engine = c("markdown", "commonmark")
-)
+# 
+# fmt_markdown(
+#   gt(Summary_Dataset),
+#   columns = everything(),
+#   rows = everything(),
+#   md_engine = c("markdown", "commonmark")
+# )
 ```
 
 
@@ -108,45 +107,47 @@ packages <- tibble(
                     "randomForest",
                     "caret"
                     ),
-  Packages_Link = c("https://cran.r-project.org/web/packages/neuralnet/",
-                    "https://cran.r-project.org/web/packages/caret/index.html",
-                    "https://cran.r-project.org/web/packages/e1071/index.html",
-                    "https://cran.r-project.org/web/packages/caret/index.html",
-                    "https://cran.r-project.org/web/packages/C50/index.html",
-                    "https://cran.r-project.org/web/packages/caret/index.html",
-                    "https://cran.r-project.org/web/packages/class/index.html",
-                    "https://cran.r-project.org/web/packages/FastKNN/index.html",
-                    "https://cran.r-project.org/web/packages/randomForest/index.html",
-                    "https://cran.r-project.org/web/packages/caret/index.html"
-                    )
+  Packages_Link = c('<a href="https://cran.r-project.org/web/packages/neuralnet/">https://cran.r-project.org/web/packages/neuralnet/</a>',
+                    '<a href="https://cran.r-project.org/web/packages/caret/index.html">https://cran.r-project.org/web/packages/caret/index.html</a>',
+                    '<a href="https://cran.r-project.org/web/packages/e1071/index.html">https://cran.r-project.org/web/packages/e1071/index.html</a>',
+                    '<a href="https://cran.r-project.org/web/packages/caret/index.html">https://cran.r-project.org/web/packages/caret/index.html</a>',
+                    '<a href="https://cran.r-project.org/web/packages/C50/index.html">https://cran.r-project.org/web/packages/C50/index.html</a>',
+                    '<a href="https://cran.r-project.org/web/packages/caret/index.html">https://cran.r-project.org/web/packages/caret/index.html</a>',
+                    '<a href="https://cran.r-project.org/web/packages/class/index.html">https://cran.r-project.org/web/packages/class/index.html</a>',
+                    '<a href="https://cran.r-project.org/web/packages/FastKNN/index.html">https://cran.r-project.org/web/packages/FastKNN/index.html</a>',
+                    '<a href="https://cran.r-project.org/web/packages/randomForest/index.html">https://cran.r-project.org/web/packages/randomForest/index.html</a>',
+                    '<a href="https://cran.r-project.org/web/packages/caret/index.html">https://cran.r-project.org/web/packages/caret/index.html</a>' )
 )
 
 #packages
 ```
 
+```{r, message=FALSE, warning=FALSE}
+datatable(packages, escape = FALSE,  width = '100%', options = list(scrollX = TRUE))  # This does show the links
+```
 
 
 ```{r, echo=FALSE, eval=FALSE}
-# using markdown
-packages %>%
-  mutate(
-    link = glue::glue("[website]({Packages_Link})"),
-    link = map(Packages_Link, gt::md)) %>%
-  select(!Packages_Link) %>% 
-  gt() %>% 
-  tab_header(
-    title = md("List of algorithms used in Egeland et al., 2018"),
-    subtitle = "R Packages and their URL are given"
-  ) %>% 
-  cols_label(
-    Algorithm = "Algorithm",
-    Package_used = "Package used",
-    link = "Package URL") %>%  
-  tab_footnote(data = .,
-               footnote = "No 'knn' package was found. Similar algorithm in FastKNN - fknn",
-               # locations = cells_body(columns = Package_used, rows = everything()
-               locations = cells_body(columns = Package_used, rows = Package_used == 'knn/fknn')
-  )
+# # using markdown
+# packages %>%
+#   mutate(
+#     link = glue::glue("[website]({Packages_Link})"),
+#     link = map(Packages_Link, gt::md)) %>%
+#   select(!Packages_Link) %>% 
+#   gt() %>% 
+#   tab_header(
+#     title = md("List of algorithms used in Egeland et al., 2018"),
+#     subtitle = "R Packages and their URL are given"
+#   ) %>% 
+#   cols_label(
+#     Algorithm = "Algorithm",
+#     Package_used = "Package used",
+#     link = "Package URL") %>%  
+#   tab_footnote(data = .,
+#                footnote = "No 'knn' package was found. Similar algorithm in FastKNN - fknn",
+#                # locations = cells_body(columns = Package_used, rows = everything()
+#                locations = cells_body(columns = Package_used, rows = Package_used == 'knn/fknn')
+#   )
 ```
 
 ### Análisis somero del material suplementario
@@ -166,35 +167,3 @@ Finalmente, realizamos una CA no supervisada con puntajes de carga de PCA.
 Aseguran que los huesos de *SH* presentan mucha perturbación (tipo carroña) y por ende no podrían ser clasificados como rito mortuorio. Sin embargo no muestran un análisis detallado de los rastros de "huellas" de carroñeo que presentan ni los datos que (entiendo) posee el grupo de Nohemí.
 
 Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque probablemente muestren algo similar), pero sí a nivel de incluir datos nuevos que no estén incluidos y ya sea repitiendo la aproximación de ellos o agregando alguna nueva, los resultados sean diferentes apoyando (esta vez) la idea de que los restos en **SH** están allí por un acto "ritual de muerte" y no por simple acumulación transporte.
-
-
-
-```{r}
-example.df.kable <- data.frame("link"=c("[Tokyo](https://en.wikipedia.org/wiki/Tokyo)","[Paris](https://en.wikipedia.org/wiki/Paris)"), "country"=c("Japan","France"))
-```
-
-```{r}
-example.df.datatable <- data.frame("link"=c(
-'<a href="https://en.wikipedia.org/wiki/Tokyo">Tokyo</a>',
-'<a href="https://en.wikipedia.org/wiki/Paris">Paris</a>'),
-"country"=c("Japan","France"))
-```
-
-```{r}
-kable(example.df.kable)
-```
-
-
-```{r}
-datatable(example.df.kable)  # This does NOT show the links
-```
-
-
-```{r}
-datatable(example.df.datatable)  # This does NOT show the links
-```
-
-
-```{r}
-datatable(example.df.datatable, escape=FALSE)  # This does show the links
-```
