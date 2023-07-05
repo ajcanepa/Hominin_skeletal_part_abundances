@@ -237,6 +237,7 @@ DT::datatable(
   extensions = 'Buttons', 
   options = list(
    scrollX = TRUE,
+   pageLength = 6,
     dom = 'Bfrtip',
     buttons = 
       list('copy', 'print', list(
