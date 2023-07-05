@@ -229,8 +229,7 @@ Summary_Dataset_Multivar <-
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 # put CSV, XLS, and PDF in a collection
 DT::datatable(
-  head(Summary_Dataset_Multivar), 
-  class = 'cell-border stripe',
+  Summary_Dataset_Multivar, 
   width = '100%', 
   #options = list(scrollX = TRUE),
   extensions = 'Buttons', 
