@@ -56,6 +56,13 @@ El conjunto de datos recopilado se muestra a continuación. La tabla se puede de
 Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
 ```
 
+```{r, echo=FALSE, eval=FALSE}
+# Código para crear las categorías del artículo.
+Summary_Dataset <-
+  Summary_Dataset %>% 
+  mutate(Assem = case_when(grepl("Hummingbird_Pueblo_Pueblo", Study) ~ ""))
+```
+
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
 #Tablas pijas con GT que funcionan muy mal
@@ -189,7 +196,53 @@ Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque probab
 ### Exploratory Random Forest (RF)
 Se realizó un RF a los 16 assemblages para evaluar que atributos (partes del cuerpo) poseían una mayor variabilidad, a través del MDA (*Mean Decrease Accuracy*) y el MDG (*Mean Decrease Gini*).
 
-Encontraron que siete (7) elemntos esqueléticos (o grups de elementos) fueron aquellos que tuvieron un MDA > 5
+Encontraron que siete (7) elementos esqueléticos (o grupos de elementos) fueron aquellos que tuvieron un MDA > 5
+
+El total de ensambles de primates fue de `r levels(factor(Summary_Dataset$Ref))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*"
+
+```{r message=FALSE, warning=FALSE}
+Summary_Dataset_Multivar <-
+  Summary_Dataset %>% 
+  filter(Ref %in% c("Pottery_Mound_Pueblo_IV", "Kuaua_Pueblo_Pueblo_IV", "Skhul_Layer_B", "Krapina", "Fontbregoua_H1", "Fontbregoua_H3", "Gran_Dolina_TD6", "El_Mirador_MIR4A", "AL_333", "Unscavenged_human_corpses_WA", "Scavenged_human_corpses_WA", "Mapungubwe_leopard_kills",  "Leopard_refuse", "Misgrot_Cave", "Sima_de_los_Huesos", "Dinaledi")) %>% 
+  mutate(Type = case_when(grepl("Pueblo", Ref) ~ "Primary hominin interment",
+                          grepl("Skhul", Ref) ~ "Possible Primary hominin interment",
+                          Ref == "Krapina" ~ "Hominin canibalism/ secondary interment",
+                          grepl("Fontbregoua", Ref) ~ "Hominin canibalism/ secondary interment",
+                          Ref == "Gran_Dolina_TD6" ~ "Hominin canibalism/ secondary interment",
+                          Ref == "El_Mirador_MIR4A" ~ "Hominin canibalism/ secondary interment",
+                          Ref == "AL_333" ~ "Nonantrhopogenic hominin accumulation",
+                          Ref == "Unscavenged_human_corpses_WA" ~ "Nonantrhopogenic hominin accumulation",
+                          Ref == "Scavenged_human_corpses_WA" ~ "Scavenged human corpses",
+                          Ref == "Mapungubwe_leopard_kills" ~ "Scavenged human corpses",
+                          Ref == "Leopard_refuse" ~ "Scavenged human corpses",
+                          Ref == "Misgrot_Cave" ~ "Scavenged human corpses",
+                          Ref == "Sima_de_los_Huesos" ~ "Possible hominin deliberate disposal",
+                          Ref == "Dinaledi" ~ "Possible hominin deliberate disposal"
+                          )) %>% 
+  relocate(Type, .before = Cranium)
+```
+
+
+ De tal manera que conjunto de datos a trabajar para los análisis multivariado `Summary_Dataset_Multivar` queda como:
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# put CSV, XLS, and PDF in a collection
+datatable(
+  Summary_Dataset_Multivar, width = '100%', 
+  #options = list(scrollX = TRUE),
+  extensions = 'Buttons', 
+  options = list(
+   scrollX = TRUE,
+    dom = 'Bfrtip',
+    buttons = 
+      list('copy', 'print', list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      ))
+  )
+)
+```
 
 
 
