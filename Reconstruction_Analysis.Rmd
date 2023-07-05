@@ -228,7 +228,7 @@ Summary_Dataset_Multivar <-
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 # put CSV, XLS, and PDF in a collection
-datatable(
+DT::datatable(
   Summary_Dataset_Multivar, width = '100%', 
   #options = list(scrollX = TRUE),
   extensions = 'Buttons', 
@@ -240,7 +240,10 @@ datatable(
         extend = 'collection',
         buttons = c('csv', 'excel', 'pdf'),
         text = 'Download'
-      ))
+      )),
+   lengthMenu = list(c(10,30, 50, -1), 
+                      c('10', '30', '50', 'All')),
+    paging = T
   )
 )
 ```
