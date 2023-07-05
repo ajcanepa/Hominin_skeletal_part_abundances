@@ -144,7 +144,7 @@ packages <- tibble(
 #packages
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 datatable(packages, escape = FALSE,  width = '100%', options = list(scrollX = TRUE))  # This does show the links
 ```
 
@@ -240,9 +240,7 @@ DT::datatable(
         extend = 'collection',
         buttons = c('csv', 'excel', 'pdf'),
         text = 'Download'
-      )),
-   lengthMenu = list(c(10,30, 50, -1), 
-                      c('10', '30', '50', 'All'))
+      ))
   )
 )
 ```
