@@ -242,8 +242,7 @@ DT::datatable(
         text = 'Download'
       )),
    lengthMenu = list(c(10,30, 50, -1), 
-                      c('10', '30', '50', 'All')),
-    paging = T
+                      c('10', '30', '50', 'All'))
   )
 )
 ```
