@@ -173,6 +173,7 @@ datatable(packages, escape = FALSE,  width = '100%', options = list(scrollX = TR
 ```
 
 ### Análisis somero del material suplementario
+
 Aquí se destacan algunos puntos clave del documento mismo.
 
 El objetivo del análisis exploratorio es doble: (i) identificar el número óptimo de grupos representados por los ensamblajes de homínidos y (ii) determinar la pertenencia de cada grupo identificado. Muchos algoritmos de agrupación tienden a funcionar mal cuando, como es el caso aquí, el número de variables (elementos esqueléticos = 23) excede sustancialmente el tamaño de la muestra (ensamblajes de homínidos = 16). Para abordar esta discrepancia, utilizamos un análisis de RF en los 16 ensamblajes, incluidos SH y DC, para identificar un subconjunto de elementos esqueléticos que es más pequeño que el tamaño de la muestra y explica la mayor cantidad de variación (120). Para identificar el número óptimo de grupos representados por los 16 ensamblajes, los elementos esqueléticos con un valor de MDA > 5 después de la generación de 500 árboles se ingresan en la biblioteca R "NbClust", que ejecuta y combina 30 algoritmos de agrupamiento diferentes. Luego, un análisis de k-medias clasifica cada uno de los conjuntos comparativos en uno de los grupos reconocidos por las funciones NbClust. La fuerza de la asignación de grupos se evalúa con la función gráfica "clusplot", que proporciona elipses y gráficos de silueta con un 95 % de confianza, que estiman el valor s(i) de cada conjunto comparativo. Una comparación de distancias dentro y entre grupos da como resultado valores de s(i) que van desde 1 (clasificación fuerte dentro de un grupo) hasta 0 (clasificación parsimoniosa pero débil dentro de un grupo). Esta clasificación preliminar establece un marco para la aplicación de una variedad de métodos de aprendizaje automático que pueden identificar los ensamblajes comparativos que mejor coinciden con las concentraciones de homínidos de SH y DC.
@@ -198,7 +199,7 @@ Se realizó un RF a los 16 assemblages para evaluar que atributos (partes del cu
 
 Encontraron que siete (7) elementos esqueléticos (o grupos de elementos) fueron aquellos que tuvieron un MDA > 5
 
-El total de ensambles de primates fue de `r levels(factor(Summary_Dataset$Ref))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*"
+El total de ensambles de primates fue de `r length(levels(factor(Summary_Dataset$Ref)))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*"
 
 ```{r message=FALSE, warning=FALSE}
 Summary_Dataset_Multivar <-
