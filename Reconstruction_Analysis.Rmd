@@ -182,3 +182,15 @@ Finalmente, realizamos una CA no supervisada con puntajes de carga de PCA.
 Aseguran que los huesos de *SH* presentan mucha perturbación (tipo carroña) y por ende no podrían ser clasificados como rito mortuorio. Sin embargo no muestran un análisis detallado de los rastros de "huellas" de carroñeo que presentan ni los datos que (entiendo) posee el grupo de Nohemí.
 
 Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque probablemente muestren algo similar), pero sí a nivel de incluir datos nuevos que no estén incluidos y ya sea repitiendo la aproximación de ellos o agregando alguna nueva, los resultados sean diferentes apoyando (esta vez) la idea de que los restos en **SH** están allí por un acto "ritual de muerte" y no por simple acumulación transporte.
+
+
+## Repetición de los análisis
+
+### Exploratory Random Forest (RF)
+Se realizó un RF a los 16 assemblages para evaluar que atributos (partes del cuerpo) poseían una mayor variabilidad, a través del MDA (*Mean Decrease Accuracy*) y el MDG (*Mean Decrease Gini*).
+
+Encontraron que siete (7) elemntos esqueléticos (o grups de elementos) fueron aquellos que tuvieron un MDA > 5
+
+
+
+### K-means análisis
