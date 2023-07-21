@@ -303,10 +303,11 @@ Se puede usar el
 ```{r}
 RF_Data <-
   Dataset_skeletal_used %>% 
-  select(Type:Foot_metatarsals_pedal_phalanges_) #%>%
+  select(Type:Foot_metatarsals_pedal_phalanges_) %>% 
+  mutate(Type = factor(Type)) #%>%
   #drop_na()
 
-RF_Data
+#RF_Data
 ```
 
 
