@@ -199,14 +199,15 @@ Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque probab
 #### Random Forest (RF)
 Se realizó un RF a los 16 assemblages para evaluar que atributos (partes del cuerpo) poseían una mayor variabilidad, a través del MDA (*Mean Decrease Accuracy*) y el MDG (*Mean Decrease Gini*).
 
-Encontraron que siete (7) elementos esqueléticos (o grupos de elementos) fueron aquellos que tuvieron un MDA > 5
+Encontraron que siete (7) elementos esqueléticos (o grupos de elementos) fueron aquellos que tuvieron un MDA > 5. 
 
-El total de ensambles de primates fue de `r length(levels(factor(Summary_Dataset$Ref)))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*"
+*    Presunción: Asumimos que la clase a predecir es una categoría con los niveles `Primary hominin interment`, `Possible primary hominin interment`,  `Hominin cannibalism/secondary interment`, `Nonanthropogenic hominin accumulation`, `Unscavenged human corpses`, `Scavenged human corpses`, `Leopard refuse`, `Natural Baboon accumulation` and `Possible hominin deliberate disposal`.
+
+A continuación crearemos una columna nueva con esta nueva clase a predcir (nuevo atributo `Type`):
 
 ```{r message=FALSE, warning=FALSE}
 Summary_Dataset_Multivar <-
-  Summary_Dataset %>% 
-  filter(Ref %in% c("Pottery_Mound_Pueblo_IV", "Kuaua_Pueblo_Pueblo_IV", "Skhul_Layer_B", "Krapina", "Fontbregoua_H1", "Fontbregoua_H3", "Gran_Dolina_TD6", "El_Mirador_MIR4A", "AL_333", "Unscavenged_human_corpses_WA", "Scavenged_human_corpses_WA", "Mapungubwe_leopard_kills",  "Leopard_refuse", "Misgrot_Cave", "Sima_de_los_Huesos", "Dinaledi")) %>% 
+  Summary_Dataset %>%
   mutate(Type = case_when(grepl("Pueblo", Ref) ~ "Primary hominin interment",
                           grepl("Skhul", Ref) ~ "Possible Primary hominin interment",
                           Ref == "Krapina" ~ "Hominin canibalism/ secondary interment",
@@ -224,6 +225,15 @@ Summary_Dataset_Multivar <-
                           )) %>% 
   relocate(Type, .before = Cranium)
 ```
+
+
+El total de ensambles de primates fue de `r length(levels(factor(Summary_Dataset$Ref)))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*"
+
+
+```{r message=FALSE, warning=FALSE}
+filter(Ref %in% c("Pottery_Mound_Pueblo_IV", "Kuaua_Pueblo_Pueblo_IV", "Skhul_Layer_B", "Krapina", "Fontbregoua_H1", "Fontbregoua_H3", "Gran_Dolina_TD6", "El_Mirador_MIR4A", "AL_333", "Unscavenged_human_corpses_WA", "Scavenged_human_corpses_WA", "Mapungubwe_leopard_kills",  "Leopard_refuse", "Misgrot_Cave", "Sima_de_los_Huesos", "Dinaledi")) %>%
+```
+
 
 
  De tal manera que conjunto de datos a trabajar para los análisis multivariado `Summary_Dataset_Multivar` queda como:
