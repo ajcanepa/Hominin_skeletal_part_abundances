@@ -1,4 +1,4 @@
-Ref,Study,Type,Cranium,Mandible,Cervical,Thoracic,Lumbar,Sacrum,Sternum,Clavicle,Rib,Scapula,Humerus,Radius,Ulna,Carpal,Metacarpal,Innominate,Femur,Patella,Tibia,Fibula,Tarsal,Metatarsal,Hand phalanx,Foot phalanx,Hand (metacarpals + manual phalanges),Foot (metatarsals + pedal phalanges)
+Ref,Study,Type,Cranium,Mandible,Cervical,Thoracic,Lumbar,Sacrum,Sternum,Clavicle,Rib,Scapula,Humerus,Radius,Ulna,Carpal,Metacarpal,Innominate,Femur,Patella,Tibia,Fibula,Tarsal,Metatarsal,Hand_phalanx,Foot_phalanx,Hand_metacarpals_manual_phalanges_,Foot_metatarsals_pedal_phalanges_
 Pottery_Mound_Pueblo_IV,Pottery_Mound_Pueblo_IV,Primary hominin interment,38,34,254,452,193,39,0,81,901,78,73,77,74,520,416,77,86,68,66,68,434,390,811,423,1227,813
 Kuaua_Pueblo_Pueblo_IV,Kuaua_Pueblo_Pueblo_IV,Primary hominin interment,68,64,288,534,252,52,0,103,993,105,129,121,109,388,472,120,133,77,121,104,572,448,721,423,1193,871
 Skhul_Layer_B,Skhul_Layer_B_Skhul_II,Possible Primary hominin interment,1,1,0,0,0,0,0,0,0,0,2,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0

@@ -127,7 +127,12 @@ El conjunto de datos recopilado se muestra a continuación. La tabla se puede de
 
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
-Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
+# Loading the function to improve the column's name
+source(file = "INPUT/FUNCTIONS/replace_column_names.R")
+
+# Loadiung the data and cleaning the names
+Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv") %>% #names()
+  replace_column_names() 
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
@@ -291,8 +296,45 @@ Se realizó un RF a los 16 assemblages para evaluar que atributos (partes del cu
 
 Encontraron que siete (7) elementos esqueléticos (o grupos de elementos) fueron aquellos que tuvieron un MDA > 5. 
 
+* **Random Forest** usando el paquete `randomForest`
+
+Se puede usar el 
+
+```{r}
+RF_Data <-
+  Dataset_skeletal_used %>% 
+  select(Type:Foot_metatarsals_pedal_phalanges_) #%>%
+  #drop_na()
+
+RF_Data
+```
 
 
+
+    *    Supervisado
+```{r}
+RF_Sup <- randomForest(
+  Type ~ .,
+  data = RF_Data,
+  ntree = 2000,
+  mtry = 2,
+  importance = TRUE,
+  na.action = na.omit
+)
+```
+
+
+```{r}
+data.frame(Gini = sort(importance(rf1, type = 2)[,], decreasing = T))
+
+varImpPlot(rf1)
+```
+
+
+```{r}
+```
+
+    *    No-supervisado
 
 
 
