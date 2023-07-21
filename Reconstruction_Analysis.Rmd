@@ -206,22 +206,17 @@ Encontraron que siete (7) elementos esqueléticos (o grupos de elementos) fueron
 A continuación crearemos una columna nueva con esta nueva clase a predcir (nuevo atributo `Type`):
 
 ```{r message=FALSE, warning=FALSE}
-Summary_Dataset_Multivar <-
+#Summary_Dataset_Multivar <-
   Summary_Dataset %>%
-  mutate(Type = case_when(grepl("Pueblo", Ref) ~ "Primary hominin interment",
-                          grepl("Skhul", Ref) ~ "Possible Primary hominin interment",
-                          Ref == "Krapina" ~ "Hominin canibalism/ secondary interment",
-                          grepl("Fontbregoua", Ref) ~ "Hominin canibalism/ secondary interment",
-                          Ref == "Gran_Dolina_TD6" ~ "Hominin canibalism/ secondary interment",
-                          Ref == "El_Mirador_MIR4A" ~ "Hominin canibalism/ secondary interment",
-                          Ref == "AL_333" ~ "Nonantrhopogenic hominin accumulation",
-                          Ref == "Unscavenged_human_corpses_WA" ~ "Nonantrhopogenic hominin accumulation",
-                          Ref == "Scavenged_human_corpses_WA" ~ "Scavenged human corpses",
-                          Ref == "Mapungubwe_leopard_kills" ~ "Scavenged human corpses",
-                          Ref == "Leopard_refuse" ~ "Scavenged human corpses",
-                          Ref == "Misgrot_Cave" ~ "Scavenged human corpses",
-                          Ref == "Sima_de_los_Huesos" ~ "Possible hominin deliberate disposal",
-                          Ref == "Dinaledi" ~ "Possible hominin deliberate disposal"
+  mutate(Type = case_when(grepl(paste(c("Pueblo", "Dolni_Vestonice"), collapse='|'), Ref) ~ "Primary hominin interment",
+                          grepl(paste(c("Skhul", "Qafzeh", "Regourdou", "La_Chapelle", "Tabun_Layer", "Shanidar_Layer", "Kebara", "El_Miron"), collapse='|'), Ref) ~ "Possible Primary hominin interment",
+                          grepl(paste(c("Krapina", "Fontbregoua", "Gran_Dolina", "El_Mirador", "Goughs_Cave", "5MT", "La_Tolita", "Crow_Creek"), collapse='|'), Ref) ~ "Hominin canibalism/ secondary interment",
+                          grepl(paste(c("AL_333", "Liang_Bua", "Dmanisi_Layer", "Malapa"), collapse='|'), Ref) ~ "Nonantrhopogenic hominin accumulation",
+                          grepl(paste(c("Unscavenged_human_corpses_WA"), collapse='|'), Ref) ~ "Unscavenged human corpses",
+                          grepl(c("Scavenged_human"), Ref) ~ "Scavenged human corpses",
+                          grepl(paste(c("Mapungubwe", "Leopard_refuse"), collapse='|'), Ref) ~ "Leopard refuse",
+                          grepl(c("Misgrot_Cave"), Ref) ~ "Natural Baboon accumulation",
+                          grepl(paste(c("Sima_de_los_Huesos", "Dinaledi"), collapse='|'), Ref) ~ "Possible hominin deliberate disposal",
                           )) %>% 
   relocate(Type, .before = Cranium)
 ```
