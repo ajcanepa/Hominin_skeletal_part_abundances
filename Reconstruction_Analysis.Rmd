@@ -223,15 +223,43 @@ write_csv(x = Summary_Dataset_Multivar, file = "OUTPUT/Summary_Dataset_Multivar.
 
 *    Primate Skeletal Element Data
 
-El total de ensambles de primates fue de `r length(levels(factor(Summary_Dataset$Ref)))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*"
+El total de ensambles de primates fue de `r length(levels(factor(Summary_Dataset$Ref)))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*".
 
+A este conjunto de datos que ha sido (o eso creemos) el que han usado en el artículo, le llamaremos `Dataset_skeletal_used` y lo guardaremos en la carpeta `OUTPUT` como `Dataset_skeletal_used.csv`
 
 ```{r message=FALSE, warning=FALSE}
-filter(Ref %in% c("Pottery_Mound_Pueblo_IV", "Kuaua_Pueblo_Pueblo_IV", "Skhul_Layer_B", "Krapina", "Fontbregoua_H1", "Fontbregoua_H3", "Gran_Dolina_TD6", "El_Mirador_MIR4A", "AL_333", "Unscavenged_human_corpses_WA", "Scavenged_human_corpses_WA", "Mapungubwe_leopard_kills",  "Leopard_refuse", "Misgrot_Cave", "Sima_de_los_Huesos", "Dinaledi")) %>%
+Dataset_skeletal_used <- 
+Summary_Dataset_Multivar %>% 
+  filter(Ref %in% c("Pottery_Mound_Pueblo_IV", "Kuaua_Pueblo_Pueblo_IV", "Skhul_Layer_B", "Krapina", "Fontbregoua_H1", "Fontbregoua_H3", "Gran_Dolina_TD6", "El_Mirador_MIR4A", "AL_333", "Unscavenged_human_corpses_WA", "Scavenged_human_corpses_WA", "Mapungubwe_leopard_kills",  "Leopard_refuse", "Misgrot_Cave", "Sima_de_los_Huesos", "Dinaledi"))
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# put CSV, XLS, and PDF in a collection
+DT::datatable(
+  Dataset_skeletal_used, 
+  width = '100%', 
+  #options = list(scrollX = TRUE),
+  extensions = 'Buttons', 
+  options = list(
+   scrollX = TRUE,
+   pageLength = 6,
+    dom = 'Bfrtip',
+    buttons = 
+      list('copy', 'print', list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      ))
+  )
+)
 ```
 
 
+Guardaremos ahora este conjunto **filtrado** de datos como `Dataset_skeletal_used.csv`.
 
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+write_csv(x = Dataset_skeletal_used, file = "OUTPUT/Dataset_skeletal_used.csv", col_names = TRUE)
+```
 
 
 
