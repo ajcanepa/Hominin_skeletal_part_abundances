@@ -37,68 +37,6 @@ Para eso ellos:
 
 5.-   Usando herramientas no-supervisadas intentan agrupar los yacimientos (todos) con especial interés en **SH** y **DC** para ver si coinciden con las características/grupos encontradas en los k-means anteriores.
 
-El conjunto de datos se entrega de manera desagregada, dificultando los análisis por lo que he procedido a recopilarlo todo en un único documento. El documento original entregado como "material suplementario" se puede encontrar [aquí](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-#library(gt)
-library(tidyverse)
-# Install the DT package
-#install.packages("DT")
-# Load the DT package
-library(DT)
-library(knitr)
-```
-
-El conjunto de datos recopilado se muestra a continuación. La tabla se puede descargar de la siguiente botonera y es dinámica.
-
-
-```{r, message=FALSE, warning=FALSE, echo=FALSE}
-Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
-```
-
-```{r, echo=FALSE, eval=FALSE}
-# Código para crear las categorías del artículo.
-Summary_Dataset <-
-  Summary_Dataset %>% 
-  mutate(Assem = case_when(grepl("Hummingbird_Pueblo_Pueblo", Study) ~ ""))
-```
-
-
-```{r, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
-#Tablas pijas con GT que funcionan muy mal
-# Summary_Dataset %>% 
-#   slice_head(n = 15) %>% 
-#   gt()
-# 
-# fmt_markdown(
-#   gt(Summary_Dataset),
-#   columns = everything(),
-#   rows = everything(),
-#   md_engine = c("markdown", "commonmark")
-# )
-```
-
-```{r, message=FALSE, warning=FALSE, echo=FALSE}
-# put CSV, XLS, and PDF in a collection
-datatable(
-  Summary_Dataset, width = '100%', 
-  #options = list(scrollX = TRUE),
-  extensions = 'Buttons', 
-  options = list(
-   scrollX = TRUE,
-    dom = 'Bfrtip',
-    buttons = 
-      list('copy', 'print', list(
-        extend = 'collection',
-        buttons = c('csv', 'excel', 'pdf'),
-        text = 'Download'
-      ))
-    
-  )
-)
-```
-
-
 ### Tratamiento estadístico de datos de partes esqueléticas de primates
 Todos los análisis descritos a continuación se ejecutan dentro del entorno estadístico R
 
@@ -172,6 +110,133 @@ datatable(packages, escape = FALSE,  width = '100%', options = list(scrollX = TR
 #   )
 ```
 
+### Carga y pre-procesamiento de datos
+Los datos se entregan desagregados y no con todas las columnas utilizadas en el análisis, por lo que tendremos que crear los conjuntos de datos necesarios para replicar los análisis realizados.
+
+El conjunto de datos se entrega de manera desagregada, dificultando los análisis por lo que he procedido a recopilarlo todo en un único documento. El documento original entregado como "material suplementario" se puede encontrar [aquí](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#library(gt)
+library(tidyverse)
+# Install the DT package
+#install.packages("DT")
+# Load the DT package
+library(DT)
+library(knitr)
+```
+
+El conjunto de datos recopilado se muestra a continuación. La tabla se puede descargar de la siguiente botonera y es dinámica.
+
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+Summary_Dataset <- read_csv("INPUT/DATA/Summary_Dataset.csv")
+```
+
+```{r, echo=FALSE, eval=FALSE}
+# Código para crear las categorías del artículo.
+Summary_Dataset <-
+  Summary_Dataset %>% 
+  mutate(Assem = case_when(grepl("Hummingbird_Pueblo_Pueblo", Study) ~ ""))
+```
+
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
+#Tablas pijas con GT que funcionan muy mal
+# Summary_Dataset %>% 
+#   slice_head(n = 15) %>% 
+#   gt()
+# 
+# fmt_markdown(
+#   gt(Summary_Dataset),
+#   columns = everything(),
+#   rows = everything(),
+#   md_engine = c("markdown", "commonmark")
+# )
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# put CSV, XLS, and PDF in a collection
+datatable(
+  Summary_Dataset, width = '100%', 
+  #options = list(scrollX = TRUE),
+  extensions = 'Buttons', 
+  options = list(
+   scrollX = TRUE,
+    dom = 'Bfrtip',
+    buttons = 
+      list('copy', 'print', list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      ))
+    
+  )
+)
+```
+
+
+
+*    Presunción: Asumimos que la clase a predecir es una categoría con los niveles `Primary hominin interment`, `Possible primary hominin interment`,  `Hominin cannibalism/secondary interment`, `Nonanthropogenic hominin accumulation`, `Unscavenged human corpses`, `Scavenged human corpses`, `Leopard refuse`, `Natural Baboon accumulation` and `Possible hominin deliberate disposal`.
+
+A continuación crearemos una columna nueva con esta nueva clase a predcir (nuevo atributo `Type`):
+
+```{r message=FALSE, warning=FALSE}
+Summary_Dataset_Multivar <-
+  Summary_Dataset %>%
+  mutate(Type = case_when(grepl(paste(c("Pueblo", "Dolni_Vestonice"), collapse='|'), Ref) ~ "Primary hominin interment",
+                          grepl(paste(c("Skhul", "Qafzeh", "Regourdou", "La_Chapelle", "Tabun_Layer", "Shanidar_Layer", "Kebara", "El_Miron"), collapse='|'), Ref) ~ "Possible Primary hominin interment",
+                          grepl(paste(c("Krapina", "Fontbregoua", "Gran_Dolina", "El_Mirador", "Goughs_Cave", "5MT", "La_Tolita", "Crow_Creek"), collapse='|'), Ref) ~ "Hominin canibalism/ secondary interment",
+                          grepl(paste(c("AL_333", "Liang_Bua", "Dmanisi_Layer", "Malapa"), collapse='|'), Ref) ~ "Nonantrhopogenic hominin accumulation",
+                          grepl(paste(c("Unscavenged_human_corpses_WA"), collapse='|'), Ref) ~ "Unscavenged human corpses",
+                          grepl(c("Scavenged_human"), Ref) ~ "Scavenged human corpses",
+                          grepl(paste(c("Mapungubwe", "Leopard_refuse"), collapse='|'), Ref) ~ "Leopard refuse",
+                          grepl(c("Misgrot_Cave"), Ref) ~ "Natural Baboon accumulation",
+                          grepl(paste(c("Sima_de_los_Huesos", "Dinaledi"), collapse='|'), Ref) ~ "Possible hominin deliberate disposal",
+                          )) %>% 
+  relocate(Type, .before = Cranium)
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# put CSV, XLS, and PDF in a collection
+DT::datatable(
+  Summary_Dataset_Multivar, 
+  width = '100%', 
+  #options = list(scrollX = TRUE),
+  extensions = 'Buttons', 
+  options = list(
+   scrollX = TRUE,
+   pageLength = 6,
+    dom = 'Bfrtip',
+    buttons = 
+      list('copy', 'print', list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      ))
+  )
+)
+```
+
+Guardaremos ahora este conjunto **completo** de datos como `Summary_Dataset_Multivar.csv`.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+write_csv(x = Summary_Dataset_Multivar, file = "OUTPUT/Summary_Dataset_Multivar.csv", col_names = TRUE)
+```
+
+* Primate 
+El total de ensambles de primates fue de `r length(levels(factor(Summary_Dataset$Ref)))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*"
+
+
+```{r message=FALSE, warning=FALSE}
+filter(Ref %in% c("Pottery_Mound_Pueblo_IV", "Kuaua_Pueblo_Pueblo_IV", "Skhul_Layer_B", "Krapina", "Fontbregoua_H1", "Fontbregoua_H3", "Gran_Dolina_TD6", "El_Mirador_MIR4A", "AL_333", "Unscavenged_human_corpses_WA", "Scavenged_human_corpses_WA", "Mapungubwe_leopard_kills",  "Leopard_refuse", "Misgrot_Cave", "Sima_de_los_Huesos", "Dinaledi")) %>%
+```
+
+
+
+
+
+
+
 ### Análisis somero del material suplementario
 
 Aquí se destacan algunos puntos clave del documento mismo.
@@ -201,58 +266,8 @@ Se realizó un RF a los 16 assemblages para evaluar que atributos (partes del cu
 
 Encontraron que siete (7) elementos esqueléticos (o grupos de elementos) fueron aquellos que tuvieron un MDA > 5. 
 
-*    Presunción: Asumimos que la clase a predecir es una categoría con los niveles `Primary hominin interment`, `Possible primary hominin interment`,  `Hominin cannibalism/secondary interment`, `Nonanthropogenic hominin accumulation`, `Unscavenged human corpses`, `Scavenged human corpses`, `Leopard refuse`, `Natural Baboon accumulation` and `Possible hominin deliberate disposal`.
-
-A continuación crearemos una columna nueva con esta nueva clase a predcir (nuevo atributo `Type`):
-
-```{r message=FALSE, warning=FALSE}
-#Summary_Dataset_Multivar <-
-  Summary_Dataset %>%
-  mutate(Type = case_when(grepl(paste(c("Pueblo", "Dolni_Vestonice"), collapse='|'), Ref) ~ "Primary hominin interment",
-                          grepl(paste(c("Skhul", "Qafzeh", "Regourdou", "La_Chapelle", "Tabun_Layer", "Shanidar_Layer", "Kebara", "El_Miron"), collapse='|'), Ref) ~ "Possible Primary hominin interment",
-                          grepl(paste(c("Krapina", "Fontbregoua", "Gran_Dolina", "El_Mirador", "Goughs_Cave", "5MT", "La_Tolita", "Crow_Creek"), collapse='|'), Ref) ~ "Hominin canibalism/ secondary interment",
-                          grepl(paste(c("AL_333", "Liang_Bua", "Dmanisi_Layer", "Malapa"), collapse='|'), Ref) ~ "Nonantrhopogenic hominin accumulation",
-                          grepl(paste(c("Unscavenged_human_corpses_WA"), collapse='|'), Ref) ~ "Unscavenged human corpses",
-                          grepl(c("Scavenged_human"), Ref) ~ "Scavenged human corpses",
-                          grepl(paste(c("Mapungubwe", "Leopard_refuse"), collapse='|'), Ref) ~ "Leopard refuse",
-                          grepl(c("Misgrot_Cave"), Ref) ~ "Natural Baboon accumulation",
-                          grepl(paste(c("Sima_de_los_Huesos", "Dinaledi"), collapse='|'), Ref) ~ "Possible hominin deliberate disposal",
-                          )) %>% 
-  relocate(Type, .before = Cranium)
-```
 
 
-El total de ensambles de primates fue de `r length(levels(factor(Summary_Dataset$Ref)))`. De éstos, se seleccionaron 14 además de los de la sima de los huesos (**SH**) y Dinaledi Chamber (**DC**). Ver los supplemental information para dilucidar los conjuntos de datos "*seleccionados*"
-
-
-```{r message=FALSE, warning=FALSE}
-filter(Ref %in% c("Pottery_Mound_Pueblo_IV", "Kuaua_Pueblo_Pueblo_IV", "Skhul_Layer_B", "Krapina", "Fontbregoua_H1", "Fontbregoua_H3", "Gran_Dolina_TD6", "El_Mirador_MIR4A", "AL_333", "Unscavenged_human_corpses_WA", "Scavenged_human_corpses_WA", "Mapungubwe_leopard_kills",  "Leopard_refuse", "Misgrot_Cave", "Sima_de_los_Huesos", "Dinaledi")) %>%
-```
-
-
-
- De tal manera que conjunto de datos a trabajar para los análisis multivariado `Summary_Dataset_Multivar` queda como:
-
-```{r, message=FALSE, warning=FALSE, echo=FALSE}
-# put CSV, XLS, and PDF in a collection
-DT::datatable(
-  Summary_Dataset_Multivar, 
-  width = '100%', 
-  #options = list(scrollX = TRUE),
-  extensions = 'Buttons', 
-  options = list(
-   scrollX = TRUE,
-   pageLength = 6,
-    dom = 'Bfrtip',
-    buttons = 
-      list('copy', 'print', list(
-        extend = 'collection',
-        buttons = c('csv', 'excel', 'pdf'),
-        text = 'Download'
-      ))
-  )
-)
-```
 
 
 
