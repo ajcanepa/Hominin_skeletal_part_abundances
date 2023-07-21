@@ -262,8 +262,6 @@ write_csv(x = Dataset_skeletal_used, file = "OUTPUT/Dataset_skeletal_used.csv", 
 ```
 
 
-
-
 ### Análisis somero del material suplementario
 
 Aquí se destacan algunos puntos clave del documento mismo.
