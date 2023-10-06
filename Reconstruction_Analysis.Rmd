@@ -19,9 +19,11 @@ Cuando se encuentra y analiza un yacimiento de homínidos (u homininos para ser 
 
 Afortunamente existe una cantidad interesante de yacimientos con restos humanos y de primates ("cercanos") que pueden dar pistas de si los yacimientos **SH** y **DC** pueden (o no) considerarse procesos rituales (muy específicos) o simplemente procesos aleatorios y/o semi-aleatorios.
 
+<br>
 ### Objetivos
 Los objetivos del artículo son tratar de comparar los yacimientos de **SH** y **DC** con yacimientos conocidos para determinar si la estructura (como composición unitaria, no como forma) de huesos disponibles es ás característico de un rito funerario o de un proceso de pérdida aleatorio (descomposición) o semi-aleatorio (carroña).
 
+<br>
 #### Diseño de Análisis
 La idea general es que ellos comparan los huesos encontrados ("*Hominin skeletal part representation* - __HSPR__") con otros 14 yacimientos entre los cuales existen algunos de humanos en estado "completo" en el que no le falta ninguna pieza.
 
@@ -37,13 +39,25 @@ Para eso ellos:
 
 5.-   Usando herramientas no-supervisadas intentan agrupar los yacimientos (todos) con especial interés en **SH** y **DC** para ver si coinciden con las características/grupos encontradas en los k-means anteriores.
 
+<br>
 ### Tratamiento estadístico de datos de partes esqueléticas de primates
 Todos los análisis descritos a continuación se ejecutan dentro del entorno estadístico R
 
 Los algoritmos implementados, el paquete utilizado y la URL de esos paquetes se enumeran en la siguiente tabla:
 
 
-```{r echo=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tibble)
+library(tidyverse)
+# Install the DT package
+#install.packages("DT")
+# Load the DT package
+library(DT)
+library(knitr)
+```
+
+
+```{r, echo=FALSE}
 packages <- tibble(
   Algorithm = c("Neural Network",
                 "Neural Network",
@@ -110,21 +124,11 @@ datatable(packages, escape = FALSE,  width = '100%', options = list(scrollX = TR
 #   )
 ```
 
+<br>
 ### Carga y pre-procesamiento de datos
 El conjunto de datos se entrega de manera desagregada, dificultando los análisis por lo que he procedido a recopilarlo todo en un único documento. El documento original entregado como "material suplementario" se puede encontrar [aquí](https://www.pnas.org/doi/suppl/10.1073/pnas.1718678115/suppl_file/pnas.1718678115.sd01.xlsx).
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-#library(gt)
-library(tidyverse)
-# Install the DT package
-#install.packages("DT")
-# Load the DT package
-library(DT)
-library(knitr)
-```
-
 El conjunto de datos recopilado se muestra a continuación. La tabla se puede descargar de la siguiente botonera y es dinámica.
-
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 # Loading the function to improve the column's name
@@ -266,7 +270,7 @@ Guardaremos ahora este conjunto **filtrado** de datos como `Dataset_skeletal_use
 write_csv(x = Dataset_skeletal_used, file = "OUTPUT/Dataset_skeletal_used.csv", col_names = TRUE)
 ```
 
-
+<br>
 ### Análisis somero del material suplementario
 
 Aquí se destacan algunos puntos clave del documento mismo.
@@ -281,16 +285,18 @@ Los modelos producidos por cada método de aprendizaje automático después de 3
 
 Finalmente, realizamos una CA no supervisada con puntajes de carga de PCA.
 
+<br>
 ## Pasos a seguir y algunas ideas
 Aseguran que los huesos de *SH* presentan mucha perturbación (tipo carroña) y por ende no podrían ser clasificados como rito mortuorio. Sin embargo no muestran un análisis detallado de los rastros de "huellas" de carroñeo que presentan ni los datos que (entiendo) posee el grupo de Nohemí.
 
 Quizás a nivel de Algoritmo (como tal) no se puede indagar mucho (porque probablemente muestren algo similar), pero sí a nivel de incluir datos nuevos que no estén incluidos y ya sea repitiendo la aproximación de ellos o agregando alguna nueva, los resultados sean diferentes apoyando (esta vez) la idea de que los restos en **SH** están allí por un acto "ritual de muerte" y no por simple acumulación transporte.
 
-
+<br>
 ## Repetición de los análisis
 
 ### Exploratory Analysis
 
+<br>
 #### Random Forest (RF)
 Se realizó un RF a los 16 assemblages para evaluar que atributos (partes del cuerpo) poseían una mayor variabilidad, a través del MDA (*Mean Decrease Accuracy*) y el MDG (*Mean Decrease Gini*).
 
@@ -332,11 +338,5 @@ varImpPlot(rf1)
 ```
 
 
-```{r}
-```
-
-    *    No-supervisado
-
-
-
+<br>
 #### K-means análisis
