@@ -32,4 +32,4 @@ for df_name in dataframe_names:
     Summary_Dataset_Multivar_percentage_MAU.iloc[dataframe_names.index(df_name), :len(values)] = values
 
 
-Summary_Dataset_Multivar_Percentage_MAU.to_csv("Summary_Dataset_Multivar_Percentage_MAU.csv", index=False)
+Summary_Dataset_Multivar_Percentage_MAU.to_csv("Summary_Dataset_Multivar_Percentage_MAU.csv", index=True)
