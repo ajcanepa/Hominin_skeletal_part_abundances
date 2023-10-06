@@ -1,6 +1,6 @@
 ---
 title: "Reconstrucción de Egeland et al., 2018: 'Hominin skeletal part abundances...'"
-author: 'Antonio Canepa-Oneto'
+author: 'Antonio Canepa-Oneto, ...'
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
