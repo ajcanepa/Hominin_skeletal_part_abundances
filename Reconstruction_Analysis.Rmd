@@ -319,7 +319,7 @@ RF_Data <-
 
 
     *    Supervisado
-```{r}
+```{r, eval=FALSE}
 RF_Sup <- randomForest(
   Type ~ .,
   data = RF_Data,
