@@ -304,7 +304,7 @@ Encontraron que siete (7) elementos esqueléticos (o grupos de elementos) fueron
 
 * **Random Forest** usando el paquete `randomForest`
 
-Se puede usar el 
+HASTA AQUI EL AVANCE. 
 
 ```{r}
 RF_Data <-
@@ -331,7 +331,7 @@ RF_Sup <- randomForest(
 ```
 
 
-```{r}
+```{r, eval=FALSE}
 data.frame(Gini = sort(importance(rf1, type = 2)[,], decreasing = T))
 
 varImpPlot(rf1)
