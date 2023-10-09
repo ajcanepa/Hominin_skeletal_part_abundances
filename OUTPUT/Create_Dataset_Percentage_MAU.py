@@ -10,14 +10,16 @@ sheet_names = list(all_sheets.keys())
 for sheet_name in sheet_names:
     globals()[sheet_name.replace(" ", "_").replace("-", "_")] = all_sheets[sheet_name]
 
-# 1) Prepare the columns based on Dinaledi["Unnamed: 0"]
-columns = Dinaledi["Unnamed: 0"].iloc[1:27].tolist()
+# List all dataframe names
+dataframe_names = [sheet_name.replace(" ", "_").replace("-", "_") for sheet_name in sheet_names]
 
-# 2) Create an empty dataframe with the desired structure
-Summary_Dataset_Multivar_percentage_MAU = pd.DataFrame(index=dataframe_names, columns=columns)
+# Prepare the columns based on Dinaledi["Unnamed: 0"]
+columns = Sima_de_los_Huesos["Unnamed: 0"].iloc[1:27].tolist()
+
+# Create an empty dataframe with the desired structure
+Summary_Dataset_Multivar_Percentage_MAU = pd.DataFrame(index=dataframe_names, columns= columns)
 
 # Repopulate the dataframe using .iloc for positional indexing
-
 for df_name in dataframe_names:
     df = globals()[df_name]
     
@@ -29,7 +31,50 @@ for df_name in dataframe_names:
     
     # Extract the relevant values and assign to the summary dataframe
     values = df[target_col].iloc[1:27].tolist()
-    Summary_Dataset_Multivar_percentage_MAU.iloc[dataframe_names.index(df_name), :len(values)] = values
+    Summary_Dataset_Multivar_Percentage_MAU.iloc[dataframe_names.index(df_name), :len(values)] = values
 
+#Add "Type" feature
+Types  = [
+        "Primary hominin interment",
+        "Primary hominin interment",
+        "Primary hominin interment",
+        "Primary hominin interment",
+        "Primary hominin interment",    
+        "Possible Primary hominin interment",
+        "Possible Primary hominin interment",
+        "Possible Primary hominin interment",
+        "Possible Primary hominin interment",
+        "Possible Primary hominin interment",
+        "Possible Primary hominin interment",
+        "Possible Primary hominin interment",
+        "Possible Primary hominin interment",
+        "Hominin canibalism/ secondary interment",
+        "Hominin canibalism/ secondary interment",
+        "Hominin canibalism/ secondary interment",
+        "Hominin canibalism/ secondary interment",
+        "Hominin canibalism/ secondary interment",
+        "Hominin canibalism/ secondary interment",
+        "Hominin canibalism/ secondary interment",
+        "Possible Primary hominin interment",
+        "Hominin canibalism/ secondary interment",
+        "Hominin canibalism/ secondary interment",
+        "Hominin canibalism/ secondary interment",
+        "Nonantrhopogenic hominin accumulation",
+        "Nonantrhopogenic hominin accumulation",
+        "Nonantrhopogenic hominin accumulation",
+        "Nonantrhopogenic hominin accumulation",
+        "Nonantrhopogenic hominin accumulation",
+        "Unscavenged human corpses",
+        "Scavenged human corpses",
+        "Scavenged human corpses",
+        "Scavenged human corpses",
+        "Leopard refuse",
+        "Leopard refuse",
+        "Natural Baboon accumulation",
+        "Possible hominin deliberate disposal",
+        "Possible hominin deliberate disposal"
+]
+
+Summary_Dataset_Multivar_Percentage_MAU.insert(0, "Type", Types, True)
 
 Summary_Dataset_Multivar_Percentage_MAU.to_csv("Summary_Dataset_Multivar_Percentage_MAU.csv", index=True)
