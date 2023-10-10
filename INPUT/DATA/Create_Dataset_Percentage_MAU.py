@@ -36,20 +36,43 @@ for df_name in dataframe_names:
     values = df[target_col].iloc[1:27].tolist()
     Summary_Dataset_Multivar_Percentage_MAU.iloc[dataframe_names.index(df_name), :len(values)] = values
 
+# Merge same "yacimentos" with MNE weights
+index_pairs = [
+    ("Dolni_Vestonice","Dolni_Vestonice_I_DV_3", "Dolni_Vestonice_IITriple_Burial", 2, 1),
+    ("Shanidar_Layer","Shanidar_Layer_D_Upper", "Shanidar_Layer_D_Lower", 3, 4),
+    ("Liang_Bua","Liang_Bua_Layer_OQ", "Liang_Bua_Layer_R", 1, 1)
+]
+
+# Loop through the index pairs
+for name, index1, index2, weight1, weight2 in index_pairs:
+    # Convert the values to numeric type
+    values1 = pd.to_numeric(Summary_Dataset_Multivar_Percentage_MAU.loc[index1], errors='coerce')
+    values2 = pd.to_numeric(Summary_Dataset_Multivar_Percentage_MAU.loc[index2], errors='coerce')
+    
+    # Calculate the weighted mean
+    weighted_mean = (weight1 * values1 + weight2 * values2) / (weight1 + weight2)
+    
+    # Update the merged index with the weighted mean
+    Summary_Dataset_Multivar_Percentage_MAU.loc[name] = weighted_mean
+    
+    # Drop index2 from the DataFrame
+    Summary_Dataset_Multivar_Percentage_MAU = Summary_Dataset_Multivar_Percentage_MAU.drop([index1, index2])
+    
+
 # Add "Type" feature
 def assign_type(index_name):
     if index_name in ['Hummingbird_Pueblo_Pueblo_I', 'Pottery_Mound_Pueblo_IV', 'Kuaua_Pueblo_Pueblo_IV',
-                      'Dolni_Vestonice_I_DV_3', 'Dolni_Vestonice_IITriple_Burial']:
+                      'Dolni_Vestonice_I_DV_3', 'Dolni_Vestonice_IITriple_Burial', 'Dolni_Vestonice']:
         return 'Primary hominin interment'    
     elif index_name in ['Skhul_Layer_B', 'Qafzeh_Couche_XVII', 'Regourdou', 'La_Chapelle_aux_Saints',
-                        'Tabun_Layer_C', 'Shanidar_Layer_D_Upper', 'Shanidar_Layer_D_Lower', 'Kebara_Couche_XII', 'El_Miron']:
+                        'Tabun_Layer_C', 'Shanidar_Layer_D_Upper', 'Shanidar_Layer_D_Lower', 'Shanidar_Layer', 'Kebara_Couche_XII', 'El_Miron']:
         return 'Possible Primary hominin interment'    
     elif index_name in ['Sima_de_los_Huesos', 'Dinaledi']:
         return 'Possible hominin deliberate disposal'    
     elif index_name in ['Fontbregoua_H1', 'Fontbregoua_H3', 'Gran_Dolina_TD6', 'El_Mirador_MIR4A', "Gough's_Cave",
                         '5MT_3', '5MT_10010_Feature_3', 'La_Tolita_Cama_de_Huesos', 'Crow_Creek', 'Krapina']:
         return 'Hominin cannibalism/ secondary interment'
-    elif index_name in ['Liang_Bua_Layer_R', 'Liang_Bua_Layer_OQ', 'Dmanisi_Layer_B1y', 'Malapa', 'AL_333']:
+    elif index_name in ['Liang_Bua_Layer_R', 'Liang_Bua_Layer_OQ', 'Liang_Bua', 'Dmanisi_Layer_B1y', 'Malapa', 'AL_333']:
         return 'Nonanthropogenic hominin accumulation'    
     elif index_name == 'Misgrot_Cave':
         return 'Natural Baboon accumulation'    
