@@ -40,34 +40,25 @@ for df_name in dataframe_names:
 def assign_type(index_name):
     if index_name in ['Hummingbird_Pueblo_Pueblo_I', 'Pottery_Mound_Pueblo_IV', 'Kuaua_Pueblo_Pueblo_IV',
                       'Dolni_Vestonice_I_DV_3', 'Dolni_Vestonice_IITriple_Burial']:
-        return 'Primary hominin interment'
-    
+        return 'Primary hominin interment'    
     elif index_name in ['Skhul_Layer_B', 'Qafzeh_Couche_XVII', 'Regourdou', 'La_Chapelle_aux_Saints',
                         'Tabun_Layer_C', 'Shanidar_Layer_D_Upper', 'Shanidar_Layer_D_Lower', 'Kebara_Couche_XII', 'El_Miron']:
-        return 'Possible Primary hominin interment'
-    
+        return 'Possible Primary hominin interment'    
     elif index_name in ['Sima_de_los_Huesos', 'Dinaledi']:
-        return 'Possible hominin deliberate disposal'
-    
+        return 'Possible hominin deliberate disposal'    
     elif index_name in ['Fontbregoua_H1', 'Fontbregoua_H3', 'Gran_Dolina_TD6', 'El_Mirador_MIR4A', "Gough's_Cave",
                         '5MT_3', '5MT_10010_Feature_3', 'La_Tolita_Cama_de_Huesos', 'Crow_Creek', 'Krapina']:
         return 'Hominin cannibalism/ secondary interment'
-
     elif index_name in ['Liang_Bua_Layer_R', 'Liang_Bua_Layer_OQ', 'Dmanisi_Layer_B1y', 'Malapa', 'AL_333']:
-        return 'Nonanthropogenic hominin accumulation'
-    
+        return 'Nonanthropogenic hominin accumulation'    
     elif index_name == 'Misgrot_Cave':
-        return 'Natural Baboon accumulation'
-    
+        return 'Natural Baboon accumulation'    
     elif index_name == 'Unscavenged_human_corpses_WA':
-        return 'Unscavenged human corpses'
-    
+        return 'Unscavenged human corpses'    
     elif index_name in ['Scavenged_human_corpses_WA', 'Scavenged_human_corpses_NM', 'Scavenged_human_corpse_NC']:
-        return 'Scavenged human corpses'
-    
+        return 'Scavenged human corpses'    
     elif index_name in ['Mapungubwe_leopard_kills', 'Leopard_refuse']:
-        return 'Leopard refuse'
-    
+        return 'Leopard refuse'    
     else:
         return 'Unknown'
 
@@ -138,5 +129,5 @@ def assign_clusters(df):
 Summary_Dataset_Used_Percentage_MAU = assign_clusters(Summary_Dataset_Used_Percentage_MAU)
 
 
-
+# Save "used" dataset
 Summary_Dataset_Used_Percentage_MAU.to_csv("Summary_Dataset_Used_Percentage_MAU.csv", index_label="Ref")
