@@ -36,50 +36,43 @@ for df_name in dataframe_names:
     values = df[target_col].iloc[1:27].tolist()
     Summary_Dataset_Multivar_Percentage_MAU.iloc[dataframe_names.index(df_name), :len(values)] = values
 
-#Add "Type" feature
-Types  = [
-        "Primary hominin interment",
-        "Primary hominin interment",
-        "Primary hominin interment",
-        "Primary hominin interment",
-        "Primary hominin interment",    
-        "Possible Primary hominin interment",
-        "Possible Primary hominin interment",
-        "Possible Primary hominin interment",
-        "Possible Primary hominin interment",
-        "Possible Primary hominin interment",
-        "Possible Primary hominin interment",
-        "Possible Primary hominin interment",
-        "Possible Primary hominin interment",
-        "Hominin cannibalism/ secondary interment",
-        "Hominin cannibalism/ secondary interment",
-        "Hominin cannibalism/ secondary interment",
-        "Hominin cannibalism/ secondary interment",
-        "Hominin cannibalism/ secondary interment",
-        "Hominin cannibalism/ secondary interment",
-        "Hominin cannibalism/ secondary interment",
-        "Possible Primary hominin interment",
-        "Hominin cannibalism/ secondary interment",
-        "Hominin cannibalism/ secondary interment",
-        "Hominin cannibalism/ secondary interment",
-        "Nonanthropogenic hominin accumulation",
-        "Nonanthropogenic hominin accumulation",
-        "Nonanthropogenic hominin accumulation",
-        "Nonanthropogenic hominin accumulation",
-        "Nonanthropogenic hominin accumulation",
-        "Unscavenged human corpses",
-        "Scavenged human corpses",
-        "Scavenged human corpses",
-        "Scavenged human corpses",
-        "Leopard refuse",
-        "Leopard refuse",
-        "Natural Baboon accumulation",
-        "Possible hominin deliberate disposal",
-        "Possible hominin deliberate disposal"
-]
+# Add "Type" feature
+def assign_type(index_name):
+    if index_name in ['Hummingbird_Pueblo_Pueblo_I', 'Pottery_Mound_Pueblo_IV', 'Kuaua_Pueblo_Pueblo_IV',
+                      'Dolni_Vestonice_I_DV_3', 'Dolni_Vestonice_IITriple_Burial']:
+        return 'Primary hominin interment'
+    
+    elif index_name in ['Skhul_Layer_B', 'Qafzeh_Couche_XVII', 'Regourdou', 'La_Chapelle_aux_Saints',
+                        'Tabun_Layer_C', 'Shanidar_Layer_D_Upper', 'Shanidar_Layer_D_Lower', 'Kebara_Couche_XII', 'El_Miron']:
+        return 'Possible Primary hominin interment'
+    
+    elif index_name in ['Sima_de_los_Huesos', 'Dinaledi']:
+        return 'Possible hominin deliberate disposal'
+    
+    elif index_name in ['Fontbregoua_H1', 'Fontbregoua_H3', 'Gran_Dolina_TD6', 'El_Mirador_MIR4A', "Gough's_Cave",
+                        '5MT_3', '5MT_10010_Feature_3', 'La_Tolita_Cama_de_Huesos', 'Crow_Creek', 'Krapina']:
+        return 'Hominin cannibalism/ secondary interment'
 
-Summary_Dataset_Multivar_Percentage_MAU.insert(0, "Type", Types[:len(sheet_names)], True)
+    elif index_name in ['Liang_Bua_Layer_R', 'Liang_Bua_Layer_OQ', 'Dmanisi_Layer_B1y', 'Malapa', 'AL_333']:
+        return 'Nonanthropogenic hominin accumulation'
+    
+    elif index_name == 'Misgrot_Cave':
+        return 'Natural Baboon accumulation'
+    
+    elif index_name == 'Unscavenged_human_corpses_WA':
+        return 'Unscavenged human corpses'
+    
+    elif index_name in ['Scavenged_human_corpses_WA', 'Scavenged_human_corpses_NM', 'Scavenged_human_corpse_NC']:
+        return 'Scavenged human corpses'
+    
+    elif index_name in ['Mapungubwe_leopard_kills', 'Leopard_refuse']:
+        return 'Leopard refuse'
+    
+    else:
+        return 'Unknown'
 
+# Create the "Type" column
+Summary_Dataset_Multivar_Percentage_MAU.insert(0, "Type", Summary_Dataset_Multivar_Percentage_MAU.index.map(assign_type), True)
 
 
 # Add domaine knowledge 4-categories
@@ -99,7 +92,7 @@ def categorize_types(type_value):
 Summary_Dataset_Multivar_Percentage_MAU.insert(1, "AccumulationType", Summary_Dataset_Multivar_Percentage_MAU['Type'].apply(categorize_types), True)
 
 
-#Save dataset
+# Save dataset
 Summary_Dataset_Multivar_Percentage_MAU.to_csv("Summary_Dataset_Multivar_Percentage_MAU.csv", index_label="Ref")
 
 # Save dataset used in Pnas 83
@@ -133,7 +126,7 @@ cluster_C = ['Fontbregoua_H1','El_Mirador_MIR4A','Gran_Dolina_TD6', 'AL_333', 'F
 cluster_D = ['Scavenged_human_corpses_WA', 'Sima_de_los_Huesos', 'Dinaledi','Misgrot_Cave']
 
 def assign_clusters(df):
-    df = df.copy()  # Explicitly create a copy to avoid modifying the original
+    df = df.copy() 
     df['Cluster_Pnas83'] = ''
     df.loc[cluster_A, 'Cluster_Pnas83'] = 'A'
     df.loc[cluster_B, 'Cluster_Pnas83'] = 'B'
