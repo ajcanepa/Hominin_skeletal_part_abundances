@@ -7,7 +7,7 @@ all_sheets = pd.read_excel("pnas.1718678115.sd01.xlsx", sheet_name=None)
 sheet_names = list(all_sheets.keys())
 
 # Drop Dinaledi 
-#sheet_names = sheet_names[:-1]
+sheet_names = sheet_names[:-1]
 
 # Dynamically create dataframes for each sheet
 for sheet_name in sheet_names:
@@ -37,26 +37,26 @@ for df_name in dataframe_names:
     Summary_Dataset_Multivar_Percentage_MAU.iloc[dataframe_names.index(df_name), :len(values)] = values
 
 # Merge same "yacimentos" with MNE weights
-index_pairs = [
-    ("Dolni_Vestonice","Dolni_Vestonice_I_DV_3", "Dolni_Vestonice_IITriple_Burial", 2, 1),
-    ("Shanidar_Layer","Shanidar_Layer_D_Upper", "Shanidar_Layer_D_Lower", 3, 4),
-    ("Liang_Bua","Liang_Bua_Layer_OQ", "Liang_Bua_Layer_R", 1, 1)
-]
+#index_pairs = [
+#    ("Dolni_Vestonice","Dolni_Vestonice_I_DV_3", "Dolni_Vestonice_IITriple_Burial", 2, 1),
+#    ("Shanidar_Layer","Shanidar_Layer_D_Upper", "Shanidar_Layer_D_Lower", 3, 4),
+#    ("Liang_Bua","Liang_Bua_Layer_OQ", "Liang_Bua_Layer_R", 1, 1)
+#]
 
 # Loop through the index pairs
-for name, index1, index2, weight1, weight2 in index_pairs:
+#for name, index1, index2, weight1, weight2 in index_pairs:
     # Convert the values to numeric type
-    values1 = pd.to_numeric(Summary_Dataset_Multivar_Percentage_MAU.loc[index1], errors='coerce')
-    values2 = pd.to_numeric(Summary_Dataset_Multivar_Percentage_MAU.loc[index2], errors='coerce')
+#    values1 = pd.to_numeric(Summary_Dataset_Multivar_Percentage_MAU.loc[index1], errors='coerce')
+#    values2 = pd.to_numeric(Summary_Dataset_Multivar_Percentage_MAU.loc[index2], errors='coerce')
     
     # Calculate the weighted mean
-    weighted_mean = (weight1 * values1 + weight2 * values2) / (weight1 + weight2)
+#    weighted_mean = (weight1 * values1 + weight2 * values2) / (weight1 + weight2)
     
     # Update the merged index with the weighted mean
-    Summary_Dataset_Multivar_Percentage_MAU.loc[name] = weighted_mean
+#    Summary_Dataset_Multivar_Percentage_MAU.loc[name] = weighted_mean
     
     # Drop index2 from the DataFrame
-    Summary_Dataset_Multivar_Percentage_MAU = Summary_Dataset_Multivar_Percentage_MAU.drop([index1, index2])
+#    Summary_Dataset_Multivar_Percentage_MAU = Summary_Dataset_Multivar_Percentage_MAU.drop([index1, index2])
     
 
 # Add "Type" feature
@@ -141,7 +141,7 @@ cluster_D = ['Scavenged_human_corpses_WA', 'Sima_de_los_Huesos', 'Dinaledi','Mis
 
 def assign_clusters(df):
     df = df.copy() 
-    df['Cluster_Pnas83'] = ''
+    df['Cluster_Pnas'] = ''
     df.loc[cluster_A, 'Cluster_Pnas83'] = 'A'
     df.loc[cluster_B, 'Cluster_Pnas83'] = 'B'
     df.loc[cluster_C, 'Cluster_Pnas83'] = 'C'
