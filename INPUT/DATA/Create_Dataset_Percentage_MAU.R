@@ -103,6 +103,54 @@ Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_M
 Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU %>%
   select(Type, AccumulationType, everything())
 
+#### Add number of individuals as feature ####
+individuals_dict <- c("Hummingbird Pueblo_Pueblo I" = 6,
+                      "Pottery Mound_Pueblo IV" = 49,
+                      "Kuaua Pueblo_Pueblo IV" = 84,
+                      "Dolni Vestonice I_DV 3" = 1,
+                      "Dolni Vestonice IITriple Burial" = 2,
+                      "Skhul_Layer B" = 6,
+                      "Qafzeh Couche XVII" = 2,
+                      "Regourdou" = 1,
+                      "La Chapelle aux Saints" = 1,
+                      "Tabun_Layer C" = 1,
+                      "Shanidar Layer D Upper" = 3,
+                      "Shanidar Layer D Lower" = 4,
+                      "Kebara Couche XII" = 1,
+                      "Fontbregoua_H1" = 7,
+                      "Fontbregoua_H3" = 6,
+                      "Gran Dolina_TD6" = 2,
+                      "El Mirador_MIR4A" = 5,
+                      "Gough's Cave" = 3,
+                      "5MT-3" = 10,
+                      "5MT-10010 Feature 3" = 5,
+                      "El Miron" = 1,
+                      "La Tolita_Cama de Huesos" = 11,
+                      "Crow Creek" = 476,
+                      "Krapina" = 43,
+                      "Liang Bua_Layer R" = 2,
+                      "Liang Bua_Layer OQ" = 6,
+                      "Dmanisi_Layer B1y" = 4,
+                      "Malapa" = 1,
+                      "AL 333" = 13,
+                      "Unscavenged human corpses_WA" = 17,
+                      "Scavenged human corpses_WA" = 45,
+                      "Scavenged human corpses_NM" = 7,
+                      "Scavenged human corpse_NC" = 1,
+                      "Mapungubwe leopard kills" = 7,
+                      "Leopard refuse" = 8,
+                      "Misgrot Cave" = 7,
+                      "Sima de los Huesos" = 18,
+                      "Dinaledi" = 13)
+
+# Add the "Individuals" column
+Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU %>%
+  mutate(Individuals = individuals_dict[match(rownames(Summary_Dataset_Multivar_Percentage_MAU), names(individuals_dict))])
+
+# Move "Individuals" to the third position
+Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU %>%
+  select(1:2, Individuals, everything())
+
 
 # Save dataset Summary_Dataset_Multivar_Percentage_MAU as CSV
 write.csv(Summary_Dataset_Multivar_Percentage_MAU, "INPUT/DATA/Summary_Dataset_Multivar_Percentage_MAU.csv", row.names = TRUE)
