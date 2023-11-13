@@ -7,7 +7,7 @@ all_sheets = pd.read_excel("pnas.1718678115.sd01.xlsx", sheet_name=None)
 sheet_names = list(all_sheets.keys())
 
 # Drop Dinaledi 
-sheet_names = sheet_names[:-1]
+#sheet_names = sheet_names[:-1]
 
 # Dynamically create dataframes for each sheet
 for sheet_name in sheet_names:
