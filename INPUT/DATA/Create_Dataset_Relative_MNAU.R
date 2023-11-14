@@ -156,11 +156,11 @@ Summary_Dataset_Multivar_Relative_MNAU <- Summary_Dataset_Multivar_Relative_MNAU
 Summary_Dataset_Multivar_Relative_MNAU <- Summary_Dataset_Multivar_Relative_MNAU %>%
   select(-c("Metacarpal", "Metatarsal", "Hand phalanx", "Foot phalanx"))
 
-# Convert '-' to "nan"
+# Convert '-' to "nan" in character columns
 char_cols <- sapply(Summary_Dataset_Multivar_Relative_MNAU, is.character)
 Summary_Dataset_Multivar_Relative_MNAU[char_cols] <- lapply(Summary_Dataset_Multivar_Relative_MNAU[char_cols], na_if, '-')
 
-# Convert non-numeric to type numeric
+# Convert non-numeric to type numeric and convert '-' to "nan" 
 cols_to_convert <- setdiff(names(Summary_Dataset_Multivar_Relative_MNAU), c("Type", "AccumulationType"))
 Summary_Dataset_Multivar_Relative_MNAU[cols_to_convert] <- lapply(Summary_Dataset_Multivar_Relative_MNAU[cols_to_convert], function(x) {
   if (is.character(x)) as.numeric(na_if(x, "-")) else x
@@ -169,14 +169,17 @@ Summary_Dataset_Multivar_Relative_MNAU[cols_to_convert] <- lapply(Summary_Datase
 ## Caluclate Relative MNAU from MANU by normalizing features with Manhatten Norm (L1)
 # Select only numeric columns for normalization
 numeric_data <- Summary_Dataset_Multivar_Relative_MNAU %>%
-  select(-Type, -AccumulationType, -Individuals, where(is.numeric))
+  select(-"Type", -"AccumulationType", -"Individuals", where(is.numeric)) %>%
+    select(-"Individuals")
 
 # Calculate the Manhattan Norm (L1-norm) for each row
 row_sums <- rowSums(abs(numeric_data), na.rm = TRUE)
 
+
 # Normalize each row
 Summary_Dataset_Multivar_Relative_MNAU_normalized <- numeric_data %>%
   mutate(across(where(is.numeric), ~./row_sums*100))
+
 
 #print("Test: ")
 #print(row_sums <- rowSums(abs(Summary_Dataset_Multivar_Relative_MNAU_normalized), na.rm = TRUE))
