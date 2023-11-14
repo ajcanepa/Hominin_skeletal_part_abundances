@@ -24,10 +24,10 @@ columns = Sima_de_los_Huesos$"...1"[2:27]
 
 
 # Create an empty dataframe
-Summary_Dataset_Multivar_Percentage_MAU <- as.data.frame(matrix(nrow = length(dataframe_names), ncol = length(columns)))
+Summary_Dataset_Multivar_Percentage_MNAU <- as.data.frame(matrix(nrow = length(dataframe_names), ncol = length(columns)))
 
-names(Summary_Dataset_Multivar_Percentage_MAU) <- columns
-rownames(Summary_Dataset_Multivar_Percentage_MAU) <- dataframe_names
+names(Summary_Dataset_Multivar_Percentage_MNAU) <- columns
+rownames(Summary_Dataset_Multivar_Percentage_MNAU) <- dataframe_names
 
 
 # Repopulate the dataframe
@@ -39,7 +39,7 @@ for (df_name in dataframe_names) {
   
   # Extract the relevant values and assign to the summary dataframe
   values <- df[[target_col]][2:27]
-  Summary_Dataset_Multivar_Percentage_MAU[df_name, 1:length(values)] <- values
+  Summary_Dataset_Multivar_Percentage_MNAU[df_name, 1:length(values)] <- values
 }
 
 
@@ -72,10 +72,10 @@ assign_type <- function(index_name) {
 }
 
 # Create the "Type" column based on row names
-Summary_Dataset_Multivar_Percentage_MAU$Type <- sapply(rownames(Summary_Dataset_Multivar_Percentage_MAU), assign_type)
+Summary_Dataset_Multivar_Percentage_MNAU$Type <- sapply(rownames(Summary_Dataset_Multivar_Percentage_MNAU), assign_type)
 
 #"Type" column as the first column
-Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU[, c("Type", names(Summary_Dataset_Multivar_Percentage_MAU)[-ncol(Summary_Dataset_Multivar_Percentage_MAU)])]
+Summary_Dataset_Multivar_Percentage_MNAU <- Summary_Dataset_Multivar_Percentage_MNAU[, c("Type", names(Summary_Dataset_Multivar_Percentage_MNAU)[-ncol(Summary_Dataset_Multivar_Percentage_MNAU)])]
 
 
 #### Add "AccumulationType" feature ####
@@ -96,11 +96,11 @@ categorize_types <- function(type_value) {
 }
 
 # Add the 'AccumulationType' column based on 'Type' column
-Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU %>%
+Summary_Dataset_Multivar_Percentage_MNAU <- Summary_Dataset_Multivar_Percentage_MNAU %>%
   mutate(AccumulationType = sapply(Type, categorize_types))
 
 # Move the 'AccumulationType' column to the second position
-Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU %>%
+Summary_Dataset_Multivar_Percentage_MNAU <- Summary_Dataset_Multivar_Percentage_MNAU %>%
   select(Type, AccumulationType, everything())
 
 #### Add number of individuals as feature ####
@@ -144,16 +144,16 @@ individuals_dict <- c("Hummingbird_Pueblo_Pueblo_I" = 6,
                       "Dinaledi" = 13)
 
 # Add the "Individuals" column
-Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU %>%
-  mutate(Individuals = individuals_dict[match(rownames(Summary_Dataset_Multivar_Percentage_MAU), names(individuals_dict))])
+Summary_Dataset_Multivar_Percentage_MNAU <- Summary_Dataset_Multivar_Percentage_MNAU %>%
+  mutate(Individuals = individuals_dict[match(rownames(Summary_Dataset_Multivar_Percentage_MNAU), names(individuals_dict))])
 
 # Move "Individuals" to the third position
-Summary_Dataset_Multivar_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU %>%
+Summary_Dataset_Multivar_Percentage_MNAU <- Summary_Dataset_Multivar_Percentage_MNAU %>%
   select(1:2, Individuals, everything())
 
 
-# Save dataset Summary_Dataset_Multivar_Percentage_MAU as CSV
-write.csv(Summary_Dataset_Multivar_Percentage_MAU, "INPUT/DATA/Summary_Dataset_Multivar_Percentage_MAU.csv", row.names = TRUE)
+# Save dataset Summary_Dataset_Multivar_Percentage_MNAU as CSV
+write.csv(Summary_Dataset_Multivar_Percentage_MNAU, "INPUT/DATA/Summary_Dataset_Multivar_Percentage_MNAU.csv", row.names = TRUE)
 
 
 ##### Used dataset ####
@@ -178,7 +178,7 @@ samples_used <- c(
   "Dinaledi"
 )
 
-Summary_Dataset_Used_Percentage_MAU <- Summary_Dataset_Multivar_Percentage_MAU[samples_used,]
+Summary_Dataset_Used_Percentage_MNAU <- Summary_Dataset_Multivar_Percentage_MNAU[samples_used,]
 
 # Add Cluster categories from Pnas for multiclass classification
 # Define the clusters based on the index names
@@ -197,9 +197,9 @@ assign_clusters <- function(df) {
 }
 
 # Assign the cluster labels to the four dataframes
-Summary_Dataset_Used_Percentage_MAU = assign_clusters(Summary_Dataset_Used_Percentage_MAU)
+Summary_Dataset_Used_Percentage_MNAU = assign_clusters(Summary_Dataset_Used_Percentage_MNAU)
 
 # Save "used" dataset
-write.csv(Summary_Dataset_Used_Percentage_MAU, "INPUT/DATA/Summary_Dataset_Used_Percentage_MAU.csv", row.names = TRUE)
+write.csv(Summary_Dataset_Used_Percentage_MNAU, "INPUT/DATA/Summary_Dataset_Used_Percentage_MNAU.csv", row.names = TRUE)
 
 
