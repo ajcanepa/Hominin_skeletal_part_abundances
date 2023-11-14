@@ -72,7 +72,7 @@ assign_type <- function(index_name) {
 }
 
 # Create the "Type" column based on row names
-Summary_Dataset_Multivar_MPercentage_MNAU$Type <- sapply(rownames(Summary_Dataset_Multivar_Percentage_MNAU), assign_type)
+Summary_Dataset_Multivar_Percentage_MNAU$Type <- sapply(rownames(Summary_Dataset_Multivar_Percentage_MNAU), assign_type)
 
 #"Type" column as the first column
 Summary_Dataset_Multivar_Percentage_MNAU <- Summary_Dataset_Multivar_Percentage_MNAU[, c("Type", names(Summary_Dataset_Multivar_Percentage_MNAU)[-ncol(Summary_Dataset_Multivar_Percentage_MNAU)])]
