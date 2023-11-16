@@ -112,6 +112,46 @@ abbreviated_columns <- function(data) {
   return(data_cor)
 }
 
+##########
+
+abbreviated_columns_multi <- function(data) {
+  
+  name_mapping <- c(
+    "Type" = "Type",
+    "AccumulationType" = "AccumulationType",
+    "CRN" = "Cranium",
+    "MR" = "Mandible",
+    "CE" = "Cervical",
+    "TH" = "Thoracic",
+    "LM" = "Lumbar",
+    "SAC" = "Sacrum",
+    "ST" = "Sternum",
+    "CLA" = "Clavicle",
+    "RB" = "Rib",
+    "SC" = "Scapula",
+    "HM" = "Humerus",
+    "RD" = "Radius",
+    "UL" = "Ulna",
+    "CP" = "Carpal",
+    #"MC" ="Metacarpal" ,
+    "IM" = "Innominate",
+    "FM" = "Femur",
+    "PT" = "Patella",
+    "TA" = "Tibia",
+    "FB" = "Fibula",
+    "TR" = "Tarsal",
+    #"MT" = "Metatarsal",
+    #"HDPH" = "Hand.phalanx",
+    #"FTPH" = "Foot.phalanx",
+    "HD" = "Hand..metacarpals...manual.phalanges.",
+    "FT" = "Foot..metatarsals...pedal.phalanges."
+    #"Cluster_Pnas" = "Cluster_Pnas"
+  )  
+  
+  # Use rename() with unquote-splicing (!!!) to apply the name mapping
+  data_cor <- data %>% rename(!!!name_mapping)
+  return(data_cor)
+}
 
 ###########
 
