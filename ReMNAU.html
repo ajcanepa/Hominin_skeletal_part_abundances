@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>ReMNAU</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ReMNAU_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ReMNAU_files/libs/quarto-html/quarto.js"></script>
+<script src="ReMNAU_files/libs/quarto-html/popper.min.js"></script>
+<script src="ReMNAU_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ReMNAU_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ReMNAU_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ReMNAU_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ReMNAU_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ReMNAU_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ReMNAU_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="ReMNAU_files/libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="ReMNAU_files/libs/plotly-binding-4.10.3/plotly.js"></script>
+<script src="ReMNAU_files/libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="ReMNAU_files/libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="ReMNAU_files/libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="ReMNAU_files/libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="ReMNAU_files/libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="ReMNAU_files/libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ReMNAU</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="import-packages" class="level3">
+<h3 class="anchored" data-anchor-id="import-packages">Import packages</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../INPUT/FUNCTIONS/preprocess.R"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(recipes)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scatterplot3d)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="remnau---used" class="level1">
+<h1>ReMnAU - Used</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'../Input/DATA/Summary_Dataset_Used_Relative_MNAU.csv'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data_multi <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'../Input/DATA/Summary_Dataset_Multivar_Relative_MNAU.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> <span class="fu">preprocess</span>(data)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data_multi <span class="ot">=</span> <span class="fu">preprocess</span>(data_multi)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 16
+Columns: 26
+$ Type                                  &lt;chr&gt; "Primary hominin interment", "Pr…
+$ AccumulationType                      &lt;chr&gt; "Burial", "Burial", "Burial", "C…
+$ Individuals                           &lt;int&gt; 49, 84, 6, 7, 6, 2, 5, 43, 13, 1…
+$ Cranium                               &lt;dbl&gt; 0.05051322, 0.06526909, 0.082094…
+$ Mandible                              &lt;dbl&gt; 0.04519604, 0.06142973, 0.082094…
+$ Cervical                              &lt;dbl&gt; 0.048234432, 0.039490542, 0.0164…
+$ Thoracic                              &lt;dbl&gt; 0.050070125, 0.042712860, 0.0328…
+$ Lumbar                                &lt;dbl&gt; 0.051310801, 0.048375914, 0.0394…
+$ Sacrum                                &lt;dbl&gt; 0.05184252, 0.04991166, 0.049256…
+$ Sternum                               &lt;dbl&gt; 0.00000000, 0.00000000, 0.032837…
+$ Clavicle                              &lt;dbl&gt; 0.05383646, 0.04943174, 0.049256…
+$ Rib                                   &lt;dbl&gt; 0.049903963, 0.039713362, 0.0225…
+$ Scapula                               &lt;dbl&gt; 0.05184252, 0.05039158, 0.032837…
+$ Humerus                               &lt;dbl&gt; 0.04851928, 0.06190965, 0.073884…
+$ Radius                                &lt;dbl&gt; 0.05117787, 0.05807029, 0.065675…
+$ Ulna                                  &lt;dbl&gt; 0.04918393, 0.05231126, 0.073884…
+$ Carpal                                &lt;dbl&gt; 0.0432020993, 0.0232761092, 0.02…
+$ Innominate                            &lt;dbl&gt; 0.05117787, 0.05759037, 0.057465…
+$ Femur                                 &lt;dbl&gt; 0.05715970, 0.06382933, 0.065675…
+$ Patella                               &lt;dbl&gt; 0.04519604, 0.03695382, 0.016418…
+$ Tibia                                 &lt;dbl&gt; 0.04386675, 0.05807029, 0.073884…
+$ Fibula                                &lt;dbl&gt; 0.04519604, 0.04991166, 0.057465…
+$ Tarsal                                &lt;dbl&gt; 0.041208156, 0.039216302, 0.0258…
+$ Hand..metacarpals...manual.phalanges. &lt;dbl&gt; 0.042922248, 0.030133910, 0.0151…
+$ Foot..metatarsals...pedal.phalanges.  &lt;dbl&gt; 0.028439924, 0.022000533, 0.0125…
+$ Cluster_Pnas                          &lt;chr&gt; "A", "A", "B", "C", "C", "C", "C…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Pottery_Mound_Pueblo_IV"      "Kuaua_Pueblo_Pueblo_IV"      
+ [3] "Skhul_Layer_B"                "Fontbregoua_H1"              
+ [5] "Fontbregoua_H3"               "Gran_Dolina_TD6"             
+ [7] "El_Mirador_MIR4A"             "Krapina"                     
+ [9] "AL_333"                       "Unscavenged_human_corpses_WA"
+[11] "Scavenged_human_corpses_WA"   "Mapungubwe_leopard_kills"    
+[13] "Leopard_refuse"               "Misgrot_Cave"                
+[15] "Sima_de_los_Huesos"           "Dinaledi"                    </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the columns for which you want to count the labels</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>columns_to_count <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Type"</span>, <span class="st">"AccumulationType"</span>, <span class="st">"Individuals"</span>, <span class="st">"Cluster_Pnas"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to count labels in each specified column</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>count_labels <span class="ot">&lt;-</span> <span class="cf">function</span>(data, columns) {</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(data[columns], <span class="cf">function</span>(column) <span class="fu">table</span>(column))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the function to count labels</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>label_counts <span class="ot">&lt;-</span> <span class="fu">count_labels</span>(data, columns_to_count)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the counts</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>label_counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Type
+column
+Hominin cannibalism/ secondary interment 
+                                       5 
+                          Leopard refuse 
+                                       2 
+             Natural Baboon accumulation 
+                                       1 
+   Nonanthropogenic hominin accumulation 
+                                       1 
+    Possible hominin deliberate disposal 
+                                       2 
+      Possible Primary hominin interment 
+                                       1 
+               Primary hominin interment 
+                                       2 
+                 Scavenged human corpses 
+                                       1 
+               Unscavenged human corpses 
+                                       1 
+
+$AccumulationType
+column
+                               Burial                Cannibalism/Mass Grave 
+                                    5                                     5 
+               Carnivore intervention Non-human/ non-carnivore intervention 
+                                    3                                     3 
+
+$Individuals
+column
+ 2  5  6  7  8 13 17 18 43 45 49 84 
+ 1  1  2  3  1  2  1  1  1  1  1  1 
+
+$Cluster_Pnas
+column
+A B C D 
+3 3 6 4 </code></pre>
+</div>
+</div>
+<section id="take-sh-out-of-the-training-set-to-avoid-data-leakage" class="level3">
+<h3 class="anchored" data-anchor-id="take-sh-out-of-the-training-set-to-avoid-data-leakage">Take SH out of the training set (to avoid data leakage)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">split_train_SH</span>(data)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> split<span class="sc">$</span>train_data</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>sh <span class="ot">&lt;-</span> split<span class="sc">$</span>sh_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="center-and-scale-numeric-data" class="level3">
+<h3 class="anchored" data-anchor-id="center-and-scale-numeric-data">Center and scale numeric data</h3>
+<p>Normalize numeric data to have a standard deviation of one and a mean of zero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store original row names of the datasets</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>data_row_names <span class="ot">&lt;-</span> <span class="fu">rownames</span>(data)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sh_row_names <span class="ot">&lt;-</span> <span class="fu">rownames</span>(sh)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Create a recipe</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(<span class="sc">~</span> ., <span class="at">data =</span> data) <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_predictors</span>(), <span class="sc">-</span><span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">"Type"</span>, <span class="st">"AccumulationType"</span>, <span class="st">"Individuals"</span>, <span class="st">"Cluster_Pnas"</span>)))</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Fit the recipe to the training set</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>fitted_recipe <span class="ot">&lt;-</span> <span class="fu">prep</span>(recipe, <span class="at">training =</span> data)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Apply the transformation to both training and test sets</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>data_transformed <span class="ot">&lt;-</span> <span class="fu">bake</span>(fitted_recipe, <span class="at">new_data =</span> data)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>sh_transformed <span class="ot">&lt;-</span> <span class="fu">bake</span>(fitted_recipe, <span class="at">new_data =</span> sh)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Reattach the row names</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(data_transformed) <span class="ot">&lt;-</span> data_row_names</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(sh_transformed) <span class="ot">&lt;-</span> sh_row_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="feature-selection" class="level3">
+<h3 class="anchored" data-anchor-id="feature-selection">Feature selection</h3>
+<p><strong>In Pnas RF with labels has been used (!data leakage).</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure reproducibility</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the label and features</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>label <span class="ot">&lt;-</span> data<span class="sc">$</span>Type</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>data_rf_sup <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"Type"</span>, <span class="st">"AccumulationType"</span>, <span class="st">"Individuals"</span>, <span class="st">"Cluster_Pnas"</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert 'Type' to a factor</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>label <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(data<span class="sc">$</span>Type)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the RandomForest model</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>rf_model_sup <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(<span class="at">x =</span> data_rf_sup, <span class="at">y =</span> label, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the feature importance</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>feature_importance_ <span class="ot">&lt;-</span> <span class="fu">importance</span>(rf_model_sup)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the feature importance</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>feature_importance_[,<span class="fu">c</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)][]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                      MeanDecreaseAccuracy MeanDecreaseGini
+Cranium                                        0.682230267        0.3951072
+Mandible                                       1.560835223        0.5616452
+Cervical                                       1.074139957        0.4050775
+Thoracic                                       4.828835122        0.6458806
+Lumbar                                        -0.003353808        0.4932873
+Sacrum                                         3.724078941        0.6577889
+Sternum                                        2.460894418        0.4215019
+Clavicle                                       2.706901041        0.6683215
+Rib                                           -0.512191776        0.4701752
+Scapula                                        2.394942910        0.4019797
+Humerus                                        0.395985446        0.3822540
+Radius                                         0.105026105        0.3717216
+Ulna                                           0.421059712        0.4122956
+Carpal                                         4.660587685        0.7881775
+Innominate                                     1.582429828        0.6339636
+Femur                                          1.899565879        0.4718982
+Patella                                       -1.262313521        0.2779646
+Tibia                                         -0.437097710        0.3080689
+Fibula                                         0.993619129        0.5362098
+Tarsal                                         6.284200025        0.9706260
+Hand..metacarpals...manual.phalanges.          2.597943002        0.6335577
+Foot..metatarsals...pedal.phalanges.           1.519525560        0.6754310</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecting MeanDecreaseAccuracy </span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mean_decrease_accuracy <span class="ot">&lt;-</span> feature_importance_[, <span class="st">"MeanDecreaseAccuracy"</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter features where MeanDecreaseAccuracy is greater than 5</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>important_features_ <span class="ot">&lt;-</span> feature_importance_[mean_decrease_accuracy <span class="sc">&gt;</span> <span class="fl">3.4</span>, ]</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the important features</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>important_features_[,<span class="fu">c</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         MeanDecreaseAccuracy MeanDecreaseGini
+Thoracic             4.828835        0.6458806
+Sacrum               3.724079        0.6577889
+Carpal               4.660588        0.7881775
+Tarsal               6.284200        0.9706260</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save top 7 features</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>columns_rf_sup<span class="ot">&lt;-</span> <span class="fu">rownames</span>(<span class="fu">as.data.frame</span>(important_features_[,<span class="fu">c</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)]))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>columns_rf_sup</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Thoracic" "Sacrum"   "Carpal"   "Tarsal"  </code></pre>
+</div>
+</div>
+<p><strong>Random Forrest feature importance with self-label (without data leakage)</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>data_rf <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"Type"</span>, <span class="st">"AccumulationType"</span>, <span class="st">"Individuals"</span>, <span class="st">"Cluster_Pnas"</span>))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create artificial labels where each row is its own class</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>artificial_labels <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(data_rf))</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the data with the artificial labels</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>data_with_labels <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data_rf, artificial_labels)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Train Random Forest model</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(artificial_labels <span class="sc">~</span> ., <span class="at">data =</span> data_with_labels, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract feature importance based on Mean Decrease in Gini</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>feature_importance <span class="ot">&lt;-</span> <span class="fu">importance</span>(rf_model) <span class="co"># type = 1 for %IncMSE </span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>feature_importance</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                         %IncMSE IncNodePurity
+Cranium                                1.3821359     13.787274
+Mandible                              -0.6184411     11.259024
+Cervical                              -1.3826107      3.921629
+Thoracic                               0.4626930      4.522888
+Lumbar                                 1.9061311      4.515246
+Sacrum                                -0.6011654      7.284842
+Sternum                                2.6289923     11.749798
+Clavicle                              11.0808197     59.873370
+Rib                                   -2.2067320      4.149417
+Scapula                               -0.6992399      7.089104
+Humerus                               -1.6434349      5.830498
+Radius                                 1.3299706      8.873049
+Ulna                                  -0.8540742      3.486784
+Carpal                                -1.0616752      7.475007
+Innominate                             4.2003050     29.275106
+Femur                                  2.5751878     17.385131
+Patella                               -0.2801177      4.737238
+Tibia                                 -0.9225161      3.340662
+Fibula                                -0.9889710      3.966465
+Tarsal                                -2.1846094     15.982242
+Hand..metacarpals...manual.phalanges.  0.5916936      5.018006
+Foot..metatarsals...pedal.phalanges.  -0.7617898      9.338453</code></pre>
+</div>
+</div>
+<p>We are going to use <code>names(featrue_importance[feature_importance &gt; 2])</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecting MeanDecreaseAccuracy </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>mean_decrease_accuracy <span class="ot">&lt;-</span> feature_importance[,<span class="st">"%IncMSE"</span>]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter features where MeanDecreaseAccuracy is greater than 5</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>important_features_ <span class="ot">&lt;-</span> feature_importance_[mean_decrease_accuracy <span class="sc">&gt;</span> <span class="dv">2</span>, ]</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the important features</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>columns_rf <span class="ot">&lt;-</span> <span class="fu">rownames</span>(important_features_[,<span class="fu">c</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)])</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>columns_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Sternum"    "Clavicle"   "Innominate" "Femur"     </code></pre>
+</div>
+</div>
+<p><strong>Unsupervised Feature Selection with Random Forests (UFSRF)</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Todo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>SHAP</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Todo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Feature correlation heatmap</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>data_plot_cor <span class="ot">=</span> <span class="fu">abbreviated_columns</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlation matrix</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(data_plot_cor[<span class="fu">sapply</span>(data_plot_cor, is.numeric)], <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>melted_cor_matrix <span class="ot">&lt;-</span> <span class="fu">melt</span>(cor_matrix)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(melted_cor_matrix, <span class="fu">aes</span>(Var1, Var2, <span class="at">fill =</span> value)) <span class="sc">+</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"blue"</span>, <span class="at">high =</span> <span class="st">"red"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + # Rotate x-axis labels</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#theme_minimal() +</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Correlation Matrix"</span>, <span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(cor_matrix, <span class="co">#correlation matrix</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">method =</span> <span class="st">"color"</span>, <span class="co">#show coloured blocks</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">is.corr =</span> <span class="cn">TRUE</span>, <span class="co">#input matrix is a correlation matrix</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">type =</span> <span class="st">"upper"</span>, <span class="co">#show only upper diagonal of correlogram</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">order =</span> <span class="st">"AOE"</span>, <span class="co">#Hierarchical clustering order</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">hclust.method =</span> <span class="st">"average"</span>, <span class="co">#using the average linkage distance measure</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">addCoef.col =</span> <span class="st">"black"</span>, <span class="co">#show numerical value of coefficient</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">"black"</span>, <span class="co">#text color of data label</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.cex =</span> <span class="fl">0.5</span>, <span class="co">#text size of data label</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">rect.lwd =</span> <span class="dv">3</span>,<span class="co">#text size of data label</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.srt =</span> <span class="dv">90</span>, <span class="co">#text rotation of data label</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">cl.cex =</span> <span class="dv">1</span>, <span class="co">#text size of color-legend label</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">number.cex =</span> <span class="fl">0.5</span>, <span class="co">#text size of correlation coefficient</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">diag =</span> <span class="cn">FALSE</span>, <span class="co">#hide coefficient on the principal diagonal</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(cor_matrix, <span class="co">#correlation matrix</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">method =</span> <span class="st">"color"</span>, <span class="co">#show coloured blocks</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">is.corr =</span> <span class="cn">TRUE</span>, <span class="co">#input matrix is a correlation matrix</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">type =</span> <span class="st">"upper"</span>, <span class="co">#show only upper diagonal of correlogram</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">order =</span> <span class="st">"hclust"</span>, <span class="co">#Hierarchical clustering order</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">hclust.method =</span> <span class="st">"average"</span>, <span class="co">#using the average linkage distance measure</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">addCoef.col =</span> <span class="st">"black"</span>, <span class="co">#show numerical value of coefficient</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">"black"</span>, <span class="co">#text color of data label</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.cex =</span> <span class="fl">0.5</span>, <span class="co">#text size of data label</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">rect.lwd =</span> <span class="dv">3</span>,<span class="co">#text size of data label</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.srt =</span> <span class="dv">90</span>, <span class="co">#text rotation of data label</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">cl.cex =</span> <span class="dv">1</span>, <span class="co">#text size of color-legend label</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">number.cex =</span> <span class="fl">0.5</span>, <span class="co">#text size of correlation coefficient</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">diag =</span> <span class="cn">FALSE</span>, <span class="co">#hide coefficient on the principal diagonal</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Based on feature correlation and clustering, merge bone subcategories into its categories:</strong></p>
+<ul>
+<li><p><em>“Vertebra”= {“Cervical”, “Thoracic”, “Lumbar”, “Sacrum”,“Rib”}</em></p></li>
+<li><p><em>“Arm” = {“Humerus”, “Radius”, “Ulna”}</em></p></li>
+<li><p><em>“Leg” = {“Femur”, “Tibia”, “Fibula” }</em></p></li>
+<li><p><em>“Extremities”: {“Carpal”, “Tarsal</em>”, “Hand..metacarpals…manual.phalanges.”, “Foot..metatarsals…pedal.phal</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Define data_cor data set</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>data_cor <span class="ot">=</span> <span class="fu">merge_bone_cat_by_mean</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Define list of data sets to work with:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>list_of_dfs <span class="ot">&lt;-</span> <span class="fu">list</span>(data, data[columns_rf_sup] , data[columns_rf], data_cor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="dimension-reduction" class="level3">
+<h3 class="anchored" data-anchor-id="dimension-reduction">Dimension Reduction</h3>
+<p><strong>PCA</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>data_pca <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">all_of</span>(columns_to_count))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(data_pca, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>X_pca <span class="ot">&lt;-</span> pca_result<span class="sc">$</span>x[,<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>X_pca</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                    PC1         PC2         PC3        PC4
+Pottery_Mound_Pueblo_IV       3.7178886  0.02238816 -0.07120981  0.4834354
+Kuaua_Pueblo_Pueblo_IV        2.0404374 -0.43883470  0.04624904  0.2461316
+Skhul_Layer_B                 0.3019316 -1.37547749 -0.19000271 -0.1981565
+Fontbregoua_H1               -4.2932327  2.34603857 -1.17943651 -1.0000351
+Fontbregoua_H3               -4.3506160 -4.20685624  3.68492763 -1.4934336
+Gran_Dolina_TD6               0.9125481  5.74411727  3.63196529 -1.1535240
+El_Mirador_MIR4A             -3.2043638  0.71748232 -4.37866771 -0.8158809
+Krapina                      -1.6199528  0.66951951 -0.57597693 -1.0496825
+AL_333                       -2.3651127  1.26440250 -0.21647788  3.2916697
+Unscavenged_human_corpses_WA  3.8681796 -0.49493521 -0.77445802 -0.3684277
+Scavenged_human_corpses_WA    3.3511073 -0.55071335 -1.32875197 -1.6841062
+Mapungubwe_leopard_kills      1.1280473 -1.62496568 -0.58209962 -0.2557367
+Leopard_refuse               -0.2685216 -1.45345436  0.41277213  1.7109163
+Misgrot_Cave                  0.8985730 -0.72880988  0.78728234 -0.4169993
+Dinaledi                     -0.1169133  0.11009857  0.73388472  2.7038294
+                                     PC5         PC6
+Pottery_Mound_Pueblo_IV      -1.01398333 -1.94302375
+Kuaua_Pueblo_Pueblo_IV       -0.79208946 -1.03213419
+Skhul_Layer_B                 0.25666151  0.52112529
+Fontbregoua_H1               -1.35328186  0.29576904
+Fontbregoua_H3               -0.01897152 -0.77589649
+Gran_Dolina_TD6               1.07361092 -0.06767947
+El_Mirador_MIR4A              1.26534881 -0.90976380
+Krapina                      -1.17151589  0.74704563
+AL_333                        0.36397762 -0.55877979
+Unscavenged_human_corpses_WA  0.43796430  0.09225397
+Scavenged_human_corpses_WA   -0.53500778  0.77127029
+Mapungubwe_leopard_kills      1.25463065  0.88407194
+Leopard_refuse                0.92146489  0.22953656
+Misgrot_Cave                  0.29978494  0.42244113
+Dinaledi                     -0.98859380  1.32376363</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Plot 3D pca</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>df_X_pca <span class="ot">=</span> <span class="fu">as.data.frame</span>(X_pca)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(df_X_pca,<span class="at">x=</span><span class="sc">~</span>PC1,<span class="at">y=</span><span class="sc">~</span>PC2,<span class="at">z=</span><span class="sc">~</span>PC3, <span class="at">color =</span> <span class="sc">~</span>label, <span class="at">type =</span> <span class="st">'scatter3d'</span>, <span class="at">mode =</span> <span class="st">'markers'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors
+
+Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-a9dbe60cb8ccdb6f59a4" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-a9dbe60cb8ccdb6f59a4">{"x":{"visdat":{"21b8996291a":["function () ","plotlyVisDat"]},"cur_data":"21b8996291a","attrs":{"21b8996291a":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"PC1"},"yaxis":{"title":"PC2"},"zaxis":{"title":"PC3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-4.2932327140183704,-4.3506160451182243,0.91254807117108894,-3.2043637674787311,-1.6199527748401166],"y":[2.3460385681846554,-4.2068562353770433,5.7441172708915733,0.71748232312361071,0.66951951111662922],"z":[-1.1794365090846184,3.6849276346965523,3.6319652868618868,-4.3786677081157119,-0.57597693400493277],"mode":"markers","type":"scatter3d","name":"Hominin cannibalism/ secondary interment","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[1.1280473284569787,-0.26852164950134805],"y":[-1.624965675308748,-1.4534543633535906],"z":[-0.58209961719108838,0.41277213319012473],"mode":"markers","type":"scatter3d","name":"Leopard refuse","marker":{"color":"rgba(239,150,106,1)","line":{"color":"rgba(239,150,106,1)"}},"textfont":{"color":"rgba(239,150,106,1)"},"error_y":{"color":"rgba(239,150,106,1)"},"error_x":{"color":"rgba(239,150,106,1)"},"line":{"color":"rgba(239,150,106,1)"},"frame":null},{"x":[0.89857302301896536],"y":[-0.72880987505222816],"z":[0.7872823370641292],"mode":"markers","type":"scatter3d","name":"Natural Baboon accumulation","marker":{"color":"rgba(178,156,177,1)","line":{"color":"rgba(178,156,177,1)"}},"textfont":{"color":"rgba(178,156,177,1)"},"error_y":{"color":"rgba(178,156,177,1)"},"error_x":{"color":"rgba(178,156,177,1)"},"line":{"color":"rgba(178,156,177,1)"},"frame":null},{"x":[-2.3651126665683724],"y":[1.2644025003871548],"z":[-0.21647788063590184],"mode":"markers","type":"scatter3d","name":"Nonanthropogenic hominin accumulation","marker":{"color":"rgba(201,148,198,1)","line":{"color":"rgba(201,148,198,1)"}},"textfont":{"color":"rgba(201,148,198,1)"},"error_y":{"color":"rgba(201,148,198,1)"},"error_x":{"color":"rgba(201,148,198,1)"},"line":{"color":"rgba(201,148,198,1)"},"frame":null},{"x":[-0.11691330023334406],"y":[0.11009856697856629],"z":[0.73388472469585642],"mode":"markers","type":"scatter3d","name":"Possible hominin deliberate disposal","marker":{"color":"rgba(205,180,144,1)","line":{"color":"rgba(205,180,144,1)"}},"textfont":{"color":"rgba(205,180,144,1)"},"error_y":{"color":"rgba(205,180,144,1)"},"error_x":{"color":"rgba(205,180,144,1)"},"line":{"color":"rgba(205,180,144,1)"},"frame":null},{"x":[0.30193164405270656],"y":[-1.3754774893270896],"z":[-0.19000270834801636],"mode":"markers","type":"scatter3d","name":"Possible Primary hominin interment","marker":{"color":"rgba(202,217,72,1)","line":{"color":"rgba(202,217,72,1)"}},"textfont":{"color":"rgba(202,217,72,1)"},"error_y":{"color":"rgba(202,217,72,1)"},"error_x":{"color":"rgba(202,217,72,1)"},"line":{"color":"rgba(202,217,72,1)"},"frame":null},{"x":[3.7178886047842354,2.0404373805832567],"y":[0.022388156885459351,-0.4388347006710217],"z":[-0.071209811112866159,0.0462490371500789],"mode":"markers","type":"scatter3d","name":"Primary hominin interment","marker":{"color":"rgba(250,212,80,1)","line":{"color":"rgba(250,212,80,1)"}},"textfont":{"color":"rgba(250,212,80,1)"},"error_y":{"color":"rgba(250,212,80,1)"},"error_x":{"color":"rgba(250,212,80,1)"},"line":{"color":"rgba(250,212,80,1)"},"frame":null},{"x":[3.3511072981633183],"y":[-0.55071335179787229],"z":[-1.3287519701208896],"mode":"markers","type":"scatter3d","name":"Scavenged human corpses","marker":{"color":"rgba(223,194,152,1)","line":{"color":"rgba(223,194,152,1)"}},"textfont":{"color":"rgba(223,194,152,1)"},"error_y":{"color":"rgba(223,194,152,1)"},"error_x":{"color":"rgba(223,194,152,1)"},"line":{"color":"rgba(223,194,152,1)"},"frame":null},{"x":[3.8681795675279562],"y":[-0.4949352066800522],"z":[-0.77445801504460443],"mode":"markers","type":"scatter3d","name":"Unscavenged human corpses","marker":{"color":"rgba(179,179,179,1)","line":{"color":"rgba(179,179,179,1)"}},"textfont":{"color":"rgba(179,179,179,1)"},"error_y":{"color":"rgba(179,179,179,1)"},"error_x":{"color":"rgba(179,179,179,1)"},"line":{"color":"rgba(179,179,179,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform PCA</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(data_pca, <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate cumulative variance explained by each component</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>var_explained <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(pca_result<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sum</span>(pca_result<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Optional: Create a scree plot to visualize the variance explained</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(var_explained), <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">seq_along</span>(var_explained), <span class="at">y =</span> var_explained)) <span class="sc">+</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.95</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Number of Principal Components"</span>) <span class="sc">+</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Cumulative Variance Explained"</span>) <span class="sc">+</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Scree Plot Showing Cumulative Variance Explained by PCA Components"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>LDA</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(MASS)</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># LDA</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co">#cols_lda &lt;- setdiff(names(data), c("Type","Individuals", "Cluster_Pnas"))</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co">#data_lda &lt;- data[cols_lda]</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co">#lda_result &lt;- lda(AccumulationType ~ ., data = data_lda)</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co">#X_lda &lt;- as.data.frame(predict(lda_result, newdata = data_lda)$x)</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 3D scatter </span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co">#plot_ly(X_lda, x = ~LD1, y = ~LD2, z = ~LD3, color = ~data$AccumulationType, type = 'scatter3d', mode = 'markers')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LDA</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co">#cols_lda &lt;- setdiff(names(data), c("AccumulationType","Individuals", "Cluster_Pnas"))</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co">#data_lda &lt;- data[cols_lda]</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co">#lda_result &lt;- lda(Type ~ ., data = data_lda)</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co">#X_lda &lt;- as.data.frame(predict(lda_result, newdata = data_lda)$x)</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 3D scatter </span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co">#plot_ly(X_lda, x = ~LD1, y = ~LD2, z = ~LD3, color = ~data$Type, type = 'scatter3d', mode = 'markers')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>amend Dataframe list with X_pca[,c(1:6)] and X_lda</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>list_of_dfs <span class="ot">&lt;-</span> <span class="fu">list</span>(data, data[, columns_rf_sup], data[, columns_rf], data_cor, X_pca[, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                    <span class="co">#,X_lda</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="best-k" class="level3">
+<h3 class="anchored" data-anchor-id="best-k">Best K</h3>
+<p><strong>Ellbow method</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>cols_km <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(data), <span class="fu">c</span>(<span class="st">"Type"</span>,<span class="st">"AccumulationType"</span>,<span class="st">"Individuals"</span>, <span class="st">"Cluster_Pnas"</span>))</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>data_km <span class="ot">&lt;-</span> data[cols_km]</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create 10 models with 1 to 10 clusters</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>kclusts <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">k =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="fu">map</span>(k, <span class="sc">~</span> <span class="fu">kmeans</span>(<span class="at">x =</span> data_km, <span class="at">centers =</span> .x, <span class="at">nstart =</span> <span class="dv">20</span>)),</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">glanced =</span> <span class="fu">map</span>(model, glance)</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(glanced))</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="co"># View results</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>kclusts<span class="sc">%&gt;%</span> </span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> k, <span class="at">y =</span> tot.withinss)) <span class="sc">+</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co">#create plot of number of clusters vs total within sum of squares</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(data_km, kmeans, <span class="at">method =</span> <span class="st">"wss"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Silhouette method</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(data_km, <span class="at">FUN=</span>kmeans, <span class="at">method =</span> <span class="st">"silhouette"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>gap_stat <span class="ot">&lt;-</span> <span class="fu">clusGap</span>(data_km, <span class="at">FUN =</span> kmeans, <span class="at">nstart =</span> <span class="dv">25</span>, <span class="at">K.max =</span> <span class="dv">10</span>, <span class="at">B =</span> <span class="dv">50</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_gap_stat</span>(gap_stat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="modeling" class="level3">
+<h3 class="anchored" data-anchor-id="modeling">Modeling</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Perform K-means clustering</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)  </span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>kmeans_result <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(data_km, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">25</span>)  </span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="co"># The cluster assignments are stored in kmeans_result$cluster</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>sub_grp <span class="ot">&lt;-</span> kmeans_result<span class="sc">$</span>cluster</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the clusters</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(<span class="fu">list</span>(<span class="at">data =</span> data_km, <span class="at">cluster =</span> sub_grp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="eval" class="level3">
+<h3 class="anchored" data-anchor-id="eval">Eval</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform K-means clustering on the training set</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>) </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>kmeans_result <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(data_km, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign test set points to nearest clusters</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>get_nearest_cluster <span class="ot">&lt;-</span> <span class="cf">function</span>(point, centers) {</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  distances <span class="ot">&lt;-</span> <span class="fu">apply</span>(centers, <span class="dv">1</span>, <span class="cf">function</span>(center) <span class="fu">dist</span>(<span class="fu">rbind</span>(center, point)))</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">which.min</span>(distances))</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the function to each row in the test set</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>cluster_assignments_test <span class="ot">&lt;-</span> <span class="fu">apply</span>(sh, <span class="dv">1</span>, get_nearest_cluster, <span class="at">centers =</span> kmeans_result<span class="sc">$</span>centers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rbind(center, point): number of columns of result is not a multiple
+of vector length (arg 1)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in dist(rbind(center, point)): NAs introduced by coercion</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rbind(center, point): number of columns of result is not a multiple
+of vector length (arg 1)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in dist(rbind(center, point)): NAs introduced by coercion</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rbind(center, point): number of columns of result is not a multiple
+of vector length (arg 1)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in dist(rbind(center, point)): NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>sh_km <span class="ot">=</span> sh[cols_km] </span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the training and test sets for visualization</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>combined_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(data_km, sh_km)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>combined_clusters <span class="ot">&lt;-</span> <span class="fu">c</span>(kmeans_result<span class="sc">$</span>cluster, cluster_assignments_test)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize with fviz_cluster</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(<span class="fu">list</span>(<span class="at">data =</span> combined_df, <span class="at">cluster =</span> combined_clusters))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="multivar." class="level1">
+<h1>Multivar.</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#data &lt;- read.csv('../Input/DATA/Summary_Dataset_Multivar_Percentage_MAU.csv')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> data_multi  <span class="co">#preprocess(data)</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 38
+Columns: 25
+$ Type                                  &lt;chr&gt; "Primary hominin interment", "Pr…
+$ AccumulationType                      &lt;chr&gt; "Burial", "Burial", "Burial", "B…
+$ Individuals                           &lt;int&gt; 6, 49, 84, 1, 2, 6, 2, 1, 1, 1, …
+$ Cranium                               &lt;dbl&gt; 0.04989878, 0.05051322, 0.065269…
+$ Mandible                              &lt;dbl&gt; 0.04989878, 0.04519604, 0.061429…
+$ Cervical                              &lt;dbl&gt; 0.035641986, 0.048234432, 0.0394…
+$ Thoracic                              &lt;dbl&gt; 0.047819664, 0.050070125, 0.0427…
+$ Lumbar                                &lt;dbl&gt; 0.04158232, 0.05131080, 0.048375…
+$ Sacrum                                &lt;dbl&gt; 0.04989878, 0.05184252, 0.049911…
+$ Sternum                               &lt;dbl&gt; 0.04989878, 0.00000000, 0.000000…
+$ Clavicle                              &lt;dbl&gt; 0.04989878, 0.05383646, 0.049431…
+$ Rib                                   &lt;dbl&gt; 0.047819664, 0.049903963, 0.0397…
+$ Scapula                               &lt;dbl&gt; 0.04989878, 0.05184252, 0.050391…
+$ Humerus                               &lt;dbl&gt; 0.04989878, 0.04851928, 0.061909…
+$ Radius                                &lt;dbl&gt; 0.04989878, 0.05117787, 0.058070…
+$ Ulna                                  &lt;dbl&gt; 0.04989878, 0.04918393, 0.052311…
+$ Carpal                                &lt;dbl&gt; 0.0363845270, 0.0432020993, 0.02…
+$ Innominate                            &lt;dbl&gt; 0.04989878, 0.05117787, 0.057590…
+$ Femur                                 &lt;dbl&gt; 0.04989878, 0.05715970, 0.063829…
+$ Patella                               &lt;dbl&gt; 0.045740548, 0.045196042, 0.0369…
+$ Tibia                                 &lt;dbl&gt; 0.04989878, 0.04386675, 0.058070…
+$ Fibula                                &lt;dbl&gt; 0.04989878, 0.04519604, 0.049911…
+$ Tarsal                                &lt;dbl&gt; 0.043364416, 0.041208156, 0.0392…
+$ Hand..metacarpals...manual.phalanges. &lt;dbl&gt; 0.0400503365, 0.0429222476, 0.03…
+$ Foot..metatarsals...pedal.phalanges.  &lt;dbl&gt; 0.012912404, 0.028439924, 0.0220…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Hummingbird_Pueblo_Pueblo_I"     "Pottery_Mound_Pueblo_IV"        
+ [3] "Kuaua_Pueblo_Pueblo_IV"          "Dolni_Vestonice_I_DV_3"         
+ [5] "Dolni_Vestonice_IITriple_Burial" "Skhul_Layer_B"                  
+ [7] "Qafzeh_Couche_XVII"              "Regourdou"                      
+ [9] "La_Chapelle_aux_Saints"          "Tabun_Layer_C"                  
+[11] "Shanidar_Layer_D_Upper"          "Shanidar_Layer_D_Lower"         
+[13] "Kebara_Couche_XII"               "Fontbregoua_H1"                 
+[15] "Fontbregoua_H3"                  "Gran_Dolina_TD6"                
+[17] "El_Mirador_MIR4A"                "Gough's_Cave"                   
+[19] "5MT_3"                           "5MT_10010_Feature_3"            
+[21] "El_Miron"                        "La_Tolita_Cama_de_Huesos"       
+[23] "Crow_Creek"                      "Krapina"                        
+[25] "Liang_Bua_Layer_R"               "Liang_Bua_Layer_OQ"             
+[27] "Dmanisi_Layer_B1y"               "Malapa"                         
+[29] "AL_333"                          "Unscavenged_human_corpses_WA"   
+[31] "Scavenged_human_corpses_WA"      "Scavenged_human_corpses_NM"     
+[33] "Scavenged_human_corpse_NC"       "Mapungubwe_leopard_kills"       
+[35] "Leopard_refuse"                  "Misgrot_Cave"                   
+[37] "Sima_de_los_Huesos"              "Dinaledi"                       </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the columns for which you want to count the labels</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>columns_to_count <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Type"</span>, <span class="st">"AccumulationType"</span>, <span class="st">"Individuals"</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to count labels in each specified column</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>count_labels <span class="ot">&lt;-</span> <span class="cf">function</span>(data, columns) {</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(data[columns], <span class="cf">function</span>(column) <span class="fu">table</span>(column))</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the function to count labels</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>label_counts <span class="ot">&lt;-</span> <span class="fu">count_labels</span>(data, columns_to_count)</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the counts</span></span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>label_counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Type
+column
+Hominin cannibalism/ secondary interment 
+                                      10 
+                          Leopard refuse 
+                                       2 
+             Natural Baboon accumulation 
+                                       1 
+   Nonanthropogenic hominin accumulation 
+                                       5 
+    Possible hominin deliberate disposal 
+                                       2 
+      Possible Primary hominin interment 
+                                       9 
+               Primary hominin interment 
+                                       5 
+                 Scavenged human corpses 
+                                       3 
+               Unscavenged human corpses 
+                                       1 
+
+$AccumulationType
+column
+                               Burial                Cannibalism/Mass Grave 
+                                   16                                    10 
+               Carnivore intervention Non-human/ non-carnivore intervention 
+                                    5                                     7 
+
+$Individuals
+column
+  1   2   3   4   5   6   7   8  10  11  13  17  18  43  45  49  84 476 
+  8   4   2   2   2   4   4   1   1   1   2   1   1   1   1   1   1   1 </code></pre>
+</div>
+</div>
+<section id="take-sh-out-of-the-training-set-to-avoid-data-leakage-1" class="level3">
+<h3 class="anchored" data-anchor-id="take-sh-out-of-the-training-set-to-avoid-data-leakage-1">Take SH out of the training set (to avoid data leakage)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">split_train_SH</span>(data)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> split<span class="sc">$</span>train_data</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>sh <span class="ot">&lt;-</span> split<span class="sc">$</span>sh_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="center-and-scale-numeric-data-1" class="level3">
+<h3 class="anchored" data-anchor-id="center-and-scale-numeric-data-1">Center and scale numeric data</h3>
+<p>Normalize numeric data to have a standard deviation of one and a mean of zero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store original row names of the datasets</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>data_row_names <span class="ot">&lt;-</span> <span class="fu">rownames</span>(data)</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>sh_row_names <span class="ot">&lt;-</span> <span class="fu">rownames</span>(sh)</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Create a recipe</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(<span class="sc">~</span> ., <span class="at">data =</span> data) <span class="sc">%&gt;%</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_predictors</span>(), <span class="sc">-</span><span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">"Type"</span>, <span class="st">"AccumulationType"</span>, <span class="st">"Individuals"</span>)))</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Fit the recipe to the training set</span></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>fitted_recipe <span class="ot">&lt;-</span> <span class="fu">prep</span>(recipe, <span class="at">training =</span> data)</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Apply the transformation to both training and test sets</span></span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>data_transformed <span class="ot">&lt;-</span> <span class="fu">bake</span>(fitted_recipe, <span class="at">new_data =</span> data)</span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>sh_transformed <span class="ot">&lt;-</span> <span class="fu">bake</span>(fitted_recipe, <span class="at">new_data =</span> sh)</span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Reattach the row names</span></span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(data_transformed) <span class="ot">&lt;-</span> data_row_names</span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(sh_transformed) <span class="ot">&lt;-</span> sh_row_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="feature-selection-1" class="level3">
+<h3 class="anchored" data-anchor-id="feature-selection-1">Feature selection</h3>
+<p><strong>In Pnas RF with labels has been used (!data leakage).</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure reproducibility</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the label and features</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>label <span class="ot">&lt;-</span> data<span class="sc">$</span>Type</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>data_rf_sup <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"Type"</span>, <span class="st">"AccumulationType"</span>, <span class="st">"Individuals"</span>))</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert 'Type' to a factor</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>label <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(data<span class="sc">$</span>Type)</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the RandomForest model</span></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>rf_model_sup <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(<span class="at">x =</span> data_rf_sup, <span class="at">y =</span> label, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the feature importance</span></span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>feature_importance_ <span class="ot">&lt;-</span> <span class="fu">importance</span>(rf_model_sup)</span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the feature importance</span></span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>feature_importance_[,<span class="fu">c</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)][]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                      MeanDecreaseAccuracy MeanDecreaseGini
+Cranium                                          1.8957550        1.4649639
+Mandible                                         5.9866928        2.2734109
+Cervical                                        -0.9853640        0.8905219
+Thoracic                                         5.6874844        1.6104381
+Lumbar                                           2.8930456        1.1546162
+Sacrum                                           5.7867941        1.6096494
+Sternum                                         -0.8341856        0.7295759
+Clavicle                                         2.0198593        1.3238684
+Rib                                              2.8983234        1.7547995
+Scapula                                          0.4745256        0.9690864
+Humerus                                         -0.4599505        1.1099935
+Radius                                           1.4087256        1.2157931
+Ulna                                             4.1608759        1.2952177
+Carpal                                           4.7965211        1.8705068
+Innominate                                       4.6498579        1.5723740
+Femur                                           -0.5909389        1.4407248
+Patella                                          1.3718469        1.1398302
+Tibia                                            0.0756671        1.0547055
+Fibula                                           2.6051421        1.2803847
+Tarsal                                           2.2695764        1.2073018
+Hand..metacarpals...manual.phalanges.            0.7692997        1.4090704
+Foot..metatarsals...pedal.phalanges.             0.9002072        1.1445723</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecting MeanDecreaseAccuracy </span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>mean_decrease_accuracy <span class="ot">&lt;-</span> feature_importance_[, <span class="st">"MeanDecreaseAccuracy"</span>]</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter features where MeanDecreaseAccuracy is greater than 5</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>important_features_ <span class="ot">&lt;-</span> feature_importance_[mean_decrease_accuracy <span class="sc">&gt;</span> <span class="fl">3.4</span>, ]</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the important features</span></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>important_features_[,<span class="fu">c</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           MeanDecreaseAccuracy MeanDecreaseGini
+Mandible               5.986693         2.273411
+Thoracic               5.687484         1.610438
+Sacrum                 5.786794         1.609649
+Ulna                   4.160876         1.295218
+Carpal                 4.796521         1.870507
+Innominate             4.649858         1.572374</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save top 7 features</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>columns_rf_sup<span class="ot">&lt;-</span> <span class="fu">rownames</span>(<span class="fu">as.data.frame</span>(important_features_[,<span class="fu">c</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)]))</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>columns_rf_sup</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Mandible"   "Thoracic"   "Sacrum"     "Ulna"       "Carpal"    
+[6] "Innominate"</code></pre>
+</div>
+</div>
+<p><strong>Random Forrest feature importance with self-label (without data leakage)</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>data_rf <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"Type"</span>, <span class="st">"AccumulationType"</span>, <span class="st">"Individuals"</span>))</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create artificial labels where each row is its own class</span></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>artificial_labels <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(data_rf))</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the data with the artificial labels</span></span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>data_with_labels <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data_rf, artificial_labels)</span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Train Random Forest model</span></span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(artificial_labels <span class="sc">~</span> ., <span class="at">data =</span> data_with_labels, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract feature importance based on Mean Decrease in Gini</span></span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>feature_importance <span class="ot">&lt;-</span> <span class="fu">importance</span>(rf_model) <span class="co"># type = 1 for %IncMSE </span></span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>feature_importance</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                           %IncMSE IncNodePurity
+Cranium                                2.753239441     322.97948
+Mandible                               3.721810414     307.27461
+Cervical                               0.257932992      96.01411
+Thoracic                               2.002482872     196.81015
+Lumbar                                -0.002555434     100.11718
+Sacrum                                 2.669590645     174.08345
+Sternum                               -1.264321435      51.39950
+Clavicle                               6.783653449     499.62035
+Rib                                   -1.850157388      96.63718
+Scapula                                2.930256138     127.30279
+Humerus                               -1.136193135     111.82852
+Radius                                 1.943997217     193.67861
+Ulna                                   7.602460627     371.25636
+Carpal                                -0.950954676     133.04912
+Innominate                             2.001314827     155.55416
+Femur                                  7.047708320     341.03033
+Patella                                0.175210617     119.17459
+Tibia                                 -0.929681657      64.41610
+Fibula                                -0.417934987     102.90939
+Tarsal                                 1.448909436     181.91667
+Hand..metacarpals...manual.phalanges.  1.059931968      78.49789
+Foot..metatarsals...pedal.phalanges.   0.885284154     182.30442</code></pre>
+</div>
+</div>
+<p>We are going to use <code>names(featrue_importance[feature_importance &gt; 2])</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecting MeanDecreaseAccuracy </span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>mean_decrease_accuracy <span class="ot">&lt;-</span> feature_importance[,<span class="st">"%IncMSE"</span>]</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter features where MeanDecreaseAccuracy is greater than 5</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>important_features_ <span class="ot">&lt;-</span> feature_importance_[mean_decrease_accuracy <span class="sc">&gt;</span> <span class="dv">2</span>, ]</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the important features</span></span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>columns_rf <span class="ot">&lt;-</span> <span class="fu">rownames</span>(important_features_[,<span class="fu">c</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)])</span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>columns_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Cranium"    "Mandible"   "Thoracic"   "Sacrum"     "Clavicle"  
+[6] "Scapula"    "Ulna"       "Innominate" "Femur"     </code></pre>
+</div>
+</div>
+<p><strong>Unsupervised Feature Selection with Random Forests (UFSRF)</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Todo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>SHAP</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Todo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Feature correlation heatmap</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>data_plot_cor <span class="ot">=</span> <span class="fu">abbreviated_columns_multi</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlation matrix</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(data_plot_cor[<span class="fu">sapply</span>(data_plot_cor, is.numeric)], <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>melted_cor_matrix <span class="ot">&lt;-</span> <span class="fu">melt</span>(cor_matrix)</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(melted_cor_matrix, <span class="fu">aes</span>(Var1, Var2, <span class="at">fill =</span> value)) <span class="sc">+</span></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"blue"</span>, <span class="at">high =</span> <span class="st">"red"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + # Rotate x-axis labels</span></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#theme_minimal() +</span></span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Correlation Matrix"</span>, <span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(cor_matrix, <span class="co">#correlation matrix</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">method =</span> <span class="st">"color"</span>, <span class="co">#show coloured blocks</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">is.corr =</span> <span class="cn">TRUE</span>, <span class="co">#input matrix is a correlation matrix</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">type =</span> <span class="st">"upper"</span>, <span class="co">#show only upper diagonal of correlogram</span></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">order =</span> <span class="st">"AOE"</span>, <span class="co">#Hierarchical clustering order</span></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">hclust.method =</span> <span class="st">"average"</span>, <span class="co">#using the average linkage distance measure</span></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">addCoef.col =</span> <span class="st">"black"</span>, <span class="co">#show numerical value of coefficient</span></span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">"black"</span>, <span class="co">#text color of data label</span></span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.cex =</span> <span class="fl">0.5</span>, <span class="co">#text size of data label</span></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">rect.lwd =</span> <span class="dv">3</span>,<span class="co">#text size of data label</span></span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.srt =</span> <span class="dv">90</span>, <span class="co">#text rotation of data label</span></span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">cl.cex =</span> <span class="dv">1</span>, <span class="co">#text size of color-legend label</span></span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">number.cex =</span> <span class="fl">0.5</span>, <span class="co">#text size of correlation coefficient</span></span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">diag =</span> <span class="cn">FALSE</span>, <span class="co">#hide coefficient on the principal diagonal</span></span>
+<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(cor_matrix, <span class="co">#correlation matrix</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">method =</span> <span class="st">"color"</span>, <span class="co">#show coloured blocks</span></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">is.corr =</span> <span class="cn">TRUE</span>, <span class="co">#input matrix is a correlation matrix</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">type =</span> <span class="st">"upper"</span>, <span class="co">#show only upper diagonal of correlogram</span></span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">order =</span> <span class="st">"hclust"</span>, <span class="co">#Hierarchical clustering order</span></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">hclust.method =</span> <span class="st">"average"</span>, <span class="co">#using the average linkage distance measure</span></span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">addCoef.col =</span> <span class="st">"black"</span>, <span class="co">#show numerical value of coefficient</span></span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">"black"</span>, <span class="co">#text color of data label</span></span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.cex =</span> <span class="fl">0.5</span>, <span class="co">#text size of data label</span></span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">rect.lwd =</span> <span class="dv">3</span>,<span class="co">#text size of data label</span></span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.srt =</span> <span class="dv">90</span>, <span class="co">#text rotation of data label</span></span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">cl.cex =</span> <span class="dv">1</span>, <span class="co">#text size of color-legend label</span></span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">number.cex =</span> <span class="fl">0.5</span>, <span class="co">#text size of correlation coefficient</span></span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">diag =</span> <span class="cn">FALSE</span>, <span class="co">#hide coefficient on the principal diagonal</span></span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Based on feature correlation and clustering, merge bone subcategories into its categories:</strong></p>
+<ul>
+<li><p><em>“Vertebra”= {“Cervical”, “Thoracic”, “Lumbar”, “Sacrum”,“Rib”}</em></p></li>
+<li><p><em>“Arm” = {“Humerus”, “Radius”, “Ulna”}</em></p></li>
+<li><p><em>“Leg” = {“Femur”, “Tibia”, “Fibula” }</em></p></li>
+<li><p><em>“Extremities”: {“Carpal”, “Tarsal</em>”, “Hand..metacarpals…manual.phalanges.”, “Foot..metatarsals…pedal.phal</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Define data_cor data set</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>data_cor <span class="ot">=</span> <span class="fu">merge_bone_cat_by_mean</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Define list of data sets to work with:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>list_of_dfs <span class="ot">&lt;-</span> <span class="fu">list</span>(data, data[columns_rf_sup] , data[columns_rf], data_cor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="dimension-reduction-1" class="level3">
+<h3 class="anchored" data-anchor-id="dimension-reduction-1">Dimension Reduction</h3>
+<p><strong>PCA</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>data_pca <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">all_of</span>(columns_to_count))</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(data_pca, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>X_pca <span class="ot">&lt;-</span> pca_result<span class="sc">$</span>x[,<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>X_pca</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                        PC1         PC2         PC3         PC4
+Hummingbird_Pueblo_Pueblo_I     -2.17525237 -0.20116647 -0.44371571  0.73128733
+Pottery_Mound_Pueblo_IV         -2.54066675 -0.54951341 -0.40474850  0.12934309
+Kuaua_Pueblo_Pueblo_IV          -1.27142032  0.33079866  0.07451960 -0.13091318
+Dolni_Vestonice_I_DV_3          -2.13893498 -0.13611788  0.43646660 -0.65491423
+Dolni_Vestonice_IITriple_Burial -1.81367791  0.54100939  0.68463552 -0.96506124
+Skhul_Layer_B                    0.15981501  1.08651398  0.59312839  0.52339163
+Qafzeh_Couche_XVII              -0.30343891 -0.40075763 -2.59888019  3.52323190
+Regourdou                       -2.64513321 -0.62935625 -0.09807172  0.60922485
+La_Chapelle_aux_Saints          -1.17238533  0.48686679  1.43162776 -1.47876923
+Tabun_Layer_C                   -0.01067888  1.55973434 -1.74041750  2.45977147
+Shanidar_Layer_D_Upper          -0.93250433  1.16501742 -0.35969863 -0.06482410
+Shanidar_Layer_D_Lower          -0.43181269  0.32093455  0.30989148  0.04596408
+Kebara_Couche_XII               -3.96811620 -1.65520536  1.72008335 -0.75826688
+Fontbregoua_H1                   4.72868640 -1.06522738 -0.64068660 -2.20191001
+Fontbregoua_H3                   3.25671869  2.93419184  4.86973533  2.48797769
+Gran_Dolina_TD6                  1.29450160 -4.82514641 -0.43866804  0.18331709
+El_Mirador_MIR4A                 3.43212258 -0.50883779 -0.90645287 -2.60582174
+Gough's_Cave                     2.02074223  0.46100717  3.09774097  0.23109855
+5MT_3                            0.65184547 -0.67278546 -1.15252248  0.55649918
+5MT_10010_Feature_3             -1.10811273 -0.71967669  1.39693545 -0.38744594
+El_Miron                        -2.68620409 -1.37439334 -3.84611726 -0.52988252
+La_Tolita_Cama_de_Huesos         1.98996110  3.01420850  0.46728914  0.77578302
+Crow_Creek                      -1.77266975  2.86427349  1.04426519 -2.88420520
+Krapina                          1.78003827 -0.08321550 -0.18824061 -1.22705372
+Liang_Bua_Layer_R                1.18498827  1.51192341 -2.97705122  2.75603834
+Liang_Bua_Layer_OQ               0.01447786 -7.91888349  2.98009572  1.69883269
+Dmanisi_Layer_B1y                4.67783973 -2.14169405 -2.40900733 -2.76697674
+Malapa                           0.83706518 -0.01730394 -0.28464103  2.19227992
+AL_333                           3.52524845 -0.13806030 -0.76162420  0.73206643
+Unscavenged_human_corpses_WA    -2.67308432 -0.35445736 -0.09906420  0.16425002
+Scavenged_human_corpses_WA      -2.44858504  0.46722350 -0.37223559 -1.35794012
+Scavenged_human_corpses_NM       0.26632956  1.28788265  0.43057291 -2.32049653
+Scavenged_human_corpse_NC       -1.06809208  2.09969788 -2.47307034 -0.82784216
+Mapungubwe_leopard_kills        -0.71075664  1.24789321  0.97411600 -0.28209282
+Leopard_refuse                   0.87519994  1.44484883  0.95981310  0.74681861
+Misgrot_Cave                    -0.09899537 -0.08560347  1.52512679 -0.28364049
+Dinaledi                         1.27494161  0.65337660 -0.80112927  1.18088096
+                                         PC5         PC6
+Hummingbird_Pueblo_Pueblo_I      0.008034339 -0.82130841
+Pottery_Mound_Pueblo_IV          0.351753927  0.53145333
+Kuaua_Pueblo_Pueblo_IV           0.423864633  0.70916384
+Dolni_Vestonice_I_DV_3           0.355539848  0.32068912
+Dolni_Vestonice_IITriple_Burial  0.551846316 -0.83963049
+Skhul_Layer_B                    0.079229196 -0.47675685
+Qafzeh_Couche_XVII              -0.152005197  1.00102360
+Regourdou                        0.748293073 -1.28451525
+La_Chapelle_aux_Saints           0.655807320  1.09520474
+Tabun_Layer_C                    0.380989950 -1.74346656
+Shanidar_Layer_D_Upper          -0.637852889  0.65216993
+Shanidar_Layer_D_Lower          -1.048154529  0.75852111
+Kebara_Couche_XII                0.392049445 -3.02510621
+Fontbregoua_H1                   0.304260348 -1.25229470
+Fontbregoua_H3                   0.386859274  0.49462236
+Gran_Dolina_TD6                  4.653877690  1.63038116
+El_Mirador_MIR4A                -3.016523684 -0.49811426
+Gough's_Cave                     1.161612978 -0.17725245
+5MT_3                            1.646852021 -0.98810168
+5MT_10010_Feature_3             -0.462063115 -0.02968625
+El_Miron                        -1.585272186  0.95691299
+La_Tolita_Cama_de_Huesos        -0.292469333 -0.10313365
+Crow_Creek                      -0.432248176  0.31787774
+Krapina                         -0.132301789  0.34425050
+Liang_Bua_Layer_R               -0.924827861 -0.04147848
+Liang_Bua_Layer_OQ              -3.026423529  1.06294519
+Dmanisi_Layer_B1y                0.711564208 -1.05912997
+Malapa                          -0.577448136 -3.00733340
+AL_333                          -0.237184019  0.38570223
+Unscavenged_human_corpses_WA    -0.314948846  0.15911868
+Scavenged_human_corpses_WA       0.358900838 -0.56767020
+Scavenged_human_corpses_NM      -0.490136201  0.43097729
+Scavenged_human_corpse_NC        0.757054063  2.03634582
+Mapungubwe_leopard_kills        -0.370098510  0.66727152
+Leopard_refuse                  -0.507361649  1.43745486
+Misgrot_Cave                     0.119862768  0.22237420
+Dinaledi                         0.159067415  0.70051863</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Plot 3D pca</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>df_X_pca <span class="ot">=</span> <span class="fu">as.data.frame</span>(X_pca)</span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(df_X_pca,<span class="at">x=</span><span class="sc">~</span>PC1,<span class="at">y=</span><span class="sc">~</span>PC2,<span class="at">z=</span><span class="sc">~</span>PC3, <span class="at">color =</span> <span class="sc">~</span>label, <span class="at">type =</span> <span class="st">'scatter3d'</span>, <span class="at">mode =</span> <span class="st">'markers'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors
+
+Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-25cd45d4094001b9c8a5" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-25cd45d4094001b9c8a5">{"x":{"visdat":{"21b86d595512":["function () ","plotlyVisDat"]},"cur_data":"21b86d595512","attrs":{"21b86d595512":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"PC1"},"yaxis":{"title":"PC2"},"zaxis":{"title":"PC3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[4.7286863973873867,3.2567186930362664,1.2945015974450746,3.432122575822341,2.0207422276151612,0.65184546662066811,-1.1081127261408477,1.9899611001165733,-1.7726697496079504,1.7800382666155377],"y":[-1.0652273759240616,2.9341918421327335,-4.8251464146873841,-0.50883778872075147,0.46100716584602536,-0.67278546322858979,-0.71967668682833008,3.014208503011043,2.8642734894663229,-0.083215501345228274],"z":[-0.64068659635244263,4.8697353312690268,-0.4386680448998953,-0.9064528725235137,3.0977409679372743,-1.1525224842753645,1.3969354517303183,0.46728914230934654,1.044265194658792,-0.18824061388308513],"mode":"markers","type":"scatter3d","name":"Hominin cannibalism/ secondary interment","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[-0.7107566403508877,0.87519994199230666],"y":[1.2478932072455349,1.4448488317624117],"z":[0.97411599597029963,0.95981310405306397],"mode":"markers","type":"scatter3d","name":"Leopard refuse","marker":{"color":"rgba(239,150,106,1)","line":{"color":"rgba(239,150,106,1)"}},"textfont":{"color":"rgba(239,150,106,1)"},"error_y":{"color":"rgba(239,150,106,1)"},"error_x":{"color":"rgba(239,150,106,1)"},"line":{"color":"rgba(239,150,106,1)"},"frame":null},{"x":[-0.098995365471868838],"y":[-0.085603471671401019],"z":[1.5251267871621024],"mode":"markers","type":"scatter3d","name":"Natural Baboon accumulation","marker":{"color":"rgba(178,156,177,1)","line":{"color":"rgba(178,156,177,1)"}},"textfont":{"color":"rgba(178,156,177,1)"},"error_y":{"color":"rgba(178,156,177,1)"},"error_x":{"color":"rgba(178,156,177,1)"},"line":{"color":"rgba(178,156,177,1)"},"frame":null},{"x":[1.184988271259698,0.014477856693401264,4.6778397257227553,0.83706517569158867,3.5252484491278673],"y":[1.5119234121495921,-7.9188834911260368,-2.141694048310038,-0.017303942193939898,-0.13806030289907129],"z":[-2.9770512239083975,2.980095721221895,-2.4090073282242468,-0.28464103299852878,-0.76162419672278814],"mode":"markers","type":"scatter3d","name":"Nonanthropogenic hominin accumulation","marker":{"color":"rgba(201,148,198,1)","line":{"color":"rgba(201,148,198,1)"}},"textfont":{"color":"rgba(201,148,198,1)"},"error_y":{"color":"rgba(201,148,198,1)"},"error_x":{"color":"rgba(201,148,198,1)"},"line":{"color":"rgba(201,148,198,1)"},"frame":null},{"x":[1.2749416085787864],"y":[0.65337659590840735],"z":[-0.80112927356536634],"mode":"markers","type":"scatter3d","name":"Possible hominin deliberate disposal","marker":{"color":"rgba(205,180,144,1)","line":{"color":"rgba(205,180,144,1)"}},"textfont":{"color":"rgba(205,180,144,1)"},"error_y":{"color":"rgba(205,180,144,1)"},"error_x":{"color":"rgba(205,180,144,1)"},"line":{"color":"rgba(205,180,144,1)"},"frame":null},{"x":[0.15981501130741249,-0.30343891357863129,-2.6451332095321161,-1.1723853289747048,-0.01067888318522027,-0.93250433125826515,-0.43181269015564094,-3.9681162047413019,-2.6862040930184716],"y":[1.0865139773925145,-0.4007576310320462,-0.6293562512623222,0.48686678592383942,1.5597343442659615,1.1650174181048563,0.32093455069412558,-1.6552053610652964,-1.3743933446604275],"z":[0.59312838882121588,-2.5988801895058833,-0.098071717790323865,1.4316277591139503,-1.7404174998295157,-0.35969862838055472,0.30989147681167334,1.7200833488365928,-3.8461172571521534],"mode":"markers","type":"scatter3d","name":"Possible Primary hominin interment","marker":{"color":"rgba(202,217,72,1)","line":{"color":"rgba(202,217,72,1)"}},"textfont":{"color":"rgba(202,217,72,1)"},"error_y":{"color":"rgba(202,217,72,1)"},"error_x":{"color":"rgba(202,217,72,1)"},"line":{"color":"rgba(202,217,72,1)"},"frame":null},{"x":[-2.1752523727448936,-2.5406667544437402,-1.2714203226492342,-2.138934980794243,-1.8136779083635293],"y":[-0.20116646726279308,-0.54951341092101902,0.33079865520900564,-0.13611788372521205,0.5410093860746279],"z":[-0.44371570848714792,-0.40474850241204435,0.07451960013951861,0.43646660099312873,0.68463551839671954],"mode":"markers","type":"scatter3d","name":"Primary hominin interment","marker":{"color":"rgba(250,212,80,1)","line":{"color":"rgba(250,212,80,1)"}},"textfont":{"color":"rgba(250,212,80,1)"},"error_y":{"color":"rgba(250,212,80,1)"},"error_x":{"color":"rgba(250,212,80,1)"},"line":{"color":"rgba(250,212,80,1)"},"frame":null},{"x":[-2.4485850437155858,0.26632955701562322,-1.0680920829102851],"y":[0.46722349567378452,1.2878826534317425,2.099697880911449],"z":[-0.37223558874238816,0.43057291075426635,-2.4730703430840841],"mode":"markers","type":"scatter3d","name":"Scavenged human corpses","marker":{"color":"rgba(223,194,152,1)","line":{"color":"rgba(223,194,152,1)"}},"textfont":{"color":"rgba(223,194,152,1)"},"error_y":{"color":"rgba(223,194,152,1)"},"error_x":{"color":"rgba(223,194,152,1)"},"line":{"color":"rgba(223,194,152,1)"},"frame":null},{"x":[-2.6730843204110268],"y":[-0.3544573583400244],"z":[-0.099064197441463359],"mode":"markers","type":"scatter3d","name":"Unscavenged human corpses","marker":{"color":"rgba(179,179,179,1)","line":{"color":"rgba(179,179,179,1)"}},"textfont":{"color":"rgba(179,179,179,1)"},"error_y":{"color":"rgba(179,179,179,1)"},"error_x":{"color":"rgba(179,179,179,1)"},"line":{"color":"rgba(179,179,179,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform PCA</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(data_pca, <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate cumulative variance explained by each component</span></span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>var_explained <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(pca_result<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sum</span>(pca_result<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Optional: Create a scree plot to visualize the variance explained</span></span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(var_explained), <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">seq_along</span>(var_explained), <span class="at">y =</span> var_explained)) <span class="sc">+</span></span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb82-11"><a href="#cb82-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.95</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb82-12"><a href="#cb82-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Number of Principal Components"</span>) <span class="sc">+</span></span>
+<span id="cb82-13"><a href="#cb82-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Cumulative Variance Explained"</span>) <span class="sc">+</span></span>
+<span id="cb82-14"><a href="#cb82-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Scree Plot Showing Cumulative Variance Explained by PCA Components"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>LDA</strong></p>
+<p>bottom page</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'MASS'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:plotly':
+
+    select</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    select</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LDA</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>cols_lda <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(data), <span class="fu">c</span>(<span class="st">"Type"</span>,<span class="st">"Individuals"</span>, <span class="st">"Cluster_Pnas"</span>))</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>data_lda <span class="ot">&lt;-</span> data[cols_lda]</span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>lda_result <span class="ot">&lt;-</span> <span class="fu">lda</span>(AccumulationType <span class="sc">~</span> ., <span class="at">data =</span> data_lda)</span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>X_lda <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">predict</span>(lda_result, <span class="at">newdata =</span> data_lda)<span class="sc">$</span>x)</span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 3D scatter </span></span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(X_lda, <span class="at">x =</span> <span class="sc">~</span>LD1, <span class="at">y =</span> <span class="sc">~</span>LD2, <span class="at">z =</span> <span class="sc">~</span>LD3, <span class="at">color =</span> <span class="sc">~</span>data<span class="sc">$</span>AccumulationType, <span class="at">type =</span> <span class="st">'scatter3d'</span>, <span class="at">mode =</span> <span class="st">'markers'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-f1944b198b9350d7f5d0" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-f1944b198b9350d7f5d0">{"x":{"visdat":{"21b869cf1c68":["function () ","plotlyVisDat"]},"cur_data":"21b869cf1c68","attrs":{"21b869cf1c68":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"LD1"},"yaxis":{"title":"LD2"},"zaxis":{"title":"LD3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-2.0370520921173361,-3.1335990039454908,-0.8847446798898263,-1.1770212397103621,0.67861099887177367,-0.62596524602750003,-1.8773281405546536,-3.1087926673438071,-1.6213466884289964,-1.8776323527946366,0.19312345042141879,0.27174695512756541,-1.7637194052675558,-0.93076301896053049,-1.7738935018998629],"y":[-1.1337336452883076,-2.3795986755691838,-2.2166297712650409,-2.2620200183240362,-0.66215132045245806,-1.9344876924802856,-0.6321919495106747,-1.112998549214391,-1.4202132605682238,-1.6673365642439228,-2.7949372733986531,-0.066797624536309705,0.58404377012881525,-0.47061980007370324,-0.025999354728224136],"z":[-0.3797344063987258,0.44885100901020647,0.049465308216353622,0.88801050144338833,-0.2972904329953262,0.48208599109624595,-1.7418316087279806,0.55591092747608517,0.5925823958687888,1.3501554590857419,0.064865122067246664,-0.560127378006543,-0.46781638974109846,0.67461400101071578,0.21233133009966229],"mode":"markers","type":"scatter3d","name":"Burial","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[2.4102869748270743,2.4508819634655028,2.7050209581555236,1.212388398462741,3.8993019565444671,2.997389397117709,1.5817718298525572,2.1719711720776482,3.4687237097048693,1.4551918640603865],"y":[-0.06213588219578367,1.2497317722807351,0.51633369734061862,1.1070555848733541,0.62166127436308072,-1.0522767755612736,-0.8341453900683361,0.53876388324431457,-0.71076364795129743,0.19180745429025875],"z":[2.058088981087443,1.4316171780072724,1.1697523818355027,0.86675891619352763,1.7613748753933705,1.3516947883053825,-0.072566146477347104,-0.10731197514952764,-2.3342819394789847,1.0767004125700574],"mode":"markers","type":"scatter3d","name":"Cannibalism/Mass Grave","marker":{"color":"rgba(252,141,98,1)","line":{"color":"rgba(252,141,98,1)"}},"textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"rgba(252,141,98,1)"},"frame":null},{"x":[0.18385710493091537,1.8213667001270533,0.83070034680463278,2.4555439470032474,1.9152906151304869],"y":[-0.31307121085930434,1.0661759506963335,0.27974570618196348,-0.5707866875987393,-0.27819259493948229],"z":[-1.2196254555550357,-1.6830650082648775,-3.7286039536501741,-1.8270790352861874,-1.2540927661363961],"mode":"markers","type":"scatter3d","name":"Carnivore intervention","marker":{"color":"rgba(141,160,203,1)","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"frame":null},{"x":[-2.7135958160298843,-2.1235302454678946,-0.35506335064712624,-1.5416935119994137,-0.69308849710570364,-1.7880342704308401,-2.6763046140641595],"y":[3.1248881621549764,3.3972346849476756,3.3945771838536278,1.9285419056452042,2.9018718602207811,-0.52549060318415075,2.2241454017900302],"z":[-0.73324408743784997,0.65948834718765825,-0.031057997842968227,1.9314518032644412,0.43648329805197017,-0.69764441647220243,-0.9269100296498366],"mode":"markers","type":"scatter3d","name":"Non-human/ non-carnivore intervention","marker":{"color":"rgba(231,138,195,1)","line":{"color":"rgba(231,138,195,1)"}},"textfont":{"color":"rgba(231,138,195,1)"},"error_y":{"color":"rgba(231,138,195,1)"},"error_x":{"color":"rgba(231,138,195,1)"},"line":{"color":"rgba(231,138,195,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LDA</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>cols_lda <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(data), <span class="fu">c</span>(<span class="st">"AccumulationType"</span>,<span class="st">"Individuals"</span>, <span class="st">"Cluster_Pnas"</span>))</span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>data_lda <span class="ot">&lt;-</span> data[cols_lda]</span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>lda_result <span class="ot">&lt;-</span> <span class="fu">lda</span>(Type <span class="sc">~</span> ., <span class="at">data =</span> data_lda)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in lda.default(x, grouping, ...): variables are collinear</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>X_lda <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">predict</span>(lda_result, <span class="at">newdata =</span> data_lda)<span class="sc">$</span>x)</span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 3D scatter </span></span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(X_lda, <span class="at">x =</span> <span class="sc">~</span>LD1, <span class="at">y =</span> <span class="sc">~</span>LD2, <span class="at">z =</span> <span class="sc">~</span>LD3, <span class="at">color =</span> <span class="sc">~</span>data<span class="sc">$</span>Type, <span class="at">type =</span> <span class="st">'scatter3d'</span>, <span class="at">mode =</span> <span class="st">'markers'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-66b2fd47cf27529698c8" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-66b2fd47cf27529698c8">{"x":{"visdat":{"21b840543a74":["function () ","plotlyVisDat"]},"cur_data":"21b840543a74","attrs":{"21b840543a74":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"LD1"},"yaxis":{"title":"LD2"},"zaxis":{"title":"LD3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-0.45418740266495977,-1.9840321042606566,-1.5047095013544449,-1.822906654710323,-0.54494174497047221,-1.3744375531815134,-0.69356809591252,-2.2952612204559282,0.44975905244282882,-1.3426953946939797],"y":[0.95303921721235541,2.062687439087556,3.1773581862033953,3.4916083596973504,3.0884861837847688,3.7278736879919503,2.4198244659782588,2.5362280938138588,2.2446076975562019,1.6759851088652096],"z":[-1.9666025538584782,-1.5793127092505914,-1.1784950404723711,0.56712993782701449,-1.0901791114377648,-1.4663235697701062,-0.018606222037305664,-0.37035598494807342,-1.7611554877294231,-0.70031706847151953],"mode":"markers","type":"scatter3d","name":"Hominin cannibalism/ secondary interment","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[0.47600909537328967,0.74447607581263286],"y":[4.9043547856573246,4.9787792278562053],"z":[0.85163318059627469,2.4437206568253389],"mode":"markers","type":"scatter3d","name":"Leopard refuse","marker":{"color":"rgba(239,150,106,1)","line":{"color":"rgba(239,150,106,1)"}},"textfont":{"color":"rgba(239,150,106,1)"},"error_y":{"color":"rgba(239,150,106,1)"},"error_x":{"color":"rgba(239,150,106,1)"},"line":{"color":"rgba(239,150,106,1)"},"frame":null},{"x":[0.036319256368936376],"y":[-5.6244238915725058],"z":[1.9180229827004123],"mode":"markers","type":"scatter3d","name":"Natural Baboon accumulation","marker":{"color":"rgba(178,156,177,1)","line":{"color":"rgba(178,156,177,1)"}},"textfont":{"color":"rgba(178,156,177,1)"},"error_y":{"color":"rgba(178,156,177,1)"},"error_x":{"color":"rgba(178,156,177,1)"},"line":{"color":"rgba(178,156,177,1)"},"frame":null},{"x":[-5.0334245544037906,-5.7619570120873469,-6.1458976434976016,-4.5962796047699763,-5.5737000760719484],"y":[-3.1803797367527165,-2.7762467959128885,-2.1126257154523458,-0.68934474976066595,-2.0832983560617091],"z":[0.86754672643494901,0.6237509056048165,-0.21214441483286384,1.7152576089356166,-0.72294830214026862],"mode":"markers","type":"scatter3d","name":"Nonanthropogenic hominin accumulation","marker":{"color":"rgba(201,148,198,1)","line":{"color":"rgba(201,148,198,1)"}},"textfont":{"color":"rgba(201,148,198,1)"},"error_y":{"color":"rgba(201,148,198,1)"},"error_x":{"color":"rgba(201,148,198,1)"},"line":{"color":"rgba(201,148,198,1)"},"frame":null},{"x":[1.0911538423964275,2.0118143672469397,1.2731563649644422,2.6297122601190286,0.77045052150300541,3.3389647980775883,1.4519917376350204,1.067795264324606,0.61763188058988805],"y":[1.8241186144220176,0.47343609882796267,-1.4971875880994323,-0.2064932263945069,-1.14253158796947,1.2193780252560922,1.2446071117751116,-0.57768252324948732,-0.36862280666978364],"z":[2.4188605116050308,2.7600949474371332,2.1194309465343979,2.2062852752486228,1.5430972175485613,-1.3548109348988113,1.5418974487990165,1.5598566454951512,0.99215631486693523],"mode":"markers","type":"scatter3d","name":"Possible Primary hominin interment","marker":{"color":"rgba(202,217,72,1)","line":{"color":"rgba(202,217,72,1)"}},"textfont":{"color":"rgba(202,217,72,1)"},"error_y":{"color":"rgba(202,217,72,1)"},"error_x":{"color":"rgba(202,217,72,1)"},"line":{"color":"rgba(202,217,72,1)"},"frame":null},{"x":[-1.4189454167897118],"y":[-3.7503722090071046],"z":[0.195495937756335],"mode":"markers","type":"scatter3d","name":"Possible hominin deliberate disposal","marker":{"color":"rgba(205,180,144,1)","line":{"color":"rgba(205,180,144,1)"}},"textfont":{"color":"rgba(205,180,144,1)"},"error_y":{"color":"rgba(205,180,144,1)"},"error_x":{"color":"rgba(205,180,144,1)"},"line":{"color":"rgba(205,180,144,1)"},"frame":null},{"x":[3.7005627747265573,4.9019076222712403,3.0157959539139005,4.4310099500317808,3.0290268277748371],"y":[-2.87111345788606,-3.4967419862575713,-0.78192593877426386,-0.8942458195348445,-1.0077680858840425],"z":[-1.6521582742728518,-0.24230316978606459,-0.28720343072179438,-1.211870238895294,-2.8104804830727375],"mode":"markers","type":"scatter3d","name":"Primary hominin interment","marker":{"color":"rgba(250,212,80,1)","line":{"color":"rgba(250,212,80,1)"}},"textfont":{"color":"rgba(250,212,80,1)"},"error_y":{"color":"rgba(250,212,80,1)"},"error_x":{"color":"rgba(250,212,80,1)"},"line":{"color":"rgba(250,212,80,1)"},"frame":null},{"x":[2.709018830138219,-1.9271897575281249,0.5830721689488263],"y":[-1.4712527609744912,-1.683530753018442,-2.6112151116865614],"z":[-1.6964723674144659,-2.973967827814064,-2.0807656120163482],"mode":"markers","type":"scatter3d","name":"Scavenged human corpses","marker":{"color":"rgba(223,194,152,1)","line":{"color":"rgba(223,194,152,1)"}},"textfont":{"color":"rgba(223,194,152,1)"},"error_y":{"color":"rgba(223,194,152,1)"},"error_x":{"color":"rgba(223,194,152,1)"},"line":{"color":"rgba(223,194,152,1)"},"frame":null},{"x":[4.1445050926933185],"y":[-1.1953692030666923],"z":[1.0522355596256148],"mode":"markers","type":"scatter3d","name":"Unscavenged human corpses","marker":{"color":"rgba(179,179,179,1)","line":{"color":"rgba(179,179,179,1)"}},"textfont":{"color":"rgba(179,179,179,1)"},"error_y":{"color":"rgba(179,179,179,1)"},"error_x":{"color":"rgba(179,179,179,1)"},"line":{"color":"rgba(179,179,179,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p><strong>amend Dataframe list with X_pca[,c(1:6)] and X_lda</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>list_of_dfs <span class="ot">&lt;-</span> <span class="fu">list</span>(data, data[, columns_rf_sup], data[, columns_rf], data_cor, X_pca[, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>], X_lda)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="best-k-1" class="level3">
+<h3 class="anchored" data-anchor-id="best-k-1">Best K</h3>
+<p><strong>Ellbow method</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>cols_km <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(data), <span class="fu">c</span>(<span class="st">"Type"</span>,<span class="st">"AccumulationType"</span>,<span class="st">"Individuals"</span>, <span class="st">"Cluster_Pnas"</span>))</span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>data_km <span class="ot">&lt;-</span> data[cols_km]</span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create 10 models with 1 to 10 clusters</span></span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>kclusts <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">k =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="fu">map</span>(k, <span class="sc">~</span> <span class="fu">kmeans</span>(<span class="at">x =</span> data_km, <span class="at">centers =</span> .x, <span class="at">nstart =</span> <span class="dv">20</span>)),</span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">glanced =</span> <span class="fu">map</span>(model, glance)</span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(glanced))</span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a><span class="co"># View results</span></span>
+<span id="cb94-15"><a href="#cb94-15" aria-hidden="true" tabindex="-1"></a>kclusts<span class="sc">%&gt;%</span> </span>
+<span id="cb94-16"><a href="#cb94-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> k, <span class="at">y =</span> tot.withinss)) <span class="sc">+</span></span>
+<span id="cb94-17"><a href="#cb94-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb94-18"><a href="#cb94-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-58-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a><span class="co">#create plot of number of clusters vs total within sum of squares</span></span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(data_km, kmeans, <span class="at">method =</span> <span class="st">"wss"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-59-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Silhouette method</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(data_km, <span class="at">FUN=</span>kmeans, <span class="at">method =</span> <span class="st">"silhouette"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-60-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>gap_stat <span class="ot">&lt;-</span> <span class="fu">clusGap</span>(data_km, <span class="at">FUN =</span> kmeans, <span class="at">nstart =</span> <span class="dv">25</span>, <span class="at">K.max =</span> <span class="dv">10</span>, <span class="at">B =</span> <span class="dv">50</span>)</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_gap_stat</span>(gap_stat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-61-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="modeling-1" class="level3">
+<h3 class="anchored" data-anchor-id="modeling-1">Modeling</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Perform K-means clustering</span></span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)  </span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>kmeans_result <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(data_km, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">25</span>)  </span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a><span class="co"># The cluster assignments are stored in kmeans_result$cluster</span></span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a>sub_grp <span class="ot">&lt;-</span> kmeans_result<span class="sc">$</span>cluster</span>
+<span id="cb98-11"><a href="#cb98-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-12"><a href="#cb98-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the clusters</span></span>
+<span id="cb98-13"><a href="#cb98-13" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(<span class="fu">list</span>(<span class="at">data =</span> data_km, <span class="at">cluster =</span> sub_grp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-62-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="eval-1" class="level3">
+<h3 class="anchored" data-anchor-id="eval-1">Eval</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform K-means clustering on the training set</span></span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>) </span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>kmeans_result <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(data_km, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign test set points to nearest clusters</span></span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>get_nearest_cluster <span class="ot">&lt;-</span> <span class="cf">function</span>(point, centers) {</span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>  distances <span class="ot">&lt;-</span> <span class="fu">apply</span>(centers, <span class="dv">1</span>, <span class="cf">function</span>(center) <span class="fu">dist</span>(<span class="fu">rbind</span>(center, point)))</span>
+<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">which.min</span>(distances))</span>
+<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the function to each row in the test set</span></span>
+<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a>cluster_assignments_test <span class="ot">&lt;-</span> <span class="fu">apply</span>(sh, <span class="dv">1</span>, get_nearest_cluster, <span class="at">centers =</span> kmeans_result<span class="sc">$</span>centers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rbind(center, point): number of columns of result is not a multiple
+of vector length (arg 1)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in dist(rbind(center, point)): NAs introduced by coercion</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rbind(center, point): number of columns of result is not a multiple
+of vector length (arg 1)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in dist(rbind(center, point)): NAs introduced by coercion</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rbind(center, point): number of columns of result is not a multiple
+of vector length (arg 1)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in dist(rbind(center, point)): NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>sh_km <span class="ot">=</span> sh[cols_km] </span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the training and test sets for visualization</span></span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>combined_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(data_km, sh_km)</span>
+<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a>combined_clusters <span class="ot">&lt;-</span> <span class="fu">c</span>(kmeans_result<span class="sc">$</span>cluster, cluster_assignments_test)</span>
+<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize with fviz_cluster</span></span>
+<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(<span class="fu">list</span>(<span class="at">data =</span> combined_df, <span class="at">cluster =</span> combined_clusters))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ReMNAU_files/figure-html/unnamed-chunk-63-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

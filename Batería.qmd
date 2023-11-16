@@ -1,0 +1,72 @@
+---
+title: "Batería de pruevas"
+format: html
+---
+
+
+## Datasets
+
+1.  **%MAU**
+    1.  used (16)
+    2.  multivar (36)
+2.  **%MNAU**
+    1.  used (16)
+    2.  multivar (36)
+3.  **ReMNAU** 
+    1.  used (16)
+    2.  multivar (36)
+4.  (Maybe) **(1-3)-All hominins**
+
+[Definitions](#definitions)
+
+## Labels 
+
+
+
+## Feature Selection 
+- drop nan-Feature, drop-variance features, select feature importance RF, drop     high-correlation, RFE (supervised), (vs MDG, MAD, SHAP)
+ -  New features via dimension reduction: PCA, LDA
+ -merge bone categories
+ 
+## Oversampling (if (semi)supervised) 
+Resampling(Boostraping), SMOTE, ADASYN, SMOTE+(BorderlineSmote, KmeanSMOTE) ) + Stratified/NOt Stratified
+
+## Best K: Ellbow and Silhouette method
+
+## Modeling 
+    - unsupervised (+pca )
+    -   LDA/pca + unsupervised
+    -   supervised
+    -   LDA/PCA + supervised
+    -   "semi-supervised"
+    -   LDA/PCA + "semi-supervised"
+
+
+## Model Evel 
+    
+    - Silhouette score
+    - ?
+    
+    
+    
+
+<a id="definitions"></a> 
+# Definitions
+
+### MNI 
+
+### MNE
+
+### MAU
+
+**%MAU**
+
+$$\frac{MAU_i}{\max(MNE)}$$
+
+### MNAU (minimum number of anatomical units)
+
+MNAU: number of bones or bone portions preserved in sample divided by number of that bone or bone portion in a complete skeleton (Ref.:@Trinkaus 1985, Cannibalism and Burial at Krapina)
+
+**%MNAU** $$\frac{MNAU_i}{\max(MNI)}$$
+
+**ReMNAU** Relative MNAU $$||MNAU||_1 $$
