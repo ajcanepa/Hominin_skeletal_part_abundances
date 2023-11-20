@@ -1,9 +1,6 @@
 ---
 title: "testest"
-format: html
-project:
-  type: website
-  output-dir: docs
+format: pdf
 ---
 
 
