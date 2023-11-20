@@ -1,6 +1,6 @@
 ---
 title: "testest"
-format: pdf
+format: gfm
 ---
 
 
