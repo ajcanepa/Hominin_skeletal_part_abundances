@@ -56,8 +56,15 @@ MNAU
 %MNAU
 
 ReMNAU 
+$$
+\begin{split} \text{ReMAUI} & =||\text{MAUI} ||_1 =\text{Manhatten-Norm}(\frac{\text{MAU}}{\text{max(MNI)}}) \\ \\
 
-AcReMNAU 
+&  = \frac{ \frac{MAU}{max(MNE)}}{\sum \frac{MAU}{max(MNE)}} 
+	 = \frac{MAU}{\sum MAU}
+   = \frac{ \frac{MAU}{max(MNI)}}{\sum \frac{MAU}{max(MNI)}} \\ \\
+   & = \frac{MNAU}{\sum MNAU} =||MNAU||_1 = ReMNAU \end{split}
+$$
+
 
 ----
 
