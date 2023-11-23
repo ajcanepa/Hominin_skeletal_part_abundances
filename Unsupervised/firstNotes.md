@@ -300,11 +300,11 @@ Based on the importance/bias of the **absolute** MPA in the dataset, one
 way to 'eliminate' this is to normalize each sample, e.g. with the
 Manhattan norm:
 
-+-------------------------------+---------------------------------+
-| ![no_waves](no_waves.png)     | ![only_waves](only_waves.png)   |
-+===============================+=================================+
-|                               |                                 |
-+-------------------------------+---------------------------------+
++---------------------------------------------------------+--------------------------------------------------------+
+| ![no_waves](no_waves.png)                               | ![only_waves](only_waves.png)                          |
++=========================================================+========================================================+
+|                                                         |                                                        |
++---------------------------------------------------------+--------------------------------------------------------+
 
 The thought is that based on these signatures (almost type timeseries)
 we might get a better understanding of the origin of accumulation types.
