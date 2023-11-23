@@ -43,19 +43,27 @@ Where:
 
 ---
 
-MNI
+#### Definitions: 
 
-MNE
+**MNI**: Minimum Number of Individuals 
 
-MAU
+**MNE**: Minimum Number of Elements
 
-MNAU
+**MAU**: Minimum Animal Units
 
-%MAU
+**MNAU**: Minimal Number of Anatomic Units
 
-%MNAU
+**%MAU**:  MAU divided by max(MNE)
 
-ReMNAU 
+**%MNAU**:  MNAU divided by max(MNI)
+
+**ReMNAU**: Relative MNAU = || MNAU||_1
+
+**Accumulative ReMNAU** : 
+$$
+AcReMNAU_{i+1} = AcReMNAU_i + ReMNAU_{i+1}
+$$
+
 $$
 \begin{split} \text{ReMAUI} & =||\text{MAUI} ||_1 =\text{Manhatten-Norm}(\frac{\text{MAU}}{\text{max(MNI)}}) \\ \\
 
@@ -74,9 +82,9 @@ Based on the supplementary Information of the Pnas. We created 6 different datas
 
 **Method 1 (%MAU): **  As the Pnas, we used the "%MAU" column to create two data set. One with all 36 sample and one with only the 16 sample use in the final analysis of the Pnas. 
 
-**Method 2 (%MNAU):**  We 
+**Method 2 (%MNAU):**  We took the all hominin MAU row and divided each by it's corresponding number of Individuals based on the literature. 
 
-**Method 3 (ReMNAU):** Since 
+**Method 3 (ReMNAU):** We took the  all hominin MAU row and divided each though the column sum.
 
 **Features: **
 
@@ -182,9 +190,9 @@ The trained simple Neural Network (NN), Support vector machine (SVM), Decision t
 | KNN       | B2           | [0.14, 0.29, 0.14, **0.43**] |
 | RF        | B2           | [0.19, 0.12, 0.14, **0.54**] |
 
-  where we have the following cluster arrangements `['Pnas_Cluster A','Pnas_Cluster B1', 'Pnas_Cluster C', Pnas_Cluster B2]` for the predicted probabilities. 
+where we have the following cluster arrangements `['Pnas_Cluster A','Pnas_Cluster B1', 'Pnas_Cluster C', Pnas_Cluster B2]` for the predicted probabilities. 
 
-We implemented the same algorithms with the same validation metrics. We started by dividing the dataset into Train set, Validation set and Test set, where the Test set consists of only the SH. The rest was divided into a 25/75% split divided into Train and Validation. 
+We implemented the same algorithms with the same validation metrics. We started by dividing the dataset into train set, validation set and test set, where the test set consists of only the SH. The rest was divided with a 25/75% split into train and validation set. 
 
 Based on the resulting low class counts the only oversampling technique we used was random oversampling. We sampled each of the four classes to have 50 samples.  
 
@@ -252,27 +260,80 @@ Since the normalized MAU (relative MAU) samples are equal to the just relative M
 
 ### Corrections PNAS
 
-
+....
 
 ## Clustering Analysis
 
-Based on the 6 dataset discussed above 
+On the 6 datasets we defined above we performed clustering analysis using the primarily the *kmeans* algorithm. 
+
+We started by creating a train and test set, i.e. taking SH our of the dataset for the modeling process to not influence the result by the SH sample. 
+
+Once SH is taken out we start again with standardizing the data by centering it to a mean of zero and rescaling to ensure a standard deviation of one. 
+
+**Feature selection:**
+
+We perform two different feature selection with the RF algorithm on the database to select the most significant features.
+
+First we calculate feature importance based on the assemblage type label "Type" and select the seven most important features, with a cut off value of the mean decrease accuracy of 3.4. 
+
+The to limit the data leakage of the first method we perform the same method but where every sample is it's own label and chose the features with mean decrease accuracy > 2. 
+
+We create for each dataset, three new version base on the two FI methods to the most important PC (cut off 0.95 explain variance).  
+
+We calculate the best k for the K means, with the silhouette score, the elbow method and with theGap statistic, with a result between2 and 4. 
+
+In particular the whole dataset classifies the SH as test set into "Cluster 3" with "Kuaua", "(Un)Scave" & "Pottery Mound"
+
+![kmeans-16-allfeatures](C:\Users\jonas.grabbe\Downloads\kmeans-16-allfeatures.png)
+
+Further I performed a type of hyperparameter optimization maximizing the silhouette score for DBCAN, hclust and kmeans with silhouette score to up to a mean of 0.7.
 
 
+
+Next steps:  
 
 ### LDA
 
+Based on the promising results of LDA might want to use LDA feautures to train the clustering of classification model
 
-
-
+![newplot](C:\Users\jonas.grabbe\Downloads\newplot.png)
 
 ### Feature correlation 
 
+Based on the heatmap feature correlation, we would be interesting to investigte the effects of merging:
+
+    “Vertebra”= {“Cervical”, “Thoracic”, “Lumbar”, “Sacrum”,“Rib”}
+    
+    “Arm” = {“Humerus”, “Radius”, “Ulna”}
+    
+    “Leg” = {“Femur”, “Tibia”, “Fibula” }
+    
+    “Extremities”= {“Carpal”, “Tarsal”, “Hand..metacarpals…manual.phalanges.”, 			  	“Foot..metatarsals…pedal.phal}
 
 
 
 
 
+### ![Corr_Mtrix](C:\Users\jonas.grabbe\Pictures\Saved Pictures\Corr_Mtrix.png)
+
+
+
+
+
+# Supervised 
+
+Since labels are not exact nor << sample size, difficult to perform classification on the dataset.
+
+We will start with a baseline with these models 
+
+- RF
+- SVM
+- NN
+- DT
+- XGB
+- KNN
+
+with a variety of different labels. 
 
 
 

@@ -422,45 +422,47 @@ fviz_cluster(list(data = combined_df, cluster = combined_clusters))
 
 ```{r}
 # Load necessary libraries
-library(factoextra)
-library(cluster)
+#library(factoextra)
+#library(cluster)
 
 # List of dataframes for evaluation
-list_of_dfs <- list(data, data[, columns_rf_sup], data[, columns_rf], data_cor, X_pca[, 1:6])
+#list_of_dfs <- list(data_km, data[, columns_rf_sup], data[, columns_rf]
+                    #,data_cor
+#                    ,X_pca[, 1:6])
 
 # Number of clusters to evaluate
-k_values <- c(3, 4, 5)
+#k_values <- c(3, 4, 5)
 
 # List to store results
-results <- list()
+#results <- list()
 
 # Function to perform K-means clustering and evaluation
-perform_clustering <- function(data, k, method) {
-  set.seed(42)
-  kmeans_result <- kmeans(data, centers = k, nstart = 25, algorithm = method)
-  return(list(cluster = kmeans_result$cluster, centers = kmeans_result$centers))
-}
+#perform_clustering <- function(data, k, method) {
+#  set.seed(42)
+#  kmeans_result <- kmeans(data, centers = k, nstart = 25, algorithm = method)
+#  return(list(cluster = kmeans_result$cluster, centers = kmeans_result$centers))
+#}
 
 # Loop through each dataframe
-for (i in seq_along(list_of_dfs)) {
-  df <- list_of_dfs[[i]]
+#for (i in seq_along(list_of_dfs)) {
+#  df <- list_of_dfs[[i]]
   
   # Loop through each k value
-  for (k in k_values) {
+#  for (k in k_values) {
     # Try different initialization algorithms if available
-    for (method in c("Hartigan-Wong", "Lloyd", "MacQueen", "kmeans++")) {
-      clustering_result <- try(perform_clustering(df, k, method), silent = TRUE)
-      if (!inherits(clustering_result, "try-error")) {
+#    for (method in c("Hartigan-Wong", "Lloyd", "MacQueen", "kmeans++")) {
+#      clustering_result <- try(perform_clustering(df, k, method), silent = TRUE)
+#      if (!inherits(clustering_result, "try-error")) {
         # Store results
-        results[[paste("DataFrame", i, "K", k, "Method", method)]] <- clustering_result
-      }
-    }
-  }
-}
+#        results[[paste("DataFrame", i, "K", k, "Method", method)]] <- clustering_result
+#      }
+#    }
+#  }
+#}
 
 # Visualize the results for one of the combinations (example)
-fviz_cluster(list(data = list_of_dfs[[1]], cluster = results$'DataFrame 1 K 3 Method kmeans++'$cluster))
-results$`DataFrame 2 K 3 Method Hartigan-Wong`$cluster
+#fviz_cluster(list(data = list_of_dfs[[1]], cluster = results$'DataFrame 1 K 3 Method kmeans++'$cluster))
+#results$`DataFrame 2 K 3 Method Hartigan-Wong`$cluster
 ```
 
 r\)
@@ -988,7 +990,7 @@ library(dbscan)
 list_of_dfs <- list(data_km,data[, columns_rf_sup]
                     , data[, columns_rf]
                     #, data_cor 
-                    ,X_lda
+                    #,X_lda
                     ,X_pca[, 1:6]
                     )
 
