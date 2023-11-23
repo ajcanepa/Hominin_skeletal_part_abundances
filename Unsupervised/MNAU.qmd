@@ -431,7 +431,7 @@ library(dbscan)
 list_of_dfs <- list(data_km,data[, columns_rf_sup]
                     , data[, columns_rf]
                     #, data_cor 
-                    ,X_lda
+                    #,X_lda
                     ,X_pca[, 1:6]
                     )
 
@@ -831,7 +831,11 @@ bottom page
 **amend Dataframe list with X_pca\[,c(1:6)\] and X_lda**
 
 ```{R}
-list_of_dfs <- list(data, data[, columns_rf_sup], data[, columns_rf], data_cor, X_pca[, 1:6], X_lda)
+list_of_dfs <- list(data, data[, columns_rf_sup], data[, columns_rf]
+                    #,data_cor, 
+                    ,X_pca[, 1:6] 
+                    #,X_lda
+                    )
 ```
 
 ### Best K
@@ -933,7 +937,7 @@ library(dbscan)
 list_of_dfs <- list(data_km,data[, columns_rf_sup]
                     , data[, columns_rf]
                     #, data_cor 
-                    ,X_lda
+                    #,X_lda
                     ,X_pca[, 1:6]
                     )
 

@@ -19,15 +19,22 @@ divided by the number of elements expected *(Both complete and damaged
 bones are included in the element counts)*. (Hag. PhD Thesis 91)
 
 It can be quantified using the following formula: $$
-\text{Abundance} = [\text{Part Abundance}_1, ...,\text{Part Abundance}_n], \  \text{with} \  n = |\text{Distinkt Skeletal Parts} |
+\text{Abundance} = [\text{Part Abundance}_1, ...,\text{Part Abundance}_n], \  \text{with} \  n = |\text{Distinct Skeletal Parts} |
 $$ and $$
 \text{Part Abundance}_i = \frac{\text{Number of Recovered Elements}_i}{\text{Number of Expected Elements}_i}, \ \forall i \in \{ 1, ..., n \}.
-$$ Where: - **Number of Recovered Elements** is the count of a specific
-type of skeletal element (e.g., femur, skull) that has been recovered
-from the archaeological site. This includes both complete and damaged
-bones. - **Number of Expected Elements** is the estimated total count of
-that specific type of skeletal element that would be expected to be
-found in a typical assemblage of the same context or period.
+$$ Where:
+
+-   **Number of Recovered Elements** is the count of a specific type of
+    skeletal element (e.g., femur, skull) that has been recovered from
+    the archaeological site. This includes both complete and damaged
+    bones.
+
+```{=html}
+<!-- -->
+```
+-   **Number of Expected Elements** is the estimated total count of that
+    specific type of skeletal element that would be expected to be found
+    in a typical assemblage of the same context or period.
 
 **Mean abundance(MA):** is the average number of skeletal elements
 observed per archaeological assemblage, normalized against the expected
@@ -77,7 +84,7 @@ skeletal parts included in the analysis.
 
 **%MNAU**: MNAU divided by max(MNI)
 
-**ReMNAU**: Relative MNAU = \|\| MNAU\|\|\_1
+**ReMNAU**: Relative MNAU = ReMNAU = $|| MNAU||_1$
 
 **Accumulative ReMNAU** : $$
 AcReMNAU_{i+1} = AcReMNAU_i + ReMNAU_{i+1}
