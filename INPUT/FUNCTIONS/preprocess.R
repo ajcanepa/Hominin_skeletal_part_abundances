@@ -183,3 +183,102 @@ merge_bone_cat_by_mean <- function(data) {
   
   return(data)
 }
+
+
+############
+
+
+grid_cluster <-function(list_of_dfs){
+  
+  
+  # Number of clusters to evaluate for K-means
+  k_values <- c(2, 3, 4, 5,6,7,8)
+  
+  # Hyperparameters for DBSCAN (example ranges)
+  eps_values <- seq(0.1, 1, 0.2)
+  minPts_values <- c(5, 10, 15)
+  
+  # Parameters for hierarchical clustering
+  hclust_methods <- c("ward.D", "single", "complete", "average")
+  
+  # List to store results and best models
+  results <- list()
+  best_models <- list(kmeans = list(score = -Inf, model = NULL),
+                      dbscan = list(score = -Inf, model = NULL),
+                      hclust = list(score = -Inf, model = NULL))
+  
+  # Function to perform K-means clustering
+  perform_kmeans <- function(data, k, method) {
+    set.seed(42)
+    kmeans_result <- kmeans(data, centers = k, nstart = 25, algorithm = method)
+    silhouette_score <- mean(silhouette(kmeans_result$cluster, dist(data))[, 3])
+    return(list(cluster = kmeans_result$cluster, score = silhouette_score))
+  }
+  
+  # Function to perform DBSCAN clustering
+  perform_dbscan <- function(data, eps, minPts) {
+    # Perform DBSCAN clustering
+    dbscan_result <- dbscan::dbscan(data, eps = eps, minPts = minPts)
+    
+    # Exclude noise points (cluster = 0) from silhouette score calculation
+    valid_clusters <- dbscan_result$cluster[dbscan_result$cluster != 0]
+    valid_data <- data[dbscan_result$cluster != 0, ]
+    
+    # Check if there are valid clusters to avoid errors in silhouette calculation
+    if (length(unique(valid_clusters)) > 1) {
+      silhouette_score <- mean(silhouette(valid_clusters, dist(valid_data))[, 3])
+    } else {
+      # Assign a default low score if there's only one cluster or none
+      silhouette_score <- -1
+    }
+    
+    return(list(cluster = dbscan_result$cluster, score = silhouette_score))
+  }
+  
+  
+  # Function to perform hierarchical clustering
+  perform_hclust <- function(data, method, k) {
+    hc <- hclust(dist(data), method = method)
+    clusters <- cutree(hc, k = k)
+    silhouette_score <- mean(silhouette(clusters, dist(data))[, 3])
+    return(list(cluster = clusters, score = silhouette_score))
+  }
+  
+  # Loop through each dataframe
+  for (i in seq_along(list_of_dfs)) {
+    df <- list_of_dfs[[i]]
+    
+    # K-means
+    for (k in k_values) {
+      for (method in c("Hartigan-Wong", "Lloyd", "Forgy",
+                       "MacQueen")) {
+        result <- perform_kmeans(df, k, method)
+        if (result$score > best_models$kmeans$score) {
+          best_models$kmeans <- list(score = result$score, model = result$cluster, dataframe = i, k = k, method = method)
+        }
+      }
+    }
+    
+    # DBSCAN
+    for (eps in eps_values) {
+      for (minPts in minPts_values) {
+        result <- perform_dbscan(df, eps, minPts)
+        if (result$score > best_models$dbscan$score) {
+          best_models$dbscan <- list(score = result$score, model = result$cluster, dataframe = i, eps = eps, minPts = minPts)
+        }
+      }
+    }
+    
+    # Hierarchical Clustering
+    for (method in hclust_methods) {
+      for (k in k_values) {
+        result <- perform_hclust(df, method, k)
+        if (result$score > best_models$hclust$score) {
+          best_models$hclust <- list(score = result$score, model = result$cluster, dataframe = i, k = k, method = method)
+        }
+      }
+    }
+  }
+  
+  return(best_models)
+}
