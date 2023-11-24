@@ -1,0 +1,369 @@
+---
+title: "Batería de pruevas"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Required Libraries
+
+library(tidyverse) library(cluster)
+
+# Define your dataset and parameters
+
+data \<- your_dataset number_of_clusters \<- k \# Define your 'k' value
+
+# Initial Clustering (e.g., using K-means)
+
+initial_clusters \<- kmeans(data, centers = number_of_clusters)
+
+# Function to calculate silhouette scores
+
+calculate_silhouette \<- function(data, clusters) { \# Compute
+silhouette scores \# Return the scores }
+
+# Recursive Elimination Function
+
+recursive_elimination \<- function(data, threshold) { \# Implement the
+elimination logic \# Return the reduced dataset and average silhouette
+scores }
+
+# Plotting the results
+
+plot_silhouette_vs_samples \<- function(scores) { \# Use ggplot2 to
+create the plot }
+
+# Execution of the process
+
+scores \<- recursive_elimination(data, 2 \* number_of_clusters)
+plot_silhouette_vs_samples(scores)
+
+# Document the process in RMarkdown/Quarto
+
+```{r, message=FALSE, warning=FALSE}
+# Required Libraries
+set.seed(42)
+source("../INPUT/FUNCTIONS/preprocess.R")
+library(dplyr)
+library(rsample)
+library(recipes)
+library(randomForest)
+library(corrplot)
+library(tibble)
+library(purrr)
+library(reshape2)
+library(ggplot2)
+library(plotly)
+library(scatterplot3d)
+library(factoextra)
+library(cluster)
+library(tidyverse)
+```
+
+```{r}
+data <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Percentage_MAU.csv')
+data_multi <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Relative_MNAU.csv')
+```
+
+```{r}
+data = preprocess(data)
+row.names(data)
+```
+
+```{r}
+#split <- split_train_SH(data)
+
+#data <- split$train_data
+#sh <- split$sh_data
+
+
+# Store original row names of the datasets
+data_row_names <- rownames(data)
+#sh_row_names <- rownames(sh)
+data_col_names <- colnames(data)
+#sh_col_names <- colnames(sh)
+
+# Step 1: Create a recipe
+recipe <- recipe(~ ., data = data) %>%
+  step_normalize(all_predictors(), -all_of(c("Type", "AccumulationType", "Individuals")))
+
+# Step 2: Fit the recipe to the training set
+fitted_recipe <- prep(recipe, training = data)
+
+# Step 3: Apply the transformation to both training and test sets
+data_transformed <- bake(fitted_recipe, new_data = data)
+#sh_transformed <- bake(fitted_recipe, new_data = sh)
+
+# Reattach the row names
+rownames(data_transformed) <- data_row_names
+#rownames(sh_transformed) <- sh_row_names
+col.names(data_transformed) <- data_col_names
+#col.names(sh_transformed) <- sh_col_names
+
+data <- data_transformed
+sh <- sh_transformed
+```
+
+```{r}
+library(cluster)
+library(broom)
+set.seed(42)
+cols_km <- setdiff(names(data), c("Type","AccumulationType","Individuals", "Cluster_Pnas"))
+data_km <- data[cols_km]
+```
+
+```{r}
+library(cluster)
+library(broom)
+set.seed(42)
+cols_km <- setdiff(names(data), c("Type","AccumulationType","Individuals", "Cluster_Pnas"))
+data_km <- data[cols_km]
+
+# Load necessary libraries
+library(factoextra)
+library(cluster)
+
+#Perform K-means clustering
+set.seed(42)  
+kmeans_result <- kmeans(data_km, centers = 8, nstart = 25)  
+
+# The cluster assignments are stored in kmeans_result$cluster
+sub_grp <- kmeans_result$cluster
+
+# Visualize the clusters
+fviz_cluster(list(data = data_km, cluster = sub_grp))
+```
+
+```{r}
+calculate_silhouette <- function(data, clusters) {
+  # Convert cluster assignments to numeric
+  cluster_vector <- as.numeric(as.character(clusters$cluster))
+
+  # Ensure the data passed to dist() is numeric
+  numeric_data <- data %>% select_if(~is.numeric(.))
+
+  # Compute silhouette scores
+  sil_scores <- silhouette(cluster_vector, dist(numeric_data))
+
+  # Extract the silhouette width values
+  sil_widths <- sil_scores[, 'sil_width']
+
+  return(sil_widths)
+}
+
+
+
+```
+
+```{r}
+calculate_silhouette(data_km,clusters=clusters)
+```
+
+```{r}
+ # Initial Clustering (for example, using K-means)
+  k <- 3  # Example number of clusters, adjust as needed
+  clusters <- kmeans(data_km, centers = k)
+
+  # Variable to hold average silhouette scores
+  avg_sil_scores <- numeric()
+```
+
+```{r}
+recursive_elimination <- function(data, threshold, number_of_clusters) {
+  require(dplyr)
+
+  # Initial Clustering (for example, using K-means)
+  k <- number_of_clusters  # Example number of clusters, adjust as needed
+  clusters <- kmeans(data, centers = k)
+
+  # Variable to hold average silhouette scores
+  avg_sil_scores <- numeric()
+
+  while (nrow(data) > threshold) {
+    # Calculate silhouette scores
+    sil_widths <- calculate_silhouette(data, clusters)
+    
+    # Record the average silhouette score
+    avg_sil_scores <- c(avg_sil_scores, mean(sil_widths))
+    
+    # Identify the sample with the lowest silhouette score
+    worst_sample_idx <- which.min(sil_widths)
+    
+    # Remove the worst sample
+    data <- data[-worst_sample_idx, ]
+    
+    # Update clustering with the reduced dataset
+    clusters <- kmeans(data, centers = k)
+  }
+
+  return(list(reduced_data = data, avg_silhouette_scores = avg_sil_scores))
+}
+
+```
+
+```{r}
+library(ggplot2)
+
+plot_silhouette_vs_samples <- function(scores) {
+  # Creating a data frame for ggplot
+  data_to_plot <- data.frame(
+    SampleSize = length(scores):1,  # Assuming each step reduces the sample size by 1
+    AvgSilhouetteScore = scores
+  )
+
+  # Plotting using ggplot
+  ggplot(data_to_plot, aes(x = SampleSize, y = AvgSilhouetteScore)) +
+    geom_line() +  # Line plot
+    geom_point() +  # Points to show each step
+    labs(title = "Average Silhouette Score vs. Sample Size",
+         x = "Sample Size",
+         y = "Average Silhouette Score") +
+    theme_minimal()
+}
+
+```
+
+# Recursive sample elimination maximizing the Silhouette Score
+
+```{r}
+# Load required libraries
+library(cluster)
+library(ggplot2)
+library(dplyr)
+
+# Define your dataset and parameters
+data <- data_for_clustering # Replace with your actual data
+number_of_clusters <-  # Define your 'k' value
+
+# Function to calculate silhouette scores
+calculate_silhouette <- function(data, clusters) {
+  cluster_vector <- as.factor(clusters$cluster)
+  sil_scores <- silhouette(cluster_vector, dist(data))
+  sil_widths <- sil_scores[, 'sil_width']
+  return(sil_widths)
+}
+
+# Recursive Elimination Function
+recursive_elimination <- function(data, threshold,  number_of_clusters) {
+  clusters <- kmeans(data, centers = number_of_clusters)
+  avg_sil_scores <- numeric()
+
+  while (nrow(data) > threshold) {
+    sil_widths <- calculate_silhouette(data, clusters)
+    avg_sil_scores <- c(avg_sil_scores, mean(sil_widths))
+    worst_sample_idx <- which.min(sil_widths)
+    data <- data[-worst_sample_idx, ]
+    clusters <- kmeans(data, centers = number_of_clusters)
+  }
+
+  return(list(reduced_data = data, avg_silhouette_scores = avg_sil_scores))
+}
+
+# Plotting the results
+plot_silhouette_vs_samples <- function(scores) {
+  data_to_plot <- data.frame(
+    SampleSize = length(scores):1,
+    AvgSilhouetteScore = scores
+  )
+  ggplot(data_to_plot, aes(x = SampleSize, y = AvgSilhouetteScore)) +
+    geom_line() + geom_point() +
+    labs(title = "Average Silhouette Score vs. Sample Size",
+         x = "Sample Size", y = "Average Silhouette Score") +
+    theme_minimal()
+}
+
+# Execution of the process
+result <- recursive_elimination(data, 2 * number_of_clusters,  number_of_clusters)
+scores <- result$avg_silhouette_scores
+plot_silhouette_vs_samples(scores)
+```
+
+```{r}
+# Load required libraries
+library(cluster)
+library(ggplot2)
+library(dplyr)
+
+# Define your dataset and parameters
+data <- data_for_clustering # Replace with your actual data
+initial_sample_size <- nrow(data)
+number_of_clusters <-  3# Define your 'k' value
+
+calculate_silhouette <- function(data, clusters) {
+  # Convert cluster assignments to numeric
+  cluster_vector <- as.numeric(as.character(clusters$cluster))
+
+  # Ensure the data passed to dist() is numeric
+  numeric_data <- data %>% select_if(~is.numeric(.))
+
+  # Compute silhouette scores
+  sil_scores <- silhouette(cluster_vector, dist(numeric_data))
+
+  # Extract the silhouette width values
+  sil_widths <- sil_scores[, 'sil_width']
+
+  return(sil_widths)
+}
+
+# Recursive Elimination Function
+recursive_elimination <- function(data, threshold) {
+  clusters <- kmeans(data, centers = number_of_clusters)
+  avg_sil_scores <- numeric()
+
+  while (nrow(data) > threshold) {
+    sil_widths <- calculate_silhouette(data, clusters)
+    avg_sil_scores <- c(avg_sil_scores, mean(sil_widths))
+    worst_sample_idx <- which.min(sil_widths)
+    data <- data[-worst_sample_idx, ]
+    clusters <- kmeans(data, centers = number_of_clusters)
+  }
+
+  return(list(reduced_data = data, avg_silhouette_scores = avg_sil_scores))
+}
+
+
+plot_silhouette_vs_samples <- function(scores, initial_sample_size, k) {
+  # Calculate the sequence for Sample Sizes
+  # It starts from the initial sample size and ends at 2*k, decrementing by 1 each time
+  sample_sizes <- seq(initial_sample_size, 2 * k, length.out = length(scores))
+
+  # Creating the data frame for plotting
+  data_to_plot <- data.frame(
+    SampleSize = sample_sizes,
+    AvgSilhouetteScore = scores
+  )
+
+  # Plotting using ggplot
+  ggplot(data_to_plot, aes(x = SampleSize, y = AvgSilhouetteScore)) +
+    geom_line() + geom_point() +
+    labs(title = "Average Silhouette Score vs. Sample Size",
+         x = "Sample Size", y = "Average Silhouette Score") +
+    theme_minimal()
+}
+
+
+# Execution of the process
+result <- recursive_elimination(data_for_clustering, 2 * number_of_clusters ,  number_of_clusters)
+scores <- result$avg_silhouette_scores
+plot_silhouette_vs_samples(scores, initial_sample_size, number_of_clusters)
+
+```
+
+```{r}
+# Ensure data is suitable for clustering
+# If data contains factors, either convert them to numeric or exclude them
+data_for_clustering <- data_km %>%
+  select_if(~is.numeric(.))  # This selects only numeric columns
+
+# Proceed with clustering and analysis using data_for_clustering
+initial_clusters <- kmeans(data_for_clustering, centers = number_of_clusters)
+
+# Modify the rest of the code to use data_for_clustering instead of data
+# ...
+
+```
+
+```{r}
+scores
+```
