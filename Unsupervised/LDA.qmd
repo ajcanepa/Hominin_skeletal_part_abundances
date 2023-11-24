@@ -1,0 +1,242 @@
+---
+title: "Batería de pruevas"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r message=FALSE, warning=FALSE}
+
+# Required Libraries
+set.seed(42)
+source("../INPUT/FUNCTIONS/preprocess.R")
+library(dplyr)
+library(rsample)
+library(recipes)
+library(randomForest)
+library(corrplot)
+library(tibble)
+library(purrr)
+library(reshape2)
+library(ggplot2)
+library(plotly)
+library(scatterplot3d)
+library(factoextra)
+library(cluster)
+```
+
+```{r}
+data_u_mau <- read.csv('../Input/DATA/Summary_Dataset_Used_Percentage_MAU.csv')
+data_m_mau <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Percentage_MAU.csv')
+
+data_u_mnau <- read.csv('../Input/DATA/Summary_Dataset_Used_Percentage_MNAU.csv')
+data_m_mnau <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Percentage_MNAU.csv')
+
+data_u_remnau <- read.csv('../Input/DATA/Summary_Dataset_Used_Relative_MNAU.csv')
+data_m_remnau <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Relative_MNAU.csv')
+```
+
+```{r}
+data_m_mau = preprocess(data_m_mau)
+```
+
+```{r}
+# Store original row names of the datasets
+data_row_names <- rownames(data_m_mau)
+#sh_row_names <- rownames(sh)
+
+# Step 1: Create a recipe
+recipe <- recipe(~ ., data = data_m_mau) %>%
+  step_normalize(all_predictors(), -all_of(c("Type", "AccumulationType", "Individuals"
+                                             #, "Cluster_Pnas"
+                                             )))
+
+# Step 2: Fit the recipe to the training set
+fitted_recipe <- prep(recipe, training = data_m_mau)
+
+# Step 3: Apply the transformation to both training and test sets
+data_transformed <- bake(fitted_recipe, new_data = data_m_mau)
+#sh_transformed <- bake(fitted_recipe, new_data = sh)
+
+# Reattach the row names
+rownames(data_transformed) <- data_row_names
+#rownames(sh_transformed) <- sh_row_names
+```
+
+```{r, warning=FALSE}
+library(MASS)
+
+# LDA
+cols_lda <- setdiff(names(data), c("Type","Individuals", "Cluster_Pnas"))
+data_lda <- data[cols_lda]
+lda_result <- lda(AccumulationType ~ ., data = data_lda)
+X_lda <- as.data.frame(predict(lda_result, newdata = data_lda)$x)
+
+# Create a 3D scatter 
+plot_ly(X_lda, x = ~LD1, y = ~LD2, z = ~LD3, color = ~data$AccumulationType, type = 'scatter3d', mode = 'markers')
+```
+
+```{r}
+# LDA
+cols_lda <- setdiff(names(data), c("AccumulationType","Individuals", "Cluster_Pnas"))
+data_lda <- data[cols_lda]
+lda_result <- lda(Type ~ ., data = data_lda)
+X_lda <- as.data.frame(predict(lda_result, newdata = data_lda)$x)
+
+# Create a 3D scatter 
+plot_ly(X_lda, x = ~LD1, y = ~LD2, z = ~LD3, color = ~data$Type, type = 'scatter3d', mode = 'markers')
+```
+
+```{r}
+library(cluster)
+library(factoextra)
+
+#create plot of number of clusters vs total within sum of squares
+fviz_nbclust(X_lda, kmeans, method = "wss")
+```
+
+```{r}
+fviz_nbclust(X_lda, FUN=kmeans, method = "silhouette")
+```
+
+```{r}
+gap_stat <- clusGap(X_lda, FUN = kmeans, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+```
+
+```{r}
+# Load necessary libraries
+library(factoextra)
+library(cluster)
+
+#Perform K-means clustering
+set.seed(42)  
+kmeans_result <- kmeans(X_lda, centers = 4, nstart = 25)  
+
+# The cluster assignments are stored in kmeans_result$cluster
+sub_grp <- kmeans_result$cluster
+
+# Visualize the clusters
+fviz_cluster(list(data = X_lda, cluster = sub_grp))
+```
+
+```{r}
+library(plotly)
+
+# Assuming you have already performed kmeans as in your provided code
+# Select three columns for the 3D plot (replace col1, col2, col3 with actual column names)
+col1 <- 1   # Replace with actual column name
+col2 <- 2  # Replace with actual column name
+col3 <- 3  # Replace with actual column name
+
+# Create a 3D scatter plot
+plot_ly(data = X_lda, x = ~X_lda[,col1], y = ~X_lda[,col2], z = ~X_lda[,col3], 
+        type = 'scatter3d', mode = 'markers',
+        marker = list(color = kmeans_result$cluster, colorscale = 'Viridis', size = 5)) %>%
+  layout(title = '3D K-Means Clustering', scene = list(
+    xaxis = list(title = col1),
+    yaxis = list(title = col2),
+    zaxis = list(title = col3)))
+```
+
+```{r}
+# Load necessary libraries
+library(tidyverse)
+library(randomForest)
+library(isotree)
+
+# Assuming your data is loaded into a dataframe named 'your_data'
+# Train an Isolation Forest model
+
+set.seed(42) # For reproducibility
+isoforest_model <- isolation.forest(X_lda, ntree = 100)
+
+# Calculate anomaly scores
+anomaly_scores <- predict(isoforest_model, X_lda)
+
+# Define the threshold (adjust based on your analysis)
+threshold <- 0.55 
+
+# Classify points as anomalies or not
+X_lda$anomaly <- anomaly_scores > threshold
+
+# Visualize the results
+# Histogram/Density Plot
+ggplot(X_lda, aes(x = anomaly_scores)) +
+  geom_histogram(binwidth = 0.01, fill = "blue", color = "black") +
+  geom_vline(xintercept = threshold, color = "red", linetype = "dashed") +
+  theme_minimal() +
+  ggtitle("Distribution of Anomaly Scores")
+
+# Scatter plot Heat Map (adjust x and y to your specific dimensions)
+ggplot(X_lda, aes(x = X_lda[,1], y = X_lda[,2], color = anomaly_scores)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("Scatter Plot Heat Map of Anomaly Scores")
+
+# Final Classifications Plot
+ggplot(X_lda, aes(x = X_lda[,1], y = X_lda[,2], color = anomaly)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("Final Classifications of Points")
+
+```
+
+```{r}
+X_lda$anomaly
+```
+
+```{r}
+# Select rows where data_km$anomaly is TRUE
+filtered_data <- subset(X_lda, anomaly == TRUE)
+row.names(filtered_data)
+```
+
+```{r}
+list = list(X_lda, X_lda[,c(1:3)])
+grid_cluster(list)
+```
+
+```{r}
+# Load necessary libraries
+library(factoextra)
+library(cluster)
+
+#Perform K-means clustering
+set.seed(42)  
+kmeans_result <- kmeans(X_lda[,c(1:3)], centers = 7, nstart = 25, algorithm = "Hartigan-Wong" )  
+
+# The cluster assignments are stored in kmeans_result$cluster
+sub_grp <- kmeans_result$cluster
+
+# Visualize the clusters
+fviz_cluster(list(data = X_lda[,c(1:3)] , cluster = sub_grp))
+```
+
+```{r}
+library(plotly)
+
+# Assuming you have already performed kmeans as in your provided code
+# Select three columns for the 3D plot (replace col1, col2, col3 with actual column names)
+col1 <- 1   # Replace with actual column name
+col2 <- 2  # Replace with actual column name
+col3 <- 3  # Replace with actual column name
+
+# Create a 3D scatter plot
+plot_ly(data = X_lda[,c(1:3)], x = ~X_lda[,col1], y = ~X_lda[,col2], z = ~X_lda[,col3], 
+        type = 'scatter3d', mode = 'markers',
+        marker = list(color = kmeans_result$cluster, colorscale = 'Viridis', size = 5)) %>%
+  layout(title = '3D K-Means Clustering', scene = list(
+    xaxis = list(title = col1),
+    yaxis = list(title = col2),
+    zaxis = list(title = col3)))
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
