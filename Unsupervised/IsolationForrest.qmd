@@ -1,0 +1,558 @@
+---
+title: "Batería de pruevas"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r,message=FALSE, warning=FALSE}
+
+# Required Libraries
+set.seed(42)
+source("../INPUT/FUNCTIONS/preprocess.R")
+library(dplyr)
+library(rsample)
+library(recipes)
+library(randomForest)
+library(corrplot)
+library(tibble)
+library(purrr)
+library(reshape2)
+library(ggplot2)
+library(plotly)
+library(scatterplot3d)
+library(factoextra)
+library(cluster)
+```
+
+```{r}
+data <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Relative_MNAU.csv')
+data_multi <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Relative_MNAU.csv')
+```
+
+```{r}
+data = preprocess(data)
+row.names(data)
+```
+
+```{r}
+#split <- split_train_SH(data)
+
+#data <- split$train_data
+#sh <- split$sh_data
+
+
+# Store original row names of the datasets
+data_row_names <- rownames(data)
+#sh_row_names <- rownames(sh)
+data_col_names <- colnames(data)
+#sh_col_names <- colnames(sh)
+
+# Step 1: Create a recipe
+recipe <- recipe(~ ., data = data) %>%
+  step_normalize(all_predictors(), -all_of(c("Type", "AccumulationType", "Individuals")))
+
+# Step 2: Fit the recipe to the training set
+fitted_recipe <- prep(recipe, training = data)
+
+# Step 3: Apply the transformation to both training and test sets
+data_transformed <- bake(fitted_recipe, new_data = data)
+#sh_transformed <- bake(fitted_recipe, new_data = sh)
+
+# Reattach the row names
+rownames(data_transformed) <- data_row_names
+#rownames(sh_transformed) <- sh_row_names
+col.names(data_transformed) <- data_col_names
+#col.names(sh_transformed) <- sh_col_names
+
+data <- data_transformed
+sh <- sh_transformed
+```
+
+```{r}
+library(cluster)
+library(broom)
+set.seed(42)
+cols_km <- setdiff(names(data), c("Type","AccumulationType","Individuals", "Cluster_Pnas"))
+data_km <- data[cols_km]
+```
+
+```{r}
+pca_result <- prcomp(data_km, center = TRUE, scale. = TRUE)
+X_pca <- pca_result$x[,1:6]
+X_pca[,1]
+```
+
+```{r}
+# Load necessary libraries
+library(tidyverse)
+library(randomForest)
+library(isotree)
+
+# Assuming your data is loaded into a dataframe named 'your_data'
+# Train an Isolation Forest model
+set.seed(42) # For reproducibility
+isoforest_model <- isolation.forest(data_km, ntree = 100)
+
+# Calculate anomaly scores
+anomaly_scores <- predict(isoforest_model, data_km)
+
+# Define the threshold (adjust based on your analysis)
+threshold <- 0.52 
+
+# Classify points as anomalies or not
+data_km$anomaly <- anomaly_scores > threshold
+
+# Visualize the results
+# Histogram/Density Plot
+ggplot(data_km, aes(x = anomaly_scores)) +
+  geom_histogram(binwidth = 0.01, fill = "blue", color = "black") +
+  geom_vline(xintercept = threshold, color = "red", linetype = "dashed") +
+  theme_minimal() +
+  ggtitle("Distribution of Anomaly Scores")
+
+# Scatter plot Heat Map (adjust x and y to your specific dimensions)
+ggplot(data_km, aes(x = X_pca[,1], y = X_pca[,2], color = anomaly_scores)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("Scatter Plot Heat Map of Anomaly Scores")
+
+# Final Classifications Plot
+ggplot(data_km, aes(x = X_pca[,1], y = X_pca[,2], color = anomaly)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("Final Classifications of Points")
+
+```
+
+```{r}
+data_km$anomaly
+```
+
+```{r}
+# Select rows where data_km$anomaly is TRUE
+filtered_data <- subset(data_km, anomaly == TRUE)
+row.names(filtered_data)
+```
+
+```{r}
+# Select rows where data_km$anomaly is TRUE
+data_IF <- subset(data_km, anomaly == FALSE)
+row.names(data_IF)
+```
+
+```{r}
+
+# Create 10 models with 1 to 10 clusters
+kclusts <- tibble(k = 1:7) %>% 
+  mutate(
+    model = map(k, ~ kmeans(x = data_IF, centers = .x, nstart = 20)),
+    glanced = map(model, glance)
+  ) %>% 
+  unnest(cols = c(glanced))
+
+# View results
+kclusts%>% 
+  ggplot(mapping = aes(x = k, y = tot.withinss)) +
+  geom_line(size = 1.2, alpha = 0.5, color = "blue") +
+  geom_point(size = 2, color = "blue")
+```
+
+```{r}
+library(cluster)
+library(factoextra)
+
+#create plot of number of clusters vs total within sum of squares
+fviz_nbclust(data_IF, kmeans, method = "wss")
+```
+
+```{r}
+fviz_nbclust(data_IF, FUN=kmeans, method = "silhouette")
+```
+
+```{r}
+gap_stat <- clusGap(data_IF, FUN = kmeans, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+```
+
+```{r}
+# Load necessary libraries
+library(factoextra)
+library(cluster)
+library(dplyr)
+
+#Perform K-means clustering
+set.seed(42)  
+kmeans_result <- kmeans(data_IF, centers = 4, nstart = 25)  
+
+# The cluster assignments are stored in kmeans_result$cluster
+sub_grp <- kmeans_result$cluster
+
+# Visualize the clusters
+fviz_cluster(list(data = data_IF, cluster = sub_grp))
+```
+
+```{r}
+sub_grp
+```
+
+```{r}
+# Load necessary libraries
+library(factoextra)
+library(cluster)
+
+#Perform K-means clustering
+set.seed(42)  
+kmeans_result <- kmeans(data_IF, centers = 4, nstart = 25)  
+
+# The cluster assignments are stored in kmeans_result$cluster
+sub_grp <- kmeans_result$cluster
+
+# Visualize the clusters
+fviz_cluster(list(data = data_IF[,c(1:22)] , cluster = sub_grp))
+```
+
+```{r}
+pca_result <- prcomp(data_IF, center = TRUE, scale. = TRUE)
+X_pca <- pca_result$x[,1:3]
+X_pca[,1]
+```
+
+```{r}
+sub_grp
+```
+
+```{r}
+# Assuming data_IF is your data frame
+# Remove the rows by negating the specific row names
+#data_IF <- data_IF[!rownames(data_IF) %in% c("Fontbregoua_H1", "El_Mirador_MIR4A"), ]
+#Krapina
+data_IF <- data_IF[!rownames(data_IF) %in% c("Krapina", "AL_333","Fontbregoua_H1", "El_Mirador_MIR4A","Regoudou"), ]
+```
+
+```{r}
+rf_if_unsuper 
+```
+
+\
+
+```{r}
+set.seed(42)
+data_rf <- data_IF |> select(-c("anomaly"))
+
+# Create artificial labels where each row is its own class
+artificial_labels <- seq_len(nrow(data_rf))
+
+# Combine the data with the artificial labels
+data_with_labels <- cbind(data_rf, artificial_labels)
+
+# Train Random Forest model
+rf_model <- randomForest(artificial_labels ~ ., data = data_with_labels, importance = TRUE)
+
+# Extract feature importance based on Mean Decrease in Gini
+feature_importance <- importance(rf_model) # type = 1 for %IncMSE 
+
+feature_importance
+```
+
+```{r}
+# Selecting MeanDecreaseAccuracy 
+mean_decrease_accuracy <- feature_importance[,"%IncMSE"]
+
+# Filter features where MeanDecreaseAccuracy is greater than 5
+important_features <- feature_importance[mean_decrease_accuracy > 3, ]
+
+# Print the important features
+columns_rf_5 <- rownames(important_features)
+columns_rf_5
+```
+
+```{r}
+# Selecting MeanDecreaseAccuracy 
+mean_decrease_accuracy <- feature_importance[,"%IncMSE"]
+
+# Filter features where MeanDecreaseAccuracy is greater than 5
+important_features <- feature_importance[mean_decrease_accuracy > 1, ]
+
+# Print the important features
+columns_rf_1 <- rownames(important_features)
+columns_rf_1
+```
+
+```{r}
+data_IF = data_IF |> select(-c("anomaly"))
+
+
+pca_result <- prcomp(data_IF, center = TRUE, scale. = TRUE)
+X_pca <- pca_result$x[,1:6]
+X_pca
+```
+
+\
+
+```{r}
+grid_cluster <-function(list_of_dfs){
+  
+    
+    # Number of clusters to evaluate for K-means
+  k_values <- c(2, 3, 4, 5,6,7,8)
+  
+  # Hyperparameters for DBSCAN (example ranges)
+  eps_values <- seq(0.1, 1, 0.2)
+  minPts_values <- c(5, 10, 15)
+  
+  # Parameters for hierarchical clustering
+  hclust_methods <- c("ward.D", "single", "complete", "average")
+  
+  # List to store results and best models
+  results <- list()
+  best_models <- list(kmeans = list(score = -Inf, model = NULL),
+                      dbscan = list(score = -Inf, model = NULL),
+                      hclust = list(score = -Inf, model = NULL))
+  
+  # Function to perform K-means clustering
+  perform_kmeans <- function(data, k, method) {
+    set.seed(42)
+    kmeans_result <- kmeans(data, centers = k, nstart = 25, algorithm = method)
+    silhouette_score <- mean(silhouette(kmeans_result$cluster, dist(data))[, 3])
+    return(list(cluster = kmeans_result$cluster, score = silhouette_score))
+  }
+  
+  # Function to perform DBSCAN clustering
+  perform_dbscan <- function(data, eps, minPts) {
+    # Perform DBSCAN clustering
+    dbscan_result <- dbscan::dbscan(data, eps = eps, minPts = minPts)
+  
+    # Exclude noise points (cluster = 0) from silhouette score calculation
+    valid_clusters <- dbscan_result$cluster[dbscan_result$cluster != 0]
+    valid_data <- data[dbscan_result$cluster != 0, ]
+  
+    # Check if there are valid clusters to avoid errors in silhouette calculation
+    if (length(unique(valid_clusters)) > 1) {
+      silhouette_score <- mean(silhouette(valid_clusters, dist(valid_data))[, 3])
+    } else {
+      # Assign a default low score if there's only one cluster or none
+      silhouette_score <- -1
+    }
+  
+    return(list(cluster = dbscan_result$cluster, score = silhouette_score))
+  }
+  
+  
+  # Function to perform hierarchical clustering
+  perform_hclust <- function(data, method, k) {
+    hc <- hclust(dist(data), method = method)
+    clusters <- cutree(hc, k = k)
+    silhouette_score <- mean(silhouette(clusters, dist(data))[, 3])
+    return(list(cluster = clusters, score = silhouette_score))
+  }
+  
+  # Loop through each dataframe
+  for (i in seq_along(list_of_dfs)) {
+    df <- list_of_dfs[[i]]
+    
+    # K-means
+    for (k in k_values) {
+      for (method in c("Hartigan-Wong", "Lloyd", "Forgy",
+                       "MacQueen")) {
+        result <- perform_kmeans(df, k, method)
+        if (result$score > best_models$kmeans$score) {
+          best_models$kmeans <- list(score = result$score, model = result$cluster, dataframe = i, k = k, method = method)
+        }
+      }
+    }
+    
+    # DBSCAN
+    for (eps in eps_values) {
+      for (minPts in minPts_values) {
+        result <- perform_dbscan(df, eps, minPts)
+        if (result$score > best_models$dbscan$score) {
+          best_models$dbscan <- list(score = result$score, model = result$cluster, dataframe = i, eps = eps, minPts = minPts)
+        }
+      }
+    }
+    
+    # Hierarchical Clustering
+    for (method in hclust_methods) {
+      for (k in k_values) {
+        result <- perform_hclust(df, method, k)
+        if (result$score > best_models$hclust$score) {
+          best_models$hclust <- list(score = result$score, model = result$cluster, dataframe = i, k = k, method = method)
+        }
+      }
+    }
+  }
+  
+  return(best_models)
+}
+```
+
+```{r}
+
+# List of dataframes for evaluation
+list_of_dfs <- list(data_IF,
+                    data_IF[, columns_rf_5]
+                    , data_IF[, columns_rf_1]
+                    #, data_cor 
+                    #,X_lda
+                    ,X_pca
+                    )
+
+grid_cluster(list_of_dfs)
+```
+
+```{r}
+best_models$kmeans
+```
+
+\
+
+```{r}
+# Load necessary libraries
+library(factoextra)
+library(cluster)
+library(dbscan)
+
+
+# List of dataframes for evaluation
+list_of_dfs <- list(data_IF,
+                    data_IF[, columns_rf_5]
+                    , data_IF[, columns_rf_1]
+                    #, data_cor 
+                    #,X_lda
+                    ,X_pca
+                    )
+
+# Number of clusters to evaluate for K-means
+k_values <- c(2, 3, 4, 5,6,7,8)
+
+# Hyperparameters for DBSCAN (example ranges)
+eps_values <- seq(0.1, 1, 0.2)
+minPts_values <- c(5, 10, 15)
+
+# Parameters for hierarchical clustering
+hclust_methods <- c("ward.D", "single", "complete", "average")
+
+# List to store results and best models
+results <- list()
+best_models <- list(kmeans = list(score = -Inf, model = NULL),
+                    dbscan = list(score = -Inf, model = NULL),
+                    hclust = list(score = -Inf, model = NULL))
+
+# Function to perform K-means clustering
+perform_kmeans <- function(data, k, method) {
+  set.seed(42)
+  kmeans_result <- kmeans(data, centers = k, nstart = 25, algorithm = method)
+  silhouette_score <- mean(silhouette(kmeans_result$cluster, dist(data))[, 3])
+  return(list(cluster = kmeans_result$cluster, score = silhouette_score))
+}
+
+# Function to perform DBSCAN clustering
+perform_dbscan <- function(data, eps, minPts) {
+  # Perform DBSCAN clustering
+  dbscan_result <- dbscan::dbscan(data, eps = eps, minPts = minPts)
+
+  # Exclude noise points (cluster = 0) from silhouette score calculation
+  valid_clusters <- dbscan_result$cluster[dbscan_result$cluster != 0]
+  valid_data <- data[dbscan_result$cluster != 0, ]
+
+  # Check if there are valid clusters to avoid errors in silhouette calculation
+  if (length(unique(valid_clusters)) > 1) {
+    silhouette_score <- mean(silhouette(valid_clusters, dist(valid_data))[, 3])
+  } else {
+    # Assign a default low score if there's only one cluster or none
+    silhouette_score <- -1
+  }
+
+  return(list(cluster = dbscan_result$cluster, score = silhouette_score))
+}
+
+
+# Function to perform hierarchical clustering
+perform_hclust <- function(data, method, k) {
+  hc <- hclust(dist(data), method = method)
+  clusters <- cutree(hc, k = k)
+  silhouette_score <- mean(silhouette(clusters, dist(data))[, 3])
+  return(list(cluster = clusters, score = silhouette_score))
+}
+
+# Loop through each dataframe
+for (i in seq_along(list_of_dfs)) {
+  df <- list_of_dfs[[i]]
+  
+  # K-means
+  for (k in k_values) {
+    for (method in c("Hartigan-Wong", "Lloyd", "Forgy",
+                     "MacQueen")) {
+      result <- perform_kmeans(df, k, method)
+      if (result$score > best_models$kmeans$score) {
+        best_models$kmeans <- list(score = result$score, model = result$cluster, dataframe = i, k = k, method = method)
+      }
+    }
+  }
+  
+  # DBSCAN
+  for (eps in eps_values) {
+    for (minPts in minPts_values) {
+      result <- perform_dbscan(df, eps, minPts)
+      if (result$score > best_models$dbscan$score) {
+        best_models$dbscan <- list(score = result$score, model = result$cluster, dataframe = i, eps = eps, minPts = minPts)
+      }
+    }
+  }
+  
+  # Hierarchical Clustering
+  for (method in hclust_methods) {
+    for (k in k_values) {
+      result <- perform_hclust(df, method, k)
+      if (result$score > best_models$hclust$score) {
+        best_models$hclust <- list(score = result$score, model = result$cluster, dataframe = i, k = k, method = method)
+      }
+    }
+  }
+}
+
+# Best models
+best_models
+```
+
+```{r}
+# Load necessary libraries
+library(factoextra)
+library(cluster)
+
+#Perform K-means clustering
+set.seed(42)  
+kmeans_result <- kmeans(data_IF[, columns_rf_5], centers = 4, nstart = 25, algorithm = "Hartigan-Wong" )  
+
+# The cluster assignments are stored in kmeans_result$cluster
+sub_grp <- kmeans_result$cluster
+
+# Visualize the clusters
+fviz_cluster(list(data = data_IF[,c(1:22)] , cluster = sub_grp))
+```
+
+```{r}
+library(plotly)
+
+# Assuming you have already performed kmeans as in your provided code
+# Select three columns for the 3D plot (replace col1, col2, col3 with actual column names)
+col1 <- 1   # Replace with actual column name
+col2 <- 2  # Replace with actual column name
+col3 <- 3  # Replace with actual column name
+
+# Create a 3D scatter plot
+plot_ly(data = data_IF, x = ~X_pca[,col1], y = ~X_pca[,col2], z = ~X_pca[,col3], 
+        type = 'scatter3d', mode = 'markers',
+        marker = list(color = kmeans_result$cluster, colorscale = 'Viridis', size = 5)) %>%
+  layout(title = '3D K-Means Clustering', scene = list(
+    xaxis = list(title = col1),
+    yaxis = list(title = col2),
+    zaxis = list(title = col3)))
+
+```
+
+```{r}
+X_pca[,1]
+```
