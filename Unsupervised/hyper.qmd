@@ -1,0 +1,531 @@
+---
+title: "Batería de pruevas"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r message=FALSE, warning=FALSE}
+
+# Required Libraries
+set.seed(42)
+source("../INPUT/FUNCTIONS/preprocess.R")
+library(dplyr)
+library(rsample)
+library(recipes)
+library(randomForest)
+library(corrplot)
+library(tibble)
+library(purrr)
+library(reshape2)
+library(ggplot2)
+library(plotly)
+library(scatterplot3d)
+library(factoextra)
+library(cluster)
+library(mclust)
+```
+
+```{r}
+if (!require(MLmetrics)) install.packages("MLmetrics")
+library(MLmetrics)
+
+```
+
+```{r}
+# Ensure the necessary libraries are installed and loaded
+if (!require(caret)) install.packages("caret")
+library(caret) # for pre-processing
+if (!require(pls)) install.packages("pls")
+library(pls) # for Partial Least Squares (PLS)
+if (!require(ica)) install.packages("ica")
+library(ica) # for Independent Component Analysis (ICA)
+if (!require(umap)) install.packages("umap")
+library(umap) # for Uniform Manifold Approximation and Projection (UMAP)
+if (!require(Rtsne)) install.packages("Rtsne")
+library(Rtsne) # for t-SNE
+if (!require(phateR)) install.packages("phateR")
+library(phateR) # for PHATE
+#if (!require(isomap)) install.packages("vegan")
+#library(vegan) # for Isomap
+
+```
+
+```{r}
+data_u_mau <- read.csv('../Input/DATA/Summary_Dataset_Used_Percentage_MAU.csv')
+data_m_mau <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Percentage_MAU.csv')
+
+data_u_mnau <- read.csv('../Input/DATA/Summary_Dataset_Used_Percentage_MNAU.csv')
+data_m_mnau <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Percentage_MNAU.csv')
+
+data_u_remnau <- read.csv('../Input/DATA/Summary_Dataset_Used_Relative_MNAU.csv')
+data_m_remnau <- read.csv('../Input/DATA/Summary_Dataset_Multivar_Relative_MNAU.csv')
+```
+
+```{r}
+data = preprocess(data_u_mau)
+```
+
+```{r}
+# Define the columns for which you want to count the labels
+columns_to_count <- c("Type", "AccumulationType", "Individuals"
+                      , "Cluster_Pnas"
+                      )
+
+# Function to count labels in each specified column
+count_labels <- function(data, columns) {
+  sapply(data[columns], function(column) table(column))
+}
+
+# Use the function to count labels
+label_counts <- count_labels(data, columns_to_count)
+
+# Print the counts
+label_counts
+```
+
+```{r}
+split <- split_train_SH(data)
+
+data <- split$train_data
+sh <- split$sh_data
+```
+
+```{r}
+type = data["Type"][1]
+accType = data["AccumulationType"][1]
+accType
+```
+
+```{r,warning=FALSE}
+# Store original row names of the datasets
+data_row_names <- rownames(data)
+sh_row_names <- rownames(sh)
+
+# Step 1: Create a recipe
+recipe <- recipe(~ ., data = data) %>%
+  step_normalize(all_predictors(), -all_of(c("Type", "AccumulationType", "Individuals"
+                                             , "Cluster_Pnas"
+                                             )))
+
+# Step 2: Fit the recipe to the training set
+fitted_recipe <- prep(recipe, training = data)
+
+# Step 3: Apply the transformation to both training and test sets
+data_transformed <- bake(fitted_recipe, new_data = data)
+sh_transformed <- bake(fitted_recipe, new_data = sh)
+
+# Reattach the row names
+rownames(data_transformed) <- data_row_names
+rownames(sh_transformed) <- sh_row_names
+```
+
+```{r}
+data <- data_transformed
+```
+
+```{r}
+library(caret)
+# Function to map predicted cluster labels to true labels
+map_clusters <- function(predicted_labels, true_labels) {
+  # Check if inputs are data frames or columns from a data frame and convert to vectors
+  if (is.data.frame(predicted_labels)) {
+    stop("predicted_labels should not be a data frame.")
+  }
+  if (is.data.frame(true_labels)) {
+    stop("true_labels should not be a data frame.")
+  }
+
+  # Convert to factors if they are not already
+  if (!is.factor(predicted_labels)) {
+    predicted_labels <- factor(predicted_labels)
+  }
+  if (!is.factor(true_labels)) {
+    true_labels <- factor(true_labels)
+  }
+
+  # Create a confusion matrix
+  confusion_mat <- table(predicted_labels, true_labels)
+
+  # Initialize a vector to hold the mapped labels
+  mapped_labels <- character(length(predicted_labels))
+
+  # For each unique predicted label, find the true label that occurs most frequently
+  for (pred_label in levels(predicted_labels)) {
+    true_label_max <- which.max(confusion_mat[pred_label, ])
+    true_label <- names(confusion_mat)[true_label_max]
+    mapped_labels[predicted_labels == pred_label] <- true_label
+  }
+
+  return(factor(mapped_labels, levels = levels(true_labels)))
+}
+
+
+
+```
+
+```{r}
+# Function to calculate F1 score
+calculate_f1_score <- function(predicted_labels, true_labels) {
+  # Ensure that labels are factors and have the same levels
+  predicted_labels <- factor(predicted_labels, levels = sort(unique(true_labels)))
+  true_labels <- factor(true_labels, levels = sort(unique(true_labels)))
+
+  # Calculate F1 score using MLmetrics package
+  f1_score <- F1_Score(y_pred = predicted_labels, y_true = true_labels)
+
+  # Return the F1 score
+  return(f1_score)
+}
+
+```
+
+```{r}
+algorithms <- list(
+  kmeans = list(iter.max = c(100, 200), nstart = c(10, 25), algos = c("Hartigan-Wong", "Lloyd", "Forgy"), k = 2:10),
+ # gmm = list(modelName = c("EII", "VII", "EEI", "VEI", "EVI", "VVI", "EEE", "VEE", "EEV", "VEV", "EVV", "VVV"), k = 2:10),
+ # clara = list(metric = c("euclidean", "manhattan"), samples = c(5, 10), samplesize = c(50, 100), rngR = c(123, 456), k = 2:10),
+  hclust = list(metric = c("euclidean", "manhattan"), method = c("single", "complete", "average", "ward.D2"), k = 2:10)
+#em = list(z = NULL, modelName = c("EII", "VII", "EEI", "VEI", "EVI", "VVI", "EEE", "VEE", "EEV", "VEV", "EVV", "VVV"), k = 2:10)
+  #hcmodel = list(modelName = c("EII", "VII", "EEI", "VEI", "EVI", "VVI", "EEE", "VEE", "EEV", "VEV", "EVV", "VVV"), k = 2:10),
+  # ... other algorithms ...
+ #spectral = list(kernel = c("rbfdot", "polydot", "vanilladot", "tanhdot"), kpar = list(sigma = seq(0.1, 2, 0.1), degree = 2:5), iter = c(100, 200), mod.simple = c(TRUE, FALSE), k = 2:10),
+  #optics = list(eps = seq(0.1, 2, 0.1), minPts = 5:50),  # No 'k' parameter
+  #dbscan = list(eps = seq(0.1, 2, 0.1), minPts = 5:50, Xi = seq(0.05, 0.2, 0.05))  # No 'k' parameter
+
+)
+
+
+```
+
+```{r}
+calculate_silhouette_score <- function(data, cluster_labels) {
+  # Convert cluster labels to numeric if they are not
+  if (!is.numeric(cluster_labels)) {
+    cluster_labels <- as.numeric(as.factor(cluster_labels))
+  }
+
+  # Check for NA values in cluster labels
+  if (any(is.na(cluster_labels))) {
+    stop("Cluster labels contain NA values.")
+  }
+
+  # Ensure data is numeric
+  if (!is.numeric(data) && !is.matrix(data)) {
+    data <- as.matrix(data[sapply(data, is.numeric)])
+  }
+
+  # Check if data has more than one column
+  if (ncol(data) < 2) {
+    stop("Data must have more than one column for silhouette calculation.")
+  }
+
+  # Compute silhouette scores
+  sil_scores <- silhouette(cluster_labels, dist(data))
+  
+  # Check if silhouette scores are in the expected format
+  if (!is.matrix(sil_scores) || !("sil_width" %in% colnames(sil_scores))) {
+    stop("Unexpected format of silhouette scores.")
+  }
+
+  # Calculate the average silhouette score
+  mean_silhouette <- mean(sil_scores[, "sil_width"])
+
+  return(mean_silhouette)
+}
+
+
+
+```
+
+```{r}
+# Define the grid search function
+grid_search_clustering <- function(data, true_labels, algorithms) {
+  best_models <- list()
+
+  for (algo_name in names(algorithms)) {
+    best_score <- -Inf
+    best_model <- NULL
+    best_params <- NULL
+
+    params_grid <- expand.grid(algorithms[[algo_name]])
+    for (i in 1:nrow(params_grid)) {
+      params <- params_grid[i, ]
+
+      # Perform clustering with current parameters
+      if (algo_name == "kmeans") {
+        cluster_result <- kmeans(data, centers = params$k, nstart = params$nstart, iter.max = params$iter.max)
+     # } else if (algo_name == "gmm") {
+    #    cluster_result <- Mclust(data, G = params$k, modelNames = params$modelName)
+    # } else if (algo_name == "clara") {
+     #  cluster_result <- clara(data, k = params$k, metric = params$metric, samples = params$samples, pamLike = TRUE)
+      } else if (algo_name == "hcmodel") {
+  # Check and ensure that 'modelName' is provided
+  if (is.null(params$modelName)) {
+    stop("modelName parameter is required for hcmodel.")
+  }
+  
+  # Call hcmodel with the correct parameters
+  cluster_result <- Mclust(data, G = params$k, modelNames = params$modelName)
+} else if (algo_name == "dbscan") {
+        cluster_result <- dbscan(data, eps = params$eps, minPts = params$minPts)
+      }
+      #else if (algo_name == "em") {
+      #  cluster_result <- Mclust(data, G = params$k, modelNames = params$modelName)
+      #}
+
+      # Add implementation for Hierarchical Model-Based Clustering
+      else if (algo_name == "hcmodel") {
+  # Ensure data is a data frame or matrix
+  if (!is.data.frame(data) && !is.matrix(data)) {
+    stop("Data must be a data frame or matrix for hcmodel.")
+  }
+
+  # Check and ensure that 'modelName' is provided
+  if (is.null(params$modelName)) {
+    stop("modelName parameter is required for hcmodel.")
+  }
+
+  # Call hc with the correct parameters
+  hc_result <- hc(data, modelName = params$modelName)
+
+  # Convert hierarchical clustering to flat clusters
+  cluster_result <- list(cluster = cutree(hc_result, k = params$k))
+}
+
+
+      # Add implementation for Spectral Clustering
+      else if (algo_name == "spectral") {
+        cluster_result <- specc(data, centers = params$k, kernel = params$kernel, kpar = params$kpar, iter.max = params$iter)
+      }
+
+      # Add implementation for OPTICS
+      else if (algo_name == "optics") {
+        cluster_result <- optics(data, eps = params$eps, minPts = params$minPts)
+      }
+     # Convert cluster_result$cluster to a vector if needed
+      cluster_labels <- if (is.data.frame(cluster_result$cluster) || is.matrix(cluster_result$cluster)) {
+        cluster_result$cluster[, 1, drop = TRUE]
+      } else {
+        as.vector(cluster_result$cluster)
+      }
+      
+      #print(algo_name)
+      #print(cluster_labels)
+      # Calculate silhouette score
+      silhouette_score <- calculate_silhouette_score(data, cluster_labels)
+      #print("silhouette score: ")
+      #print(silhouette_score)
+
+      # Update best model if current model is better
+      if (silhouette_score > best_score) {
+        best_score <- silhouette_score
+        best_model <- cluster_result
+        best_params <- params
+      }
+    }
+
+    best_models[[algo_name]] <- list(model = best_model, score = best_score, params = best_params)
+  }
+
+  return(best_models)
+}
+
+# Example usage
+# optimal_models <- grid_search_clustering(my_data, true_labels, algorithms)
+
+
+```
+
+```{r}
+
+
+# Define the function
+apply_dimension_reduction <- function(data, technique) {
+  if (technique == "PCA") {
+    result <- prcomp(data, center = TRUE, scale. = TRUE)
+    reduced_data <- result$x
+#  } 
+  #else if (technique == "LDA") {
+    # Assuming 'labels' is available in the environment
+   # result <- lda(data, grouping = labels)
+ #   reduced_data <- predict(result)$x
+  } else if (technique == "PLS") {
+    result <- plsr(data ~ ., data = data, ncomp = 7) # modify ncomp as needed
+    reduced_data <- predict(result, ncomp = 7)
+#  } else if (technique == "ICA") {
+#   result <- fastICA(data, n.comp = 7) # modify n.comp as needed
+#    reduced_data <- result$S
+  } else if (technique == "UMAP") {
+    result <- umap(data)
+    reduced_data <- result$layout
+  } else if (technique == "t-SNE") {
+    result <- Rtsne(data, dims = 7) # modify dims as needed
+    reduced_data <- result$Y
+  } else if (technique == "phate") {
+    result <- phate(data)
+    reduced_data <- result
+  #} else if (technique == "Isomap") {
+  #  result <- isomap(dist(data), k = 7) # modify k as needed
+  #  reduced_data <- result$points
+  } else {
+    stop("Unknown dimension reduction technique specified")
+  }
+
+  return(reduced_data)
+}
+
+# Example usage
+# reduced_data_pca <- apply_dimension_reduction(my_data, "PCA")
+
+```
+
+```{r}
+
+dim_reduction_techniques <- c("PCA"
+                              #,"PLS"
+                              #, "ICA"
+                              ,"UMAP"
+                              #,"t-SNE"
+                              #, "phate"
+                              )
+
+# Define your clustering algorithms and their hyperparameters
+#algorithms <- define_clustering_algorithms("kmeans","gmm", "clara", "hclust","dbscan")
+
+# Initialize a structure to store the best models from each dimension reduction technique
+best_models_overall <- list()
+
+
+data_without_outliers <- data %>% select(-c("Type", "AccumulationType", "Individuals"
+                                          , "Cluster_Pnas"
+                                          ))
+true_labels <- as.vector(type[, 1, drop = TRUE])
+
+
+# Loop over each dimension reduction technique
+for (dim_red_tech in dim_reduction_techniques) {
+  # 2.1 Apply dimension reduction
+  reduced_data <- apply_dimension_reduction(data_without_outliers, technique = dim_red_tech)
+
+  # 2.2 Perform grid search clustering on the reduced data
+  best_models <- grid_search_clustering(reduced_data, true_labels, algorithms)
+  
+  print("##################################################################################################################################################################")
+  print(dim_red_tech)
+  print(best_models)
+  
+  # Store the best models for this dimension reduction technique
+  #best_models_overall[[dim_red_tech]] <- best_models
+}
+
+```
+
+```{r}
+data_without_outliers
+```
+
+```{r}
+data_all = preprocess(data_m_mau)
+
+# Store original row names of the datasets
+data_row_names <- rownames(data_all)
+#sh_row_names <- rownames(sh)
+
+# Step 1: Create a recipe
+recipe <- recipe(~ ., data = data_all) %>%
+  step_normalize(all_predictors(), -all_of(c("Type", "AccumulationType", "Individuals"
+                                             #, "Cluster_Pnas"
+                                             )))
+
+# Step 2: Fit the recipe to the training set
+fitted_recipe <- prep(recipe, training = data_all)
+
+# Step 3: Apply the transformation to both training and test sets
+data_transformed <- bake(fitted_recipe, new_data = data_all)
+#sh_transformed <- bake(fitted_recipe, new_data = sh)
+
+# Reattach the row names
+rownames(data_transformed) <- data_row_names
+#rownames(sh_transformed) <- sh_row_names
+
+type_all = data_all["Type"]
+accType_all = data_all["AccumulationType"]
+```
+
+```{r}
+# Assuming 'best_models' contains the best model from each algorithm
+# 'new_data' is the new dataset for validation
+
+
+
+
+validate_models <- function(best_models, new_data, true_labels) {
+  validation_results <- list()
+
+  for (algo_name in names(best_models)) {
+    model <- best_models[[algo_name]]$model
+
+    # Apply the model to the new dataset
+    # Note: You need to adjust this part based on the specific model and clustering algorithm
+    cluster_labels <- predict_cluster(model, new_data)
+
+    # Calculate each metric
+    jaccard_index <- calculate_jaccard_index(cluster_labels, true_labels)
+    adjusted_rand_index <- calculate_adjusted_rand_index(cluster_labels, true_labels)
+    fowlkes_mallows_index <- calculate_fowlkes_mallows_index(cluster_labels, true_labels)
+    normalized_mutual_information <- calculate_normalized_mutual_information(cluster_labels, true_labels)
+    dunns_validation_index <- calculate_dunns_validation_index(new_data, cluster_labels)
+    silhouette_score <- calculate_silhouette_score(new_data, cluster_labels)
+    #accuracy <- calculate_accuracy(cluster_labels, true_labels)
+    #f1_score <- calculate_f1_score(cluster_labels, true_labels)
+
+    # Store the results
+    validation_results[[algo_name]] <- list(
+      Jaccard = jaccard_index,
+      ARI = adjusted_rand_index,
+      FM = fowlkes_mallows_index,
+      NMI = normalized_mutual_information,
+      Dunn = dunns_validation_index,
+      Silhouette = silhouette_score,
+      #Accuracy = accuracy,
+      #F1 = f1_score
+    )
+  }
+
+  return(validation_results)
+}
+
+# Example usage
+# validation_results <- validate_models(best_models, new_data, true_labels)
+
+```
+
+```{r}
+validate_models(best_models, data_transformed, type_all )
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

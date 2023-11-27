@@ -80,7 +80,7 @@ what cluster algos and why
 
 **list algos:** K-means(stats/(iter.max, nstart, algos, k)), Mean shift, GMM, Affinity Propagation, clara(cluster/ metric, samples, samplesize, rngR), hclust(cluster/metric, method, per.method), EM(mclust/z, modelName), hcmodel(mclust/ modelName, use), spectral (kernlab/kernel, kpar, iter, mod.simple), subspace(hdclassif), optics(dbscan/eps, minPts), dbscan(dbscan/eps, minPts, Xi)
 
-**list metrics:** The Jaccard Index (J), Adjusted Rand Index (ARI) and Fowlkes Mallows (FM), sider the normalized mutual information (NMI), Dunn’s validation index, silhouette, accuracy *2 (+F1)
+**list metrics:** The Jaccard Index (J), Adjusted Rand Index (ARI) and Fowlkes Mallows (FM), sider the normalized mutual information (NMI), Dunn’s validation index, silhouette, accuracy  and F1
 
 **list dimReduc:** Principal Component Analysis (PCA), Linear Discriminant Analysis (LDA) (labels), PARTIAL LEAST SQUARES pls, INDEPENDENT COMPONENT ANALYSIS ICA,  UNIFORM MANIFOLD APPROXIMATION AND PROJECTION (UMAP),t-Distributed Stochastic Neighbor Embedding (t-SNE), phate, Uniform Manifold Approximation and Projection (UMAP), Isomap (Isometric Mapping) 
 
@@ -99,3 +99,9 @@ RFE: 23 -1
 7) outlier inside fold 
 8) metrics / best for grid search 
 9) save and applie best models with SH -> table
+
+
+
+Further the grid search shoud be maximizing the silhouette score and / or accuracy. 
+
+I have a dataset for which I can group into 4 and subgroup them into 9. What is the best way of using accuracy or F1 score for k between 1 and 9. 

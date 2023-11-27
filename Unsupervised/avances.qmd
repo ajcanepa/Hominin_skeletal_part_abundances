@@ -1,0 +1,41 @@
+---
+title: "Avances part abundance"
+format:
+  revealjs:
+    width: 1440
+    height: 900
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+## Slide 1
+
+-   Unsupervised data analysis, i.e. leaving the labels completely out
+    the labels.
+
+-   Searched for best clustering leaving SH out.
+
+-   Reimplemended paper based on mean part abundance (silhouette score
+    0.70 vs 0.57 in Pnas ) and improved significantly.
+
+$$
+\text{Mean Part Abundance} = \frac{\sum (\text{Abundance of Each Skeletal Part})}{\text{Number of Distinct Skeletal Parts}}
+$$
+
+## Slide 2
+
+|               | kmeans   | dbscan | hclust | k=    | SH         |
+|:--------------|:---------|:-------|:-------|:------|:-----------|
+| Pnas Baseline | 0.57     | \-     | \-     | k=3,4 | baboon/leo |
+| MPA           | **0.71** | \-     | \-     | k=3   | baboon/leo |
+| MAU 16        | 0.3      | 0.3    | 0.3    |       |            |
+| MAU 36        | \-       | \-     | \-     |       |            |
+| MNAU 16       | \-       | \-     | \-     |       |            |
+| MNAU 36       | \-       | \-     | \-     |       |            |
+| ReMNAU 16     | \-       | \-     | \-     |       |            |
+| ReMNAU 36     | \-       | \-     | \-     |       |            |
+
+: PCA with burial
+
+## Slide 3
