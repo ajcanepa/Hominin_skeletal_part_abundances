@@ -1,41 +1,94 @@
 ---
-title: "Avances part abundance"
+title: "Part Abundance ML analysis"
 format:
   revealjs:
-    width: 1440
-    height: 900
+    width: 2000
+    height: 1200
 editor: 
   markdown: 
     wrap: 72
 ---
 
-## Slide 1
+## Unsupervised learning
 
--   Unsupervised data analysis, i.e. leaving the labels completely out
-    the labels.
+1. Created four data sets with sample selection as in PNAS:
 
--   Searched for best clustering leaving SH out.
+-   "%MAU" (MAU divided by max(MNE)) **and** "%MNAU" (MNAU divided by
+    max(MNI))
+-   "ReMNAU" (Relative MNAU, independent of MNE & MNI)
+-   MPA (Mean Part Abundance) $$
+    \text{Mean Part Abundance} = \frac{\sum (\text{Abundance of Each Skeletal Part})}{\text{Number of Distinct Skeletal Parts}}
+    $$
 
--   Reimplemended paper based on mean part abundance (silhouette score
-    0.70 vs 0.57 in Pnas ) and improved significantly.
+2.  Unsupervised data analysis using Clustering methods like
+    K-means, hierarchical clustering and DBSCAN.
+3.  Since \|Sample size\| \<\< \|Features\| used multiple techniques to
+    reduce dimensionality.
+4.  Used feature selection methods like MDA (Mean Decrease Accuracy) and
+    %IncMSE (Increase in Mean Square Error) to select features, via Random Forrest.
+5. Compared results via Silhouette score with Pnas (kmeans 0.71/ dbscan 0.79 / hclust 0.64 vs Pnas 0.57)
 
-$$
-\text{Mean Part Abundance} = \frac{\sum (\text{Abundance of Each Skeletal Part})}{\text{Number of Distinct Skeletal Parts}}
-$$
 
-## Slide 2
+## Pnas %MAU vs %MAU
 
-|               | kmeans   | dbscan | hclust | k=    | SH         |
-|:--------------|:---------|:-------|:-------|:------|:-----------|
-| Pnas Baseline | 0.57     | \-     | \-     | k=3,4 | baboon/leo |
-| MPA           | **0.71** | \-     | \-     | k=3   | baboon/leo |
-| MAU 16        | 0.3      | 0.3    | 0.3    |       |            |
-| MAU 36        | \-       | \-     | \-     |       |            |
-| MNAU 16       | \-       | \-     | \-     |       |            |
-| MNAU 36       | \-       | \-     | \-     |       |            |
-| ReMNAU 16     | \-       | \-     | \-     |       |            |
-| ReMNAU 36     | \-       | \-     | \-     |       |            |
+| ![%MAU](%MAU_plot.png) | ![%MNAU](%MNAU_plot.png) |
+|---------------------------|-------------------------------|
+|     Silhouette score:       0.57                |   Silhouette score:  0.64                           |
 
-: PCA with burial
+## Results
 
-## Slide 3
+| DS     | size | kmeans   |     |         | dbscan   |     |         | hclust   |     |         |
+|:------|:------|:------|:------|:------|:------|:------|:------|:------|:------|:------|
+|        |      | score    | K   | FS      | score    | K   | FS      | score    | K   | FS      |
+| Pnas 3 | 16   | 0.57     | 3   | MDA     | \-       | \-  | \-      | \-       | \-  | \-      |
+| Pnas 4 | 16   | 0.52     | 4   | MDA     | \-       | \-  | \-      | \-       | \-  | \-      |
+| MPA    | 16   | **0.71** | 3   | all F   | \-       | \-  | \-      | \-       | \-  | \-      |
+| MAU    | 16   | 0.5      | 4   | %IncMSE | \-       | \-  | \-      | 0.5      | 4   | %IncMSE |
+| MAU    | 36   | 0.35     | 4   | MDA     | 0.31     | 4   | %IncMSE | 0.38     | 3   | MDA     |
+| MNAU   | 16   | 0.64     | 3   | MDA     | **0.79** | 3   | %IncMSE | **0.64** | 3   | MDA     |
+| MNAU   | 36   | 0.42     | 4   | %IncMSE | 0.53     | 3   | %IncMSE | 0.43     | 4   | %IncMSE |
+| ReMNAU | 16   | 0.48     | 3   | all F   | \-       | \-  | \-      | 0.48     | 3   | all F   |
+| ReMNAU | 36   | 0.58     | 3   | %IncMSE | 0.67     | 2   | MDA     | 0.63     | 3   | MDA     |
+
+## Supervised learning
+
+
+## Dataset
+
+| Type                                     |  Count | Accumulation Type \* old              |  Count |
+|:-----------------------|-----------:|------------------------|-----------:|
+| Hominin cannibalism/ secondary  | 5 / 10 | Burial                                | 5 / 16 |
+| Leopard refuse                           |  2 / 2 | Cannibalism/Mass Grave                | 5 / 10 |
+| Natural Baboon acc.             |  1 / 1 | Carnivore intervention                |  3 / 5 |
+| Nonanthropogenic hominin acc.   |  1 / 5 | Non-human/ non-carnivore int. |  3 / 7 |
+| Possible hominin deliberate disposal     |  2 / 2 |                                       |        |
+| Possible Primary hominin interment       |  1 / 9 |                                       |        |
+| Primary hominin interment                |  2 / 5 |                                       |        |
+| Scavenged human corpses                  |  1 / 3 |                                       |        |
+| Unscavenged human corpses                |  1 / 1 |                                       |        |
+
+**Sample size:**
+
+| Individuals | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 10  | 11  | 13  | 17  | 18  | 43  | 45  | 49  | 84  | 476 |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| Count       | 8   | 4   | 2   | 2   | 2   | 4   | 4   | 1   | 1   | 1   | 2   | 1   | 1   | 1   | 1   | 1   | 1   | 1   |
+
+**New labels:**
+
+Cemeteries, Paleolithic Burial, Cannibalism, Mass Grave, Carnivore
+scavenging (refuse vs scat), Unscavenged human corpses plus one Natural Baboon accumulation 
+
+## Next
+
+1. Use labels to increase clustering scores, eg LDA. 
+2. Merge correlated features like 
+
+“Vertebra”= {“Cervical”, “Thoracic”, “Lumbar”, “Sacrum”,“Rib”}
+
+“Arm” = {“Humerus”, “Radius”, “Ulna”}
+
+“Leg” = {“Femur”, “Tibia”, “Fibula” }
+
+“Extremities”= {“Carpal”, “Tarsal”, “Hand..metacarpals…manual.phalanges.”, “Foot..metatarsals…pedal.phal}
+
+3. Apply supervised learning techniques.  

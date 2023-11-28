@@ -10,7 +10,7 @@
 <link href="avances_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.3.433">
 
-  <title>Avances part abundance</title>
+  <title>Part Abundance ML analysis</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -324,158 +324,376 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Avances part abundance</h1>
+  <h1 class="title">Part Abundance ML analysis</h1>
 
 <div class="quarto-title-authors">
 </div>
 
 </section>
-<section id="slide-1" class="slide level2">
-<h2>Slide 1</h2>
-<p>usupervised data analysis, ie leaveing our comletely the labels.</p>
+<section id="unsupervised-learning" class="slide level2">
+<h2>Unsupervised learning</h2>
 <ol type="1">
-<li>Redo paper based on mean part abundance (silhouette core 0.70 vs 0.57 in Pnas )</li>
+<li>Created four data sets with sample selection as in PNAS:</li>
 </ol>
-<p><span class="math display">\[
+<ul>
+<li>“%MAU” (MAU divided by max(MNE)) <strong>and</strong> “%MNAU” (MNAU divided by max(MNI))</li>
+<li>“ReMNAU” (Relative MNAU, independent of MNE &amp; MNI)</li>
+<li>MPA (Mean Part Abundance) <span class="math display">\[
 \text{Mean Part Abundance} = \frac{\sum (\text{Abundance of Each Skeletal Part})}{\text{Number of Distinct Skeletal Parts}}
-\]</span> Where: - Abundance of Each Skeletal Part is the number of individual skeletal elements of a specific type (e.g., femur, skull) recovered, divided by the number of such elements expected. - Number of Distinct Skeletal Parts is the total count of different types of skeletal parts included in the analysis. 3.</p>
+\]</span></li>
+</ul>
+<ol start="2" type="1">
+<li>Unsupervised data analysis using Clustering methods like K-means, hierarchical clustering and DBSCAN.</li>
+<li>Since |Sample size| &lt;&lt; |Features| used multiple techniques to reduce dimensionality.</li>
+<li>Used feature selection methods like MDA (Mean Decrease Accuracy) and %IncMSE (Increase in Mean Square Error) to select features, via Random Forrest.</li>
+<li>Compared results via Silhouette score with Pnas (kmeans 0.71/ dbscan 0.79 / hclust 0.64 vs Pnas 0.57)</li>
+</ol>
 </section>
-<section id="slide-2" class="slide level2">
-<h2>Slide 2</h2>
+<section id="pnas-mau-vs-mau" class="slide level2">
+<h2>Pnas %MAU vs %MAU</h2>
 <table>
-<caption>baseline 0.57 MPA 16<br>
-MAu kmeans / Dbscan / hclust 16 / 36 MANU hclust16 / 36 ReMNAU 16 / 36 = 3<em>2</em>3 =18 hyper.opr</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: left;">kmeans</th>
-<th style="text-align: left;">dbscan</th>
-<th style="text-align: left;">hclust</th>
-<th style="text-align: left;">k=</th>
-<th style="text-align: left;">SH</th>
+<th><img data-src="%MAU_plot.png" alt="%MAU"></th>
+<th><img data-src="%MNAU_plot.png" alt="%MNAU"></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Pnas Baseline</td>
-<td style="text-align: left;">0.57</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">MPA</td>
-<td style="text-align: left;"><strong>0.7</strong></td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">MAU 16</td>
-<td style="text-align: left;">0.3</td>
-<td style="text-align: left;">0.3</td>
-<td style="text-align: left;">0.3</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">MAU 36</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">MNAU 16</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">MNAU 36</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ReMNAU 16</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ReMNAU 36</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td>0.57</td>
+<td>0.64</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="slide-3" class="slide level2">
-<h2>Slide 3</h2>
-<p>Preparar pequeña presentación para reunión con CENIEH (3 slides suficiente)</p>
-<ul>
-<li><p>Pasos seguidos hasta ahora ( hemos llegado a reproducir sus resultados y mejorarlos)</p></li>
-<li><p>Resumen de resultados en una tabla</p></li>
-<li><p>Resumen balanceo de clases</p></li>
-</ul>
-<p>To effectively communicate your advances in the clustering data analysis project to the CENIEH team, a structured and clear presentation is essential. Given your background and the requirements, let’s approach this task with precision and an emphasis on logical progression. Your presentation should encapsulate the methodology, findings, and significance of your analysis. Here’s a proposed structure for your three slides:</p>
-<p>Slide 1: Introduction and Overview</p>
-<p>Title: Clustering Data Analysis Project - Update &amp; Insights</p>
-<p>Contents:</p>
-<p>Brief introduction to the project’s aim and scope.</p>
-<p>Overview of the data sources and types utilized.</p>
-<p>High-level summary of the analytical methods (R, tidyverse, rmarkdown/quarto).</p>
-<p>State the specific goals of the update: Reproducing previous results and introducing improvements.</p>
-<p>This sets the stage and aligns the audience with the context and objectives.</p>
+<section id="results" class="slide level2">
+<h2>Results</h2>
+<table>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">DS</th>
+<th style="text-align: left;">size</th>
+<th style="text-align: left;">kmeans</th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">dbscan</th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">hclust</th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">score</td>
+<td style="text-align: left;">K</td>
+<td style="text-align: left;">FS</td>
+<td style="text-align: left;">score</td>
+<td style="text-align: left;">K</td>
+<td style="text-align: left;">FS</td>
+<td style="text-align: left;">score</td>
+<td style="text-align: left;">K</td>
+<td style="text-align: left;">FS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pnas 3</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">0.57</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">MDA</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pnas 4</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">0.52</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">MDA</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MPA</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;"><strong>0.71</strong></td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">all F</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MAU</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">0.5</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">%IncMSE</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">0.5</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">%IncMSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MAU</td>
+<td style="text-align: left;">36</td>
+<td style="text-align: left;">0.35</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">MDA</td>
+<td style="text-align: left;">0.31</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">%IncMSE</td>
+<td style="text-align: left;">0.38</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">MDA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MNAU</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">0.64</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">MDA</td>
+<td style="text-align: left;"><strong>0.79</strong></td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">%IncMSE</td>
+<td style="text-align: left;"><strong>0.64</strong></td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">MDA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MNAU</td>
+<td style="text-align: left;">36</td>
+<td style="text-align: left;">0.42</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">%IncMSE</td>
+<td style="text-align: left;">0.53</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">%IncMSE</td>
+<td style="text-align: left;">0.43</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">%IncMSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ReMNAU</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">0.48</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">all F</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">0.48</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">all F</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ReMNAU</td>
+<td style="text-align: left;">36</td>
+<td style="text-align: left;">0.58</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">%IncMSE</td>
+<td style="text-align: left;">0.67</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">MDA</td>
+<td style="text-align: left;">0.63</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">MDA</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section class="slide level2">
-
-<p>Slide 2: Methodology and Process</p>
-<p>Title: Methodology and Analytical Steps</p>
-<p>Contents:</p>
-<p>Outline the steps followed in the analysis:</p>
-<p>Data preprocessing and cleaning techniques.</p>
-<p>Clustering methods applied (e.g., K-means, hierarchical, DBSCAN).</p>
-<p>Techniques for feature selection and dimensionality reduction (if used).</p>
-<p>Validation and evaluation metrics used.</p>
-<p>Highlight how you reproduced previous results and then went beyond:</p>
-<p>Comparative analysis: Previous methods vs.&nbsp;your approach.</p>
-<p>Innovative techniques or algorithms incorporated.</p>
-<p>Utilization of R and tidyverse for robust and replicable analysis.</p>
-<p>This slide showcases the technical rigor and methodological advancements.</p>
+<section id="supervised-learning" class="slide level2">
+<h2>Supervised learning</h2>
 </section>
-<section class="slide level2">
-
-<p>Slide 3: Results and Class Balancing</p>
-<p>Title: Results Summary and Class Balancing Insights</p>
-<p>Contents:</p>
-<p>Table/Graph: Concise summary of key results.</p>
-<p>Use a table or chart to compare old and new results.</p>
-<p>Highlight significant findings, improvements, and any anomalies.</p>
-<p>Discussion on class balancing:</p>
-<p>Strategies used for balancing classes in the dataset.</p>
-<p>Impact of class balancing on the results.</p>
-<p>Any challenges or insights gained from this process.</p>
-<p>Final thoughts: Implications of findings and potential future directions.</p>
-<p>This slide is critical for illustrating the tangible outcomes and practical implications of your work.</p>
-<p>Additional Considerations:</p>
-<p>Style and Formatting: Use a clear, readable format. Visual aids (graphs, tables) should be straightforward and not overcrowded. Maintain a professional color scheme and font style.</p>
-<p>Language and Tone: Maintain an informative and academic tone. Use precise language typical of a textbook, ensuring clarity and coherence.</p>
-<p>Delivery: Be prepared to elaborate on each slide. Anticipate questions about methodology, results, and their applicability.</p>
-<p>Remember, the goal is to effectively convey complex information in an easily digestible format, emphasizing both the reproduction of existing results and the enhancements made. The presentation should invite discussion and collaboration, setting a foundation for future advancements in the project.</p>
+<section id="dataset" class="slide level2">
+<h2>Dataset</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 16%">
+<col style="width: 33%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Type</th>
+<th style="text-align: right;">Count</th>
+<th>Accumulation Type * old</th>
+<th style="text-align: right;">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Hominin cannibalism/ secondary</td>
+<td style="text-align: right;">5 / 10</td>
+<td>Burial</td>
+<td style="text-align: right;">5 / 16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Leopard refuse</td>
+<td style="text-align: right;">2 / 2</td>
+<td>Cannibalism/Mass Grave</td>
+<td style="text-align: right;">5 / 10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Natural Baboon acc.</td>
+<td style="text-align: right;">1 / 1</td>
+<td>Carnivore intervention</td>
+<td style="text-align: right;">3 / 5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Nonanthropogenic hominin acc.</td>
+<td style="text-align: right;">1 / 5</td>
+<td>Non-human/ non-carnivore int.</td>
+<td style="text-align: right;">3 / 7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Possible hominin deliberate disposal</td>
+<td style="text-align: right;">2 / 2</td>
+<td></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Possible Primary hominin interment</td>
+<td style="text-align: right;">1 / 9</td>
+<td></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Primary hominin interment</td>
+<td style="text-align: right;">2 / 5</td>
+<td></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Scavenged human corpses</td>
+<td style="text-align: right;">1 / 3</td>
+<td></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Unscavenged human corpses</td>
+<td style="text-align: right;">1 / 1</td>
+<td></td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sample size:</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Individuals</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>10</th>
+<th>11</th>
+<th>13</th>
+<th>17</th>
+<th>18</th>
+<th>43</th>
+<th>45</th>
+<th>49</th>
+<th>84</th>
+<th>476</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Count</td>
+<td>8</td>
+<td>4</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>4</td>
+<td>4</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>New labels:</strong></p>
+<p>Cemeteries, Paleolithic Burial, Cannibalism, Mass Grave, Carnivore scavenging (refuse vs scat), Unscavenged human corpses plus one Natural Baboon accumulation</p>
+</section>
+<section id="next" class="slide level2">
+<h2>Next</h2>
+<ol type="1">
+<li>Use labels to increase clustering scores, eg LDA.</li>
+<li>Merge correlated features like</li>
+</ol>
+<p>“Vertebra”= {“Cervical”, “Thoracic”, “Lumbar”, “Sacrum”,“Rib”}</p>
+<p>“Arm” = {“Humerus”, “Radius”, “Ulna”}</p>
+<p>“Leg” = {“Femur”, “Tibia”, “Fibula” }</p>
+<p>“Extremities”= {“Carpal”, “Tarsal”, “Hand..metacarpals…manual.phalanges.”, “Foot..metatarsals…pedal.phal}</p>
+<ol start="3" type="1">
+<li>Apply supervised learning techniques.</li>
+</ol>
 <div class="footer footer-default">
 
 </div>
@@ -657,9 +875,9 @@ MAu kmeans / Dbscan / hclust 16 / 36 MANU hclust16 / 36 ReMNAU 16 / 36 = 3<em>2<
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
-        width: 1440,
+        width: 2000,
 
-        height: 900,
+        height: 1200,
 
         // Factor of the display size that should remain empty around the content
         margin: 0.1,
