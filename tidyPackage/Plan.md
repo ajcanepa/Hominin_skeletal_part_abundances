@@ -14,6 +14,8 @@ GUI, general utility index (GUI)227, MGUI%MGUI
 
 Need: Expected # for each skeletal part 
 
+
+
 ### Functions
 
 Dimension reduction
@@ -22,13 +24,13 @@ Dimension reduction
 
 ### Plots 
 
-AcReMNAU, 
+Accumulative Relative MNAU, 
 
 Normed Frequency per skeletal portion 
 
 MAU vs MNI (Bivariate scatterplot of MNI per skeletal portion frequencies and MAU per skeletal portion frequencies)
 
-Three-pole graph
+Three-pole graph (page 129) "Three-pole graphing technique for assessing demographic (mortality) data"
 
 ###  Datasets
 
@@ -36,4 +38,4 @@ Three-pole graph
 
 ### Refrences
 
-[Lee Lyman - Vertebrate Taphonomy](https://drive.google.com/file/d/1bqcm7wZVZyWiEDUVTJZMKTNiKBoGaK76/view?usp=sharing) 
+Lee Lyman - Vertebrate Taphonomy
