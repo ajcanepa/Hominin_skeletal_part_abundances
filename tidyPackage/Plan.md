@@ -20,7 +20,7 @@ Need: Expected # for each skeletal part
 
 Dimension reduction
 
-
+Metodología de Suby (2006):  consistente en realizar una regresión lineal entre el %MAU y el volumen medio de cada elemento esqueléticos (gr/cm3). 
 
 ### Plots 
 
@@ -36,6 +36,6 @@ Three-pole graph (page 129) "Three-pole graphing technique for assessing demogra
 
 
 
-### Refrences
+### References
 
 Lee Lyman - Vertebrate Taphonomy
