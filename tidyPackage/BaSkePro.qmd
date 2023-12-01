@@ -1,0 +1,33 @@
+---
+title: "MAU"
+format: html
+---
+
+### Import packages
+
+```{r message=FALSE, warning=FALSE}
+set.seed(42)
+source("../INPUT/FUNCTIONS/preprocess.R")
+library(dplyr)
+library(rsample)
+library(recipes)
+library(randomForest)
+library(corrplot)
+library(tibble)
+library(purrr)
+library(reshape2)
+library(ggplot2)
+library(plotly)
+library(scatterplot3d)
+library(factoextra)
+library(cluster)
+library(tidyverse)
+library(BaSkePro)
+```
+
+
+```{r}
+PMAU <- as.data.frame(c(7,0,0,0,0,0,0,0,0,36,14,0,71,71,57,100))
+BaSkePro (PMAU)
+```
+
