@@ -1,0 +1,5 @@
+tidyAML
+
+<https://github.com/spsanderson/tidyAML>
+
+"easy to use the `tidymodels` ecosystem to perform automated machine learning (AutoML)"
