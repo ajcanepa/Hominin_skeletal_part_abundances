@@ -4,7 +4,7 @@
 
 "easy to use the `tidymodels` ecosystem to perform automated machine learning (AutoML)"
 
-\*\*DataCamp course\*\*
+**DataCamp course**
 
 Modeling with tidymodels in R
 
