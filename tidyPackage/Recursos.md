@@ -2,6 +2,10 @@
 
 https://posit.co/blog/the-road-to-building-ten-million-binaries/
 
+### Excel 
+
+https://docs.google.com/spreadsheets/d/1TVN-n2ubf9SrVQOO3wxk-rKZdWaA7bsmOiXjZGacc5s/edit#gid=0
+
 ### Definitions
 
 Input: MNE
