@@ -1,10 +1,18 @@
-### Links 
+# Links 
 
+The Road to Building Ten Million Binaries
 https://posit.co/blog/the-road-to-building-ten-million-binaries/
 
-### Excel 
+R package decelopment
+https://modern-rstats.eu/package-development.html
+
+
+# Excel 
 
 https://docs.google.com/spreadsheets/d/1TVN-n2ubf9SrVQOO3wxk-rKZdWaA7bsmOiXjZGacc5s/edit#gid=0
+
+
+
 
 ### Definitions
 
