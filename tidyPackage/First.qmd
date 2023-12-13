@@ -1,0 +1,309 @@
+---
+title: "Frist draft"
+format: html
+---
+
+```{r}
+#' Compute Detailed Analysis on Skeletal Part Abundance
+#'
+#' This function performs a comprehensive analysis on skeletal part abundance in archaeological sites.
+#' It calculates various metrics such as the number of individuals, abundance, mean abundance,
+#' mean part abundance, and other related statistics, providing deep insights into the origin and
+#' characteristics of the bone assemblages. It's designed to aid in identifying patterns or anomalies
+#' in skeletal part representation that can offer insights into hominin disposal practices or
+#' post-depositional processes affecting these assemblages.
+#'
+#' @param MNE A numeric vector representing the Minimum Number of Elements (MNE) for each skeletal part.
+#'            This is the primary input for the analysis.
+#' @param ... Optional additional parameters that can be used to refine the analysis. 
+#'            These could include specific filters or criteria based on the research focus.
+#'
+#' @return A list containing various calculated metrics: Number of Individuals, Abundance,
+#'         Mean Abundance (MA), Mean Part Abundance (MPA), Minimum Number of Individuals (MNI),
+#'         Minimum Animal Units (MAU), Minimal Number of Anatomic Units (MNAU), 
+#'         Percentages of MAU and MNAU, Relative MNAU (ReMNAU), and Accumulative ReMNAU (AcReMNAU).
+#'
+#' @import dplyr
+#' @importFrom tidyr gather
+#' @importFrom stats setNames
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   MNE_vector <- c(/* MNE values for each skeletal part */)
+#'   analysis_results <- analysis(MNE_vector)
+#'   print(analysis_results)
+#' }
+analysis <- function(MNE, skeleton) {
+    
+    # Convert MNE to a data frame
+    MNE <- as.data.frame(MNE)
+    
+    #MNI <- round(MNI/Skelton)
+    if(length(MNE) != nrow(skeleton)) {
+       stop("Length of MNE vector must match the number of skeletal elements")
+     }
+    MNI <- ceiling(MNE / skeleton$One_Skeleton)
+    
+    # Compute the number of Individuals (max(MNI))
+    individuals <- max(MNI)
+    
+    # Compute max(MNI)
+    MNI_animals <- MNE / skeleton$One_Skeleton
+    animals <- max(MNI_animals)
+    
+    # Compute Abundance for each part
+    abundance <- MNE / skeleton$One_Skeleton # expected_elements derived from Distinct Skeletal Parts
+
+    # Compute Mean Abundance (MA) and Mean Part Abundance (MPA)
+    ma <- mean(abundance)
+    mpa <- sum(abundance) / length(distinct_skeletal_parts)
+
+    # Additional metrics: MNI, MAU, MNAU, %MAU, %MNAU, ReMNAU, AcReMNAU
+    # Calculations for each
+    
+    #
+    MAU <- MNE / skeleton$One_Skeleton
+      
+    #  
+    MNAU <- MNE / skeleton$One_Skeleton
+      
+    #  
+    PMAU <- MAU/animals
+    
+    #  
+    PMNAU <- MNAU/individuals
+    
+    #
+    ReMNAU <- MNAU/sum(MNAU)
+    
+    #
+    AcReMNAU = []
+    AcReMNAU.append(MNAU[1])  
+    for i in length(skeleton$One_Skeleton) -1
+      AcReMNAU.append(AcReMNAU[i-1] + MNAu[i])
+    
+      
+    # Return a list of all calculated metrics
+    return(list(MNE=MNE, MNI = MNI , MAU = MAU, MNAU = MNAU, PercentMAU = PMAU, PercentMNAU = PMNAU, ReMNAU = ReMNAU, AcReMNAU = AcReMNAU, ma = ma, mpa= map ))
+}
+
+
+```
+
+```{r}
+MNE = c(6,6,4,5,3,2,22,35,57,15,3,4,5,10,104,8,9,10,12,10,20,30,128, 10, 2, 8,  6 , 12, 24,  30, 158, 188)
+```
+
+```{r}
+analysis <- function(MNE, skeleton, individuals = NULL) {
+    
+    if(length(MNE) != nrow(skeleton)) {
+        stop("Length of MNE vector must match the number of skeletal elements")
+    }
+
+    # Convert MNE to a data frame if it's not already
+    if(!is.data.frame(MNE)) {
+        MNE <- as.data.frame(MNE)
+    }
+    
+    Elements <- skeleton$Elements
+    
+    # Calculate MNI and Individuals if not provided
+    if(is.null(individuals)) {
+        MNI <- ceiling(MNE$MNE / skeleton$One_Skeleton)
+        individuals <- max(MNI)
+    } 
+    
+    # Compute Abundance for each part
+    abundance <- MNE$MNE / (skeleton$One_Skeleton *individuals)
+
+    # Compute Mean Abundance (MA)
+    ma <- sum(MNE$MNE, na.rm = TRUE) / (sum(skeleton$One_Skeleton, na.rm = TRUE) * individuals)
+
+    # Compute Mean Part Abundance (MPA)
+    mpa <- sum(abundance, na.rm = TRUE) / length(abundance)
+
+    # Additional metrics calculations
+    MAU <- abundance
+    MNAU <- abundance
+    PMAU <- MAU / max(MNE$MNE / skeleton$One_Skeleton )
+    PMNAU <- MNAU / individuals
+    ReMNAU <- MNAU / sum(MNAU, na.rm = TRUE)
+
+    # Calculate Accumulative ReMNAU
+    AcReMNAU <- cumsum(ReMNAU)
+    
+    # Return a list of all calculated metrics
+    return(list(MNE = as.vector(MNE$MNE), Elements = Elements,abundance = max(MNE$MNE / skeleton$One_Skeleton ) ,MNI = individuals, MAU = MAU, MNAU = MNAU, PercentMAU = PMAU, 
+                PercentMNAU = PMNAU, ReMNAU = ReMNAU, AcReMNAU = AcReMNAU, MeanAbundance = ma, MeanPartAbundance = mpa))
+}
+
+
+```
+
+```{r}
+SH_data = analysis(MNE,skeleton)
+```
+
+```{r}
+SH_data
+```
+
+```{r}
+MNE
+```
+
+```{r}
+# Create the skeleton data
+   skeleton <- data.frame(
+         Elements = c("Cranium", "Mandible", "Maxillae", "Hyoid", "Atlas (C1)", "Axis (C2)",
+                     "Cervical (C2-C7)", "Cervical total", "Thoracic", "Lumbar", "Sacrum", 
+                     "Coccyx", "Sternum", "Clavicle", "Rib", "Scapula", "Humerus", "Radius", 
+                     "Ulna", "Carpals", "Metacarpal", "Hand phalanx", "Hand (metacarpals + manual phalanges)", 
+                     "Innominate (Os coxa)", "Femur", "Patella", "Tibia", "Fibula", 
+                     "Tarsal", "Metatarsal", "Foot phalanx", "Foot (metatarsals + pedal phalanges)"),
+        One_Skeleton = c(1, 1, 1, 1, 1, 1, 5, 7, 12, 5, 1, 1, 1, 2, 24, 2, 2, 2, 2, 16, 10, 28, 38, 2, 2, 2, 2, 2, 14, 10, 28, 38)
+        )
+    
+save(skeleton, file = "data/skeleton.rda")
+```
+
+```{r}
+skeleton$Elements
+```
+
+```{r}
+# Define sites
+sites <- c("Krapina", "Palomas", "Sunghir", "Carnivore", "Cannibale", "Baboon")
+
+# Set seed for reproducibility
+set.seed(0)
+
+# Create a list to store site vectors
+site_vectors <- list()
+
+# Iterate through sites and create random 33-dimensional vectors for each
+for (site in sites) {
+  individuals <- sample(3:33, 1)  # Random number between 3 and 33
+  site_vectors[[site]] <-  ceiling(individuals * skeleton$One_Skeleton * runif(nrow(skeleton)))
+}
+
+# Display site vectors
+site_vectors
+
+```
+
+```{r}
+#"Krapina", "Palomas", "Sunghir", "Carnivore", "Cannibale", "Baboon"
+# Assuming 'analysis' is our predefined function and 'skeleton' is the loaded dataset
+Krapina_analysis <- analysis(site_vectors$Krapin, skeleton)
+Palomas_analysis <- analysis(site_vectors$Palomas, skeleton)
+Sunghir_analysis <- analysis(site_vectors$Sunghir, skeleton)
+Carnivore_analysis <- analysis(site_vectors$Carnivore, skeleton)
+Cannibale_analysis <- analysis(site_vectors$Cannibale, skeleton)
+Baboon_analysis <- analysis(site_vectors$Baboon, skeleton)
+# Now, Krapina_analysis contains metrics like MNI, MAU, MNAU, ReMNAU, etc.
+
+```
+
+```{r}
+Sunghir_analysis
+```
+
+```{r}
+plot_abundance <- function(SH_df, value, comp_sites, site_vectors, elements) {
+    # Convert SH_data list to a data frame for plotly
+    #SH_df <- data.frame(Element = elements, Value = SH_data$value)
+    #print(SH_df)
+    # Create base plot for SH site
+    p <- plotly::plot_ly(data = SH_df, x = ~Element, y = ~Value, 
+                         type = 'scatter', mode = 'lines+markers', name = 'SH')
+  
+    # Add plots for comparison sites
+    for (site in comp_sites) {
+        if (!site %in% names(site_vectors)) {
+            next
+        }
+        comp_df <- data.frame(Element = skeleton$Elements, Value = site_vectors[[site]][[value]])
+        p <- p %>% plotly::add_trace(data = comp_df, x = ~Element, y = ~Value,
+        mode = 'lines+markers', name = site)
+        }
+
+    # Customize layout
+    p %>% plotly::layout(title = paste("Abundance Comparison:", value),
+                     xaxis = list(title = "Skeletal Elements"),
+                     yaxis = list(title = value))
+    }
+
+```
+
+```{r}
+plot_abundance(SH_df, MNAU, c("Baboon"), Baboon_analysis, skeleton$Elements )
+```
+
+```{r}
+names(SH_data)
+SH_df<- data.frame(Element = skeleton$Elements, MNAU = SH_data$MNAU)
+```
+
+```{r}
+plot_mau_vs_mni <- function(SH_data) {
+    plotly::plot_ly(SH_data, x = ~MAU, y = ~MNI, type = 'scatter', mode = 'markers',
+                    marker = list(size = 10)) %>%
+    plotly::layout(title = "MAU vs MNI for SH Site",
+                   xaxis = list(title = "MAU"),
+                   yaxis = list(title = "MNI"))
+}
+
+plot_mau_vs_mni(SH_df)
+```
+
+```{r}
+data <- data.frame(row.names = SH_data$Elements, MNAU_SH= SH_data$MNAU, MNAU_Sun= Sunghir_analysis$MNAU)
+acre_data <- data.frame(row.names = SH_data$Elements, AcReMNAU_SH= SH_data$AcReMNAU, AcReMNAU_Sun= Sunghir_analysis$AcReMNAU)
+```
+
+```{r}
+library(plotly)
+Elements <- data[0]
+fig <- plot_ly(data, x = ~Elements, y = ~MNAU_SH ,name = "SH",type = 'scatter', mode = 'lines+markers')
+
+fig <- fig %>% add_trace(y = ~MNAU_Sun, name= "sunghir", mode = 'lines+markers')
+
+fig 
+
+```
+
+```{r}
+fig <- plot_ly(acre_data, x = ~Elements, y = ~AcReMNAU_SH ,name = "SH",type = 'scatter', mode = 'lines+markers')
+
+fig <- fig %>% add_trace(y = ~AcReMNAU_Sun, name= "sunghir", mode = 'lines+markers')
+
+
+
+fig 
+
+```
+
+```{r}
+
+fig <- plot_ly(acre_data, x = ~Elements, y = ~AcReMNAU_SH, name = "SH", type = 'scatter', mode = 'lines+markers')
+fig <- fig %>% add_trace(x = ~Elements, y = ~AcReMNAU_Sun, name = "Sunghir", mode = 'lines+markers')
+
+# Add identity line
+# X-axis from 0 to 1
+x_identity_line <- c(0, length(row.names(acre_data)))
+
+# Y-axis from 0 to length of Elements
+y_identity_line <- c(0, 1)
+
+# Add the identity line to the plot
+fig <- fig %>% add_trace(x = x_identity_line, y = y_identity_line, mode = 'lines', line = list(dash = 'dot'), name = "Identity Line")
+
+fig 
+```
+
+```{r}
+length(row.names(acre_data))
+```
