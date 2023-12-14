@@ -196,15 +196,12 @@ site_vectors
 
 ```{r}
 #"Krapina", "Palomas", "Sunghir", "Carnivore", "Cannibale", "Baboon"
-# Assuming 'analysis' is our predefined function and 'skeleton' is the loaded dataset
 Krapina_analysis <- analysis(site_vectors$Krapin, skeleton)
 Palomas_analysis <- analysis(site_vectors$Palomas, skeleton)
 Sunghir_analysis <- analysis(site_vectors$Sunghir, skeleton)
 Carnivore_analysis <- analysis(site_vectors$Carnivore, skeleton)
 Cannibale_analysis <- analysis(site_vectors$Cannibale, skeleton)
 Baboon_analysis <- analysis(site_vectors$Baboon, skeleton)
-# Now, Krapina_analysis contains metrics like MNI, MAU, MNAU, ReMNAU, etc.
-
 ```
 
 ```{r}
