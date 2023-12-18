@@ -25,9 +25,7 @@ library(tidyverse)
 library(BaSkePro)
 ```
 
-
 ```{r}
 PMAU <- as.data.frame(c(7,0,0,0,0,0,0,0,0,36,14,0,71,71,57,100))
 BaSkePro (PMAU)
 ```
-
