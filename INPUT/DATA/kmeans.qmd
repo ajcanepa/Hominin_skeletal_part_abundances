@@ -1,0 +1,99 @@
+---
+title: kmeans
+document: html
+---
+
+```{r, warning=FALSE}
+source("../FUNCTIONS/preprocess.R")
+library(tidyverse)
+library(tidyclust)
+library(parsnip)
+library(dplyr)
+library(cluster)
+library(factoextra)
+```
+
+```{r}
+data <-read.csv("Summary_Dataset_Used_Percentage_MAU.csv")
+
+
+```
+
+```{r}
+colnames(data)
+```
+
+```{r}
+data = preprocess(data)
+data <- data |> select(-c(1,2,3,26))
+```
+
+```{r}
+
+
+# Determine the best k using the elbow method
+elbow_results <- elbow_method(data, max_clusters = 10)
+
+# Determine the best k using the silhouette method
+silhouette_results <- silhouette_method(data, max_clusters = 10)
+
+# Create and fit k-means models for [k-1, k, k+1] with different initializations
+# Assuming 'k' is the determined best number of clusters
+
+# EGKMeans with Lloyd algorithm
+kmeans_spec_lloyd <- k_means(num_clusters = k) %>%
+  set_engine("stats", algorithm = "Lloyd") %>%
+  fit(data)
+
+# EGKMeans with random initialization
+kmeans_spec_cr <- k_means(num_clusters = k) %>%
+  set_engine("ClusterR", initializer = "random") %>%
+  fit(data)
+
+# You can add more models as required
+
+```
+
+```{r}
+library(cluster)
+library(factoextra)
+
+# Load your data
+data <- read.csv('/path/to/your/data.csv')
+
+# Elbow method using factoextra
+fviz_nbclust(data, kmeans, method = "wss")
+
+# Silhouette method using cluster
+sil_width <- rep(0, 9)
+for(i in 2:10){
+  km.res <- kmeans(data, centers = i, nstart = 25)
+  sil_width[i-1] <- mean(silhouette(km.res$cluster, dist(data))[, 3])
+}
+plot(2:10, sil_width, type = 'b')
+
+```
+
+```{r}
+data
+```
+
+```{r}
+library(cluster)
+library(factoextra)
+
+# Load your data
+data <- read.csv("Summary_Dataset_Used_Percentage_MAU.csv")
+
+# Elbow method using factoextra
+fviz_nbclust(data, kmeans, method = "wss")
+
+# Silhouette method using cluster
+sil_width <- rep(0, 9)
+for(i in 2:10){
+  km.res <- kmeans(data, centers = i, nstart = 25)
+  sil_width[i-1] <- mean(silhouette(km.res$cluster, dist(data))[, 3])
+}
+plot(2:10, sil_width, type = 'b')
+
+```
