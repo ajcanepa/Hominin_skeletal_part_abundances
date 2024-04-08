@@ -78,7 +78,7 @@ Subject: Invitation to Collaborate on the TaphonomyR Survey
 
 Dear [Recipient's Name],
 
-My name is DEATHREVOL, and we are devoloping TaphonomyR, an R package dedicated to advancing research in taphonomy and zooarchaeology. Given your contributions to taphonomy, we believe your insights and expertise would greatly enrich this initiative.
+We are DEATHREVOL, and we are devoloping TaphonomyR, an R package dedicated to advancing research in taphonomy and zooarchaeology. Given your contributions to taphonomy, we believe your insights and expertise would greatly enrich this initiative.
 
 **About TaphonomyR**
 
@@ -95,7 +95,7 @@ Your expertise in [we might want to get specific on why we contatct X person] is
 We are seeking contributions in various forms, including:
 
 - **Feedback on Data Preparation Needs**: Share your experience and insights on data preparation challenges and desired functionalities.
-- **Code and Data Contributions**: Contribute pre-existing tools, scripts, or raw, published data that can be integrated into TaphonomyR.
+- **Code and Data Contributions**: Contribute pre-existing tools, scripts, or raw, published data that can be integrated into TaphonomyR. (Como palaeoverse es "community driven" pero lo podemos quitar)
 - **Expertise Sharing**: Lend your expertise through collaborative development, testing, and documentation.
 
 We are currently gathering input from the taphonomy and zooarchaeology community through a brief survey [link to survey]. Your participation would be appreciated and would take no more than [time duration] to complete.
