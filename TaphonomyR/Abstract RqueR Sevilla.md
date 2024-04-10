@@ -6,12 +6,18 @@
 
 **Abtract**
 
-In the field of archaeology, taphonomic data analysis plays an important role in deciphering the complex interplay between anthropogenic activities and natural processes on skeletal remains. Despite the critical insights it offers, the field faces challenges including the absence of standardized data preparation protocols and difficulties in replicating analyses.
+In the field of archaeology, taphonomic data analysis plays an important role in deciphering the complex interplay between anthropogenic activities and natural processes on skeletal remains. Despite the critical insights it offers, the field faces challenges including the absence of standardized data preparation protocols and difficulties in replicating analyses. 
+```suggestion @aserrano
+replace "in replicating analysis" by "in reproductibility of results". 
+```
 
-Addressing these issues, "TaphonomyR", an new R package, is introduced as a comprehensive solution tailored for the quantitative examination of taphonomic phenomena. Designed with the objective of enhancing and streamlining the analysis of hominin and faunal remains, "TaphonomyR" facilitates data  exploration and modeling and visualization for skeletal part abundance, bone desity and breakage patterns data. Using algorithms like clustering and suby regression, this package provides a strong foundation for comparing studies and understanding detailed taphonomic data.
+Addressing these issues, a new R package entitled "TaphonomyR" is introduced as a comprehensive solution tailored for the quantitative examination of taphonomic phenomena. Designed with the objective of enhancing and streamlining the analysis of hominin and faunal remains, "TaphonomyR" facilitates data  exploration and modeling and visualization for skeletal part abundance, bone desity and breakage patterns data. Using algorithms such as clustering and suby regression, this package provides a strong foundation for comparing studies and understanding detailed taphonomic data.
 
-We wants to provide a helping tool to help understand taphonomic processes, by combining data science techniques with taphonomic theory. "TaphonomyR" not only advances archaeological research but also fosters interdisciplinary collaboration, setting a new standard for reproducibility, methodological rigor, and open science in archaeology.
-
+We want to provide a helping tool to help understand taphonomic processes, by combining data science techniques with taphonomic theory. "TaphonomyR" not only advances archaeological research but also fosters interdisciplinary collaboration, setting a new standard for reproducibility, methodological rigor, and open science in archaeology.
+```suggestion @aserrano
+replace first sentence of the paragraph by 
+By combining data science techniques with taphonomic theory, our goal is to provide a tool that will aid in the understanding of taphonomic processes.
+````
 
 
 
