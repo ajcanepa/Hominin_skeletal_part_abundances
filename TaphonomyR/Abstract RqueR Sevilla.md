@@ -46,7 +46,7 @@ The strength of the 'TaphonomyR' package lies in its integrated dataset of archa
 
 ***Público objecito y resuldados previstos***
 
-"TaphonomyR" not only advances archaeological research but also fosters interdisciplinary collaboration, setting a new standard for reproducibility, methodological rigor, and open science in archaeology.
+"TaphonomyR" not only advances archaeological research but also fosters interdisciplinary collaboration, setting a new standard for reproducibility, methodological rigor, and open science in archaeology.tandard for reproducibility, methodological rigor, and open science in archaeology.
 
 
 
