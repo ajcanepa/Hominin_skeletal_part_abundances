@@ -19,6 +19,9 @@ replace first sentence of the paragraph by
 By combining data science techniques with taphonomic theory, our goal is to provide a tool that will aid in the understanding of taphonomic processes.
 ````
 
+---
+---
+## Version 2 
 
 **Preguntar a Nohemi y Ana.**
 
