@@ -32,12 +32,14 @@ In the field of archaeology, taphonomic data analysis plays an important role in
 Despite the critical insights it offers, the field faces challenges including the absence of standardized data preparation, protocols and difficulties in reproductibility of results.
 
 **Las funcionalidades** 
-By combining data science techniques with taphonomic theory, our goal is to provide a tool that will aid in the understanding of taphonomic processes.
-Designed with the objective of enhancing and streamlining the analysis of hominin and faunal remains, "TaphonomyR" facilitates data exploration, modeling and visualization for skeletal part abundance, bone desity and breakage patterns data. 
+
+By combining data science techniques with taphonomic theory, our goal is to provide a tool that will aid in the understanding of taphonomic processes and enhancing and streamlining the analysis of hominin and faunal remains.
+
+"TaphonomyR" facilitates data exploration, modeling and visualization for skeletal part abundance, bone desity and breakage patterns data. 
 
 **Desarrollo prepuesto (Paquete + Dataset + Shiny App)**
 
-Integratin into the R package a dataset with a variaty of archiological sites to compare to and offering a user friendly Shiny App provides the field a foundation for comparing studies and understanding detailed taphonomic data.
+Furthermore the intregration or a dataset with a variaty of archiological sites to compare to and the development of a user friendly Shiny App provides the field a foundation for comparing studies and understanding detailed taphonomic data.
 
 ***Público objecito y resuldados previstos***
 
