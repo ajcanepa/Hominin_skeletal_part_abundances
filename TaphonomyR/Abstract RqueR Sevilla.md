@@ -26,7 +26,7 @@ By combining data science techniques with taphonomic theory, our goal is to prov
 
 **Title:**  TaphonomyR: An open-soure R package for data analysis and visualization for quantitativ taphonomy.
 
-**Preguntar a Nohemi y Ana.**
+**Preguntar a Nohemi y Ana P.**
 
 In the field of archaeology, taphonomic data analysis plays an important role in deciphering the interplay between anthropogenic activities and natural processes on skeletal remains. 
 
@@ -46,7 +46,7 @@ The strength of the 'TaphonomyR' package lies in its integrated dataset of archa
 
 ***Público objecito y resuldados previstos***
 
-"TaphonomyR" not only advances archaeological research but also fosters interdisciplinary collaboration, setting a new standard for reproducibility, methodological rigor, and open science in archaeology.tandard for reproducibility, methodological rigor, and open science in archaeology.
+"TaphonomyR" not only advances archaeological research but also fosters interdisciplinary collaboration, setting a new standard for reproducibility, methodological rigor, and open science in archaeology.
 
 
 
