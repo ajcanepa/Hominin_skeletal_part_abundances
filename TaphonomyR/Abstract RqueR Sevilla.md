@@ -23,6 +23,9 @@ By combining data science techniques with taphonomic theory, our goal is to prov
 ---
 ## Version 2 
 
+
+**Title:**  TaphonomyR: An open-soure R package for data analysis and visualization for quantitativ taphonomy.
+
 **Preguntar a Nohemi y Ana.**
 
 In the field of archaeology, taphonomic data analysis plays an important role in deciphering the interplay between anthropogenic activities and natural processes on skeletal remains. 
@@ -39,7 +42,7 @@ By combining data science techniques with taphonomic theory, our goal is to prov
 
 **Desarrollo prepuesto (Paquete + Dataset + Shiny App)**
 
-Furthermore the intregration or a dataset with a variaty of archiological sites to compare to and the development of a user friendly Shiny App provides the field a foundation for comparing studies and understanding detailed taphonomic data.
+The strength of the 'TaphonomyR' package lies in its integrated dataset of archaeological sites, which facilitates comparative studies and enhances our understanding of new findings in relation to established categories of archaeological sites, particularly through its accompanying user-friendly Shiny App.
 
 ***Público objecito y resuldados previstos***
 
