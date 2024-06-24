@@ -466,7 +466,7 @@ consolidatedData <- mergeSkeletalSubcategories(data, mergeRules)
 **Examples**:
 
 ```
-RCopy code# Define merge rules for skeletal parts
+# Define merge rules for skeletal parts
 mergeRules <- list(
   Vertebrae = c("Cervical", "Thoracic", "Lumbar", "Sacrum", "Coccyx"),
   Hand = c("Carpals", "Metacarpal", "Hand phalanx"),
@@ -1040,7 +1040,6 @@ plot_pca		Convert loaded MNE values into common derived variables
 **Usage**:
 
 ```
-RCopy code
 regressionResults <- subyRegression(data, yVariable, xVariable = "DXA")
 ```
 
