@@ -141,7 +141,7 @@ load_mne_data		Convert loaded MNE values into common derived variables
 
 `PNAS_plus`   		Dataset of skeletal part abundance from various archaeological sites
 
-----
+---- 
 
 **Description**: The `PNAS_plus` dataset comprises of skeletal part abundance from various archaeological sites, as documented in published studies (cite). It includes data on the origin of the assemblage, number of individuals, age, and the Minimum Number of Elements (MNE) for a comprehensive list of skeletal parts. This dataset is designed to serve as a comparative tool for researchers analyzing new sites, offering a basis for understanding patterns or anomalies in skeletal part representation.
 
